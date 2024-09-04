@@ -1,18 +1,20 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from .user import User
-from .card import Card  
+# from .user import User
+# from .card import Card  
+from flask_cors import CORS, cross_origin
 
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/usercard'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
-db = SQLAlchemy()
+db = SQLAlchemy(app)
+CORS(app)
 
 class UserCard(db.Model):
-    __tablename__ = 'user_card'
+    __tablename__ = 'user_cards'
     
     user_card_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
@@ -95,4 +97,4 @@ def delete_user_card(user_card_id):
     return jsonify({"error": "UserCard not found"}), 404
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=5006, debug=True)

@@ -1,14 +1,16 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
-from .user import User
+# from .user import User
+from flask_cors import CORS, cross_origin
 
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/healthpoints'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
-db = SQLAlchemy()
+db = SQLAlchemy(app)
+CORS(app)
 
 class HealthPoints(db.Model):
     __tablename__ = 'health_points'
@@ -99,4 +101,4 @@ def delete_health_points(points_id):
     return jsonify({"error": "HealthPoints entry not found"}), 404
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(port=5004, debug=True)

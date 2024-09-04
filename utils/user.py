@@ -1,13 +1,15 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from flask_cors import CORS, cross_origin
 
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root@localhost:3306/user'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
+CORS(app)
 
 class User(db.Model):
     __tablename__ = 'user'
@@ -23,16 +25,16 @@ class User(db.Model):
     email = db.Column(db.String(64), nullable = False, unique = True)
     location_group = db.Column(db.String(64), nullable = False)
     school = db.Column(db.String(64), nullable = False)
-    password = db.Column(db.Stirng(64), nullable = True)
-    parent_id = db.Column(db.Stirng(64), db.ForeignKey('user_id'), nullable = False)
+    password = db.Column(db.String(64), nullable = False) 
+    parent_id = db.Column(db.String(64), db.ForeignKey('user_id'), nullable = True) 
     role = db.Column(db.String(64), nullable = False)
     created_date = db.Column(db.DateTime, nullable = False)
     last_login = db.Column(db.DateTime, nullable = False)
-    total_points = db.Column(db.Integer, nullable = False)
+    total_point = db.Column(db.Integer, nullable = False)
     health_tier = db.Column(db.Integer, nullable = False)
-    children = db.relationship('User', backref = db.backref('parent', remote_side =[user_id]), lazy = True)
+    # children = db.relationship('User', backref = db.backref('parent', remote_side =[user_id]), lazy = True)
     
-    def __init__(self, user_id, name, age, gender, height, weight, contact_details, nationality, email, location_group, school, password, parent_id=None, role='User', created_date=None, last_login=None, total_points=0, health_tier = 0):
+    def __init__(self, user_id, name, age, gender, height, weight, contact_details, nationality, email, location_group, school, password, parent_id=None, role='User', created_date=None, last_login=None, total_point=0, health_tier = 0):
         self.user_id = user_id
         self.name = name
         self.age = age
@@ -49,7 +51,7 @@ class User(db.Model):
         self.role = role
         self.created_date = datetime.now()
         self.last_login = datetime.now()
-        self.total_points = 0
+        self.total_point = 0
         self.health_tier = 1 
 
     def json(self):
@@ -70,7 +72,7 @@ class User(db.Model):
             "role": self.role,
             "created_date": self.created_date.isoformat(),
             "last_login": self.last_login.isoformat(),
-            "total_points": self.total_points,
+            "total_point": self.total_point,
             "health_tier":self.health_tier
         }
     
@@ -161,4 +163,4 @@ def delete_user(user_id):
     return jsonify({"error": "User not found"}), 404
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5001, debug=True)
