@@ -74,26 +74,12 @@ class User(db.Model):
             "health_tier":self.health_tier
         }
     
-@app.route("/user", methods=['GET'])
-def get_all():
-    users = User.query.all()
-    return jsonify([user.json() for user in users])
-
-@app.route("/user/<string:userid>", methods=['GET'])
-def find_by_userid(userid):
-    user = User.query.filter_by(user_id=userid).first()
-    if user:
-        return jsonify(user.json())
-    return jsonify({"message": "User not found"}), 404
-
-@app.route("/user/<string:userid>", methods=['POST'])
-def create_user(userid):
-    if User.query.filter_by(user_id=userid).first():
-        return jsonify({"message": "User with this ID already exists"}), 400
-    
+# Create a new user
+@app.route('/user', methods=['POST'])
+def create_user():
     data = request.json
     new_user = User(
-        user_id=userid,
+        user_id=None,
         name=data.get('name'),
         age=data.get('age'),
         gender=data.get('gender'),
@@ -106,17 +92,73 @@ def create_user(userid):
         school=data.get('school'),
         password=data.get('password'),
         parent_id=data.get('parent_id'),
-        role=data.get('role'),
-        created_date=data.get('created_date'),
-        last_login=data.get('last_login'),
-        total_points=data.get('total_points'),
-        health_tier= data.get('health_tier')
+        role=data.get('role', 'User')
     )
-    
-    db.session.add(new_user)
-    db.session.commit()
-    
-    return jsonify(new_user.json()), 201
+    try:
+        db.session.add(new_user)
+        db.session.commit()
+        return jsonify(new_user.json()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+# Get all users
+@app.route('/users', methods=['GET'])
+def get_users():
+    users = User.query.all()
+    return jsonify([user.json() for user in users]), 200
+
+# Get a user by ID
+@app.route('/user/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        return jsonify(user.json()), 200
+    return jsonify({"error": "User not found"}), 404
+
+# Update a user by ID
+@app.route('/user/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        data = request.json
+        user.name = data.get('name', user.name)
+        user.age = data.get('age', user.age)
+        user.gender = data.get('gender', user.gender)
+        user.height = data.get('height', user.height)
+        user.weight = data.get('weight', user.weight)
+        user.contact_details = data.get('contact_details', user.contact_details)
+        user.nationality = data.get('nationality', user.nationality)
+        user.email = data.get('email', user.email)
+        user.location_group = data.get('location_group', user.location_group)
+        user.school = data.get('school', user.school)
+        user.password = data.get('password', user.password)
+        user.parent_id = data.get('parent_id', user.parent_id)
+        user.role = data.get('role', user.role)
+        user.last_login = datetime.now()
+        
+        try:
+            db.session.commit()
+            return jsonify(user.json()), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+        
+    return jsonify({"error": "User not found"}), 404
+
+# Delete a user by ID
+@app.route('/user/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    user = User.query.get(user_id)
+    if user:
+        try:
+            db.session.delete(user)
+            db.session.commit()
+            return jsonify({"message": "User deleted"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    return jsonify({"error": "User not found"}), 404
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(debug=True)

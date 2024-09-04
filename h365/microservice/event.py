@@ -54,5 +54,81 @@ class Event(db.Model):
             "current_signups": self.current_signups
         }
 
+# Create a new event
+@app.route('/event', methods=['POST'])
+def create_event():
+    data = request.json
+    new_event = Event(
+        title=data.get('title'),
+        description=data.get('description'),
+        location=data.get('location'),
+        start_date=datetime.strptime(data.get('start_date'), '%Y-%m-%d'),
+        end_date=datetime.strptime(data.get('end_date'), '%Y-%m-%d'),
+        organizer=data.get('organizer'),
+        event_type=data.get('event_type'),
+        created_by=data.get('created_by'),
+        max_signups=data.get('max_signups'),
+        current_signups=data.get('current_signups', 0)
+    )
+    try:
+        db.session.add(new_event)
+        db.session.commit()
+        return jsonify(new_event.json()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+# Get all events
+@app.route('/events', methods=['GET'])
+def get_events():
+    events = Event.query.all()
+    return jsonify([event.json() for event in events]), 200
+
+# Get an event by ID
+@app.route('/event/<int:event_id>', methods=['GET'])
+def get_event(event_id):
+    event = Event.query.get(event_id)
+    if event:
+        return jsonify(event.json()), 200
+    return jsonify({"error": "Event not found"}), 404
+
+# Update an event by ID
+@app.route('/event/<int:event_id>', methods=['PUT'])
+def update_event(event_id):
+    event = Event.query.get(event_id)
+    if event:
+        data = request.json
+        event.title = data.get('title', event.title)
+        event.description = data.get('description', event.description)
+        event.location = data.get('location', event.location)
+        event.start_date = datetime.strptime(data.get('start_date'), '%Y-%m-%d')
+        event.end_date = datetime.strptime(data.get('end_date'), '%Y-%m-%d')
+        event.organizer = data.get('organizer', event.organizer)
+        event.event_type = data.get('event_type', event.event_type)
+        event.max_signups = data.get('max_signups', event.max_signups)
+        event.current_signups = data.get('current_signups', event.current_signups)
+
+        try:
+            db.session.commit()
+            return jsonify(event.json()), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    return jsonify({"error": "Event not found"}), 404
+
+# Delete an event by ID
+@app.route('/event/<int:event_id>', methods=['DELETE'])
+def delete_event(event_id):
+    event = Event.query.get(event_id)
+    if event:
+        try:
+            db.session.delete(event)
+            db.session.commit()
+            return jsonify({"message": "Event deleted"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    return jsonify({"error": "Event not found"}), 404
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)

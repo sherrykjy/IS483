@@ -34,6 +34,70 @@ class Card(db.Model):
             "event_id": self.event_id
         }
 
-# Make sure to initialize the database and create tables
-with app.app_context():
-    db.create_all()
+# Create a new Card
+@app.route('/card', methods=['POST'])
+def create_card():
+    data = request.json
+    new_card = Card(
+        title=data.get('title'),
+        card_type=data.get('card_type'),
+        points_required=data.get('points_required'),
+        event_id=data.get('event_id')
+    )
+    try:
+        db.session.add(new_card)
+        db.session.commit()
+        return jsonify(new_card.json()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+# Get all Cards
+@app.route('/cards', methods=['GET'])
+def get_cards():
+    cards = Card.query.all()
+    return jsonify([card.json() for card in cards]), 200
+
+# Get a Card by ID
+@app.route('/card/<int:card_id>', methods=['GET'])
+def get_card(card_id):
+    card = Card.query.get(card_id)
+    if card:
+        return jsonify(card.json()), 200
+    return jsonify({"error": "Card not found"}), 404
+
+# Update a Card by ID
+@app.route('/card/<int:card_id>', methods=['PUT'])
+def update_card(card_id):
+    card = Card.query.get(card_id)
+    if card:
+        data = request.json
+        card.title = data.get('title', card.title)
+        card.card_type = data.get('card_type', card.card_type)
+        card.points_required = data.get('points_required', card.points_required)
+        card.event_id = data.get('event_id', card.event_id)
+        
+        try:
+            db.session.commit()
+            return jsonify(card.json()), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    return jsonify({"error": "Card not found"}), 404
+
+# Delete a Card by ID
+@app.route('/card/<int:card_id>', methods=['DELETE'])
+def delete_card(card_id):
+    card = Card.query.get(card_id)
+    if card:
+        try:
+            db.session.delete(card)
+            db.session.commit()
+            return jsonify({"message": "Card deleted"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    return jsonify({"error": "Card not found"}), 404
+
+if __name__ == '__main__':
+    app.run(port=5000, debug=True)

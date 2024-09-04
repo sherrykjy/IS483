@@ -37,5 +37,71 @@ class HealthRecommendation(db.Model):
             "progress": self.progress
         }
 
+# Create a new HealthRecommendation entry
+@app.route('/healthrecommendation', methods=['POST'])
+def create_health_recommendation():
+    data = request.json
+    new_recommendation = HealthRecommendation(
+        user_id=data.get('user_id'),
+        health_goal=data.get('health_goal'),
+        recommendation_text=data.get('recommendation_text'),
+        progress=data.get('progress')
+    )
+    try:
+        db.session.add(new_recommendation)
+        db.session.commit()
+        return jsonify(new_recommendation.json()), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
+
+# Get all HealthRecommendation entries
+@app.route('/healthrecommendation', methods=['GET'])
+def get_health_recommendations():
+    recommendations_list = HealthRecommendation.query.all()
+    return jsonify([rec.json() for rec in recommendations_list]), 200
+
+# Get a HealthRecommendation entry by ID
+@app.route('/healthrecommendation/<int:recommendation_id>', methods=['GET'])
+def get_health_recommendation_by_id(recommendation_id):
+    recommendation = HealthRecommendation.query.get(recommendation_id)
+    if recommendation:
+        return jsonify(recommendation.json()), 200
+    return jsonify({"error": "HealthRecommendation entry not found"}), 404
+
+# Update a HealthRecommendation entry by ID
+@app.route('/healthrecommendation/<int:recommendation_id>', methods=['PUT'])
+def update_health_recommendation(recommendation_id):
+    recommendation = HealthRecommendation.query.get(recommendation_id)
+    if recommendation:
+        data = request.json
+        recommendation.user_id = data.get('user_id', recommendation.user_id)
+        recommendation.health_goal = data.get('health_goal', recommendation.health_goal)
+        recommendation.recommendation_text = data.get('recommendation_text', recommendation.recommendation_text)
+        recommendation.generated_date = data.get('generated_date', recommendation.generated_date)
+        recommendation.progress = data.get('progress', recommendation.progress)
+        
+        try:
+            db.session.commit()
+            return jsonify(recommendation.json()), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    return jsonify({"error": "HealthRecommendation entry not found"}), 404
+
+# Delete a HealthRecommendation entry by ID
+@app.route('/healthrecommendation/<int:recommendation_id>', methods=['DELETE'])
+def delete_health_recommendation(recommendation_id):
+    recommendation = HealthRecommendation.query.get(recommendation_id)
+    if recommendation:
+        try:
+            db.session.delete(recommendation)
+            db.session.commit()
+            return jsonify({"message": "HealthRecommendation entry deleted"}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    return jsonify({"error": "HealthRecommendation entry not found"}), 404
+
 if __name__ == '__main__':
     app.run(port=5000, debug=True)
