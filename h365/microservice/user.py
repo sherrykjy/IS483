@@ -23,15 +23,16 @@ class User(db.Model):
     email = db.Column(db.String(64), nullable = False, unique = True)
     location_group = db.Column(db.String(64), nullable = False)
     school = db.Column(db.String(64), nullable = False)
-    password = db.Column(db.Stirng(64), nullable = False)
+    password = db.Column(db.Stirng(64), nullable = True)
     parent_id = db.Column(db.Stirng(64), db.ForeignKey('user_id'), nullable = False)
     role = db.Column(db.String(64), nullable = False)
     created_date = db.Column(db.DateTime, nullable = False)
     last_login = db.Column(db.DateTime, nullable = False)
     total_points = db.Column(db.Integer, nullable = False)
+    health_tier = db.Column(db.Integer, nullable = False)
     children = db.relationship('User', backref = db.backref('parent', remote_side =[user_id]), lazy = True)
     
-    def __init__(self, user_id, name, age, gender, height, weight, contact_details, nationality, email, location_group, school, password, parent_id=None, role='User', created_date=None, last_login=None, total_points=0):
+    def __init__(self, user_id, name, age, gender, height, weight, contact_details, nationality, email, location_group, school, password, parent_id=None, role='User', created_date=None, last_login=None, total_points=0, health_tier = 0):
         self.user_id = user_id
         self.name = name
         self.age = age
@@ -49,6 +50,7 @@ class User(db.Model):
         self.created_date = datetime.now()
         self.last_login = datetime.now()
         self.total_points = 0
+        self.health_tier = 1 
 
     def json(self):
         return {
@@ -68,7 +70,8 @@ class User(db.Model):
             "role": self.role,
             "created_date": self.created_date.isoformat(),
             "last_login": self.last_login.isoformat(),
-            "total_points": self.total_points
+            "total_points": self.total_points,
+            "health_tier":self.health_tier
         }
     
 @app.route("/user", methods=['GET'])
@@ -106,7 +109,8 @@ def create_user(userid):
         role=data.get('role'),
         created_date=data.get('created_date'),
         last_login=data.get('last_login'),
-        total_points=data.get('total_points')
+        total_points=data.get('total_points'),
+        health_tier= data.get('health_tier')
     )
     
     db.session.add(new_user)

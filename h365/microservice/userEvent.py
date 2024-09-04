@@ -16,13 +16,13 @@ class UserEvents(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey('event.event_id'), nullable=False)
     registered = db.Column(db.Boolean, nullable=False, default=False)
-    bookmarked = db.Column(db.Boolean, nullable=False, default=False)
+    completed = db.Column(db.Boolean, nullable=False, default=False)
 
-    def __init__(self, user_id, event_id, registered=True, bookmarked=True):
+    def __init__(self, user_id, event_id, registered=True, completed=True):
         self.user_id = user_id
         self.event_id = event_id
         self.registered = registered
-        self.bookmarked = bookmarked
+        self.completed = completed
 
     def json(self):
         return {
@@ -30,7 +30,7 @@ class UserEvents(db.Model):
             "user_id": self.user_id,
             "event_id": self.event_id,
             "registered": self.registered,
-            "bookmarked": self.bookmarked
+            "completed": self.completed
         }
         
 if __name__ == '__main__':
