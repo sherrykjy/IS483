@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 # from .user import User
 # from .event import Event
 from flask_cors import CORS, cross_origin
+from invokes import invoke_http
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
@@ -10,6 +11,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
 CORS(app)
+
+eventURL = "http://localhost:5002/event/"
 
 class UserEvents(db.Model):
     __tablename__ = 'user_events'
@@ -100,5 +103,39 @@ def delete_user_event(user_event_id):
             return jsonify({"error": str(e)}), 400
     return jsonify({"error": "UserEvent not found"}), 404
 
+# Get active user events for a user
+@app.route('/userevent/active/<int:user_id>', methods=['GET'])
+def get_active_user_events(user_id):
+    try:
+        user_events = UserEvents.query.filter_by(user_id=user_id, registered=True, completed=False).all()
+
+        if user_events:
+            final = []
+
+            for user_event in user_events:
+                event_id = user_event.event_id
+
+                eventInfoURL = eventURL + str(event_id)
+                event = invoke_http(eventInfoURL, method='GET')
+
+                if isinstance(event, dict) and event.get("code", 200) != 200:
+                    return jsonify(event), event["code"]
+
+                else:
+                    final.append(event)
+            
+            return jsonify(final), 200
+
+        return jsonify({
+            "code": 400,
+            "message": "No active events found for this user_id"
+        }), 400
+    
+    except Exception as e:
+        return jsonify({
+            "code": 500,
+            "message": f"An error occurred: {str(e)}"
+        }), 500
+    
 if __name__ == '__main__':
     app.run(port=5007, debug=True)

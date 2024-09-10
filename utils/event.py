@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 # from .user import User
 from flask_cors import CORS, cross_origin
 
-from datetime import datetime
+from datetime import datetime, timedelta, date
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
@@ -131,6 +131,47 @@ def delete_event(event_id):
             db.session.rollback()
             return jsonify({"error": str(e)}), 400
     return jsonify({"error": "Event not found"}), 404
+
+# Get available events 
+@app.route('/event/available', methods=['GET'])
+def get_available_events():
+    try:
+        events = Event.query.all()
+
+        if events:
+            available_events = []
+
+            for event in events:
+                # Check for event capacity
+                if event.current_signups < event.max_signups:
+
+                    # Check for event date 
+                    if datetime.now().date() < event.start_date:
+                        available_events.append(event)
+                    
+                    # TO DO: Add check for event time
+
+            if available_events:
+                return jsonify([
+                    event.json() for event in available_events
+                ]), 200
+
+            else:
+                return jsonify({
+                    "code": 400, 
+                    "message": "No available events"
+                }), 400
+        
+        return jsonify({
+            "code": 400,
+            "message": "No events found"
+        }), 400
+    
+    except Exception as e:
+        return jsonify({
+            "code": 500,
+            "message": f"An error occurred: {str(e)}"
+        }), 500
 
 if __name__ == '__main__':
     app.run(port=5002, debug=True)
