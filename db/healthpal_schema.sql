@@ -25,22 +25,33 @@ CREATE TABLE user (
     last_login DATETIME NOT NULL,
     total_point INT NOT NULL,
     health_tier INT NOT NULL,
+    workout_frequency INT NOT NULL,
+    preferred_intensity INT NOT NULL,
+    goal_date DATE NOT NULL,
     PRIMARY KEY (user_id)
 );
 
 CREATE TABLE events (
     event_id INT NOT NULL,
     title VARCHAR(40) NOT NULL,
+    second_title TEXT NOT NULL,
     description TEXT NOT NULL,
     location VARCHAR(40) NOT NULL,
-    start_date DATE NOT NULL,
-    end_date DATE NOT NULL,
+    start_date DATETIME NOT NULL,
+    end_date DATETIME NOT NULL,
     organiser VARCHAR(40) NOT NULL,
     event_type VARCHAR(40) NOT NULL,
-    created_by INT NOT NULL,
     created_date DATE NOT NULL,
     max_signups INT NOT NULL,
     current_signups INT NOT NULL,
+    mode VARCHAR(40) NOT NULL,
+    participant_remark VARCHAR(200) NOT NULL,
+    entry_code VARCHAR(40) NULL,
+    event_point INT NOT NULL,
+    event_program VARCHAR(200) NOT NULL,
+    tier INT NOT NULL,
+    organiser_phone INT NOT NULL,
+    organiser_email VARCHAR(200) NOT NULL,
     PRIMARY KEY (event_id)
 );
 
@@ -61,6 +72,9 @@ CREATE TABLE cards (
     card_type VARCHAR(40) NOT NULL,
     points_required INT NOT NULL,
     event_id INT NULL,
+    card_category VARCHAR(40) NOT NULL,
+    description VARHAR(200) NOT NULL,
+    recommendation varchar(300) NOT NULL
     PRIMARY KEY (card_id),
     FOREIGN KEY (event_id) REFERENCES events (event_id)
 );
@@ -83,7 +97,6 @@ CREATE TABLE health (
     steps INT NOT NULL,
     sleep_hours FLOAT NOT NULL,
     mvpa_minutes INT NOT NULL,
-    meal_type VARCHAR(40) NOT NULL,
     calories_per_meal INT NOT NULL,
     PRIMARY KEY (health_data_id),
     FOREIGN KEY (user_id) REFERENCES user (user_id)
@@ -100,7 +113,7 @@ CREATE TABLE health_recommendation (
     FOREIGN KEY (user_id) REFERENCES user (user_id)
 );
 
-CREATE TABLE health_points (
+CREATE TABLE health_coin (
     points_id INT NOT NULL,
     user_id INT NOT NULL,
     points_earned INT NOT NULL,
@@ -109,3 +122,14 @@ CREATE TABLE health_points (
     PRIMARY KEY (points_id),
     FOREIGN KEY (user_id) REFERENCES user (user_id)
 );
+
+CREATE TABLE performance (
+    record_id VARCHAR(40) NOT NULL,
+    user_id INT NOT NULL,
+    date DATETIME NOT NULL,
+    remark TEXT NOT NULL,
+    goal_category VARCHAR(40) NOT NULL
+    PRIMARY KEY (record_id),
+    FOREIGN KEY (user_id) REFERENCES user (user_id)
+);
+
