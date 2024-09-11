@@ -21,7 +21,7 @@ CREATE TABLE user (
     password VARCHAR(40) NOT NULL,
     parent_id INT NULL,
     role VARCHAR(40) NOT NULL,
-    created_date DATE NOT NULL,
+    created_date DATETIME NOT NULL,
     last_login DATETIME NOT NULL,
     total_point INT NOT NULL,
     health_tier INT NOT NULL,
@@ -41,7 +41,7 @@ CREATE TABLE events (
     end_date DATETIME NOT NULL,
     organiser VARCHAR(40) NOT NULL,
     event_type VARCHAR(40) NOT NULL,
-    created_date DATE NOT NULL,
+    created_date DATETIME NOT NULL,
     max_signups INT NOT NULL,
     current_signups INT NOT NULL,
     mode VARCHAR(40) NOT NULL,
@@ -50,7 +50,7 @@ CREATE TABLE events (
     event_point INT NOT NULL,
     event_program VARCHAR(200) NOT NULL,
     tier INT NOT NULL,
-    organiser_phone INT NOT NULL,
+    organiser_phone VARCHAR(15) NOT NULL,
     organiser_email VARCHAR(200) NOT NULL,
     PRIMARY KEY (event_id)
 );
@@ -72,9 +72,8 @@ CREATE TABLE cards (
     card_type VARCHAR(40) NOT NULL,
     points_required INT NOT NULL,
     event_id INT NULL,
-    card_category VARCHAR(40) NOT NULL,
-    description VARHAR(200) NOT NULL,
-    recommendation varchar(300) NOT NULL
+    description VARCHAR(200) NOT NULL,
+    recommendation varchar(300) NOT NULL,
     PRIMARY KEY (card_id),
     FOREIGN KEY (event_id) REFERENCES events (event_id)
 );
@@ -128,7 +127,6 @@ CREATE TABLE performance (
     user_id INT NOT NULL,
     date DATETIME NOT NULL,
     remark TEXT NOT NULL,
-    goal_category VARCHAR(40) NOT NULL
     PRIMARY KEY (record_id),
     FOREIGN KEY (user_id) REFERENCES user (user_id)
 );
