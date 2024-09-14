@@ -8,6 +8,18 @@ const routes = [
     },
 
     {
+        path: "/",
+        name: "informationPage",
+        component: () => import("@/views/informationPage.vue")
+    },
+
+    {
+        path: "/",
+        name: "goalSettingPage",
+        component: () => import("@/views/goalSettingPage.vue")
+    },
+
+    {
       path: "/home",
       name: "homePage",
       component: () => import("@/views/homePage.vue")

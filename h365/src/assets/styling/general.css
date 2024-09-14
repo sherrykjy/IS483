@@ -1,0 +1,103 @@
+/* fonts */
+
+@font-face {
+    font-family: 'text-black';
+    src: url('../fonts/Nunito-Black.ttf');
+}
+
+@font-face {
+    font-family: 'text-bold';
+    src: url('../fonts/Nunito-Bold.ttf');
+}
+
+@font-face {
+    font-family: 'text-extraBold';
+    src: url('../fonts/Nunito-ExtraBold.ttf');
+}
+
+@font-face {
+    font-family: 'text-light';
+    src: url('../fonts/Nunito-Light.ttf');
+}
+
+@font-face {
+    font-family: 'text-Medium';
+    src: url('../fonts/Nunito-Medium.ttf');
+}
+
+@font-face {
+    font-family: 'text-regular';
+    src: url('../fonts/Nunito-Regular.ttf');
+}
+
+@font-face {
+    font-family: 'text-semibold';
+    src: url('../fonts/Nunito-SemiBold.ttf');
+}
+
+
+/* colour */
+:root {
+    --default-text: #262522;
+    --text-highlight: #7B7874;
+    --grey: #F5F4F1;
+    --grey-highlight: #D8D8D5;
+    --default-white: #FFFFFF;
+
+    --green: #45BE93;
+    --yellow: #FFCE49;
+    --orange: #EE7B09;
+    --red: #DB4B1E;
+    --blue: #1C83E1;
+    --purple: #814FF0;
+}
+
+
+/* default classes */
+
+div {
+    background-color: var(--grey);
+    max-width: 390px;
+    margin: 0 auto;
+    padding: 16px;
+    overflow-x: hidden;
+}
+
+.center {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* forms */
+
+.formLabel {
+    font-family: 'text-regular';
+    color: var(--text-highlight);
+}
+
+input[type=text],
+input[type=password] {
+    border: none;
+    border-bottom: 0.45px solid var(--text-highlight);
+    padding: 8px;
+    background: transparent;
+    outline: none;
+    width: 100%
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+    border-bottom-color: var(--text-highlight); /* Ensure the bottom border color on focus */
+}
+
+.formButton {
+    width: 100%;
+    font-family: text-medium;
+    font-size: 15px;
+    padding-top: 9.5px;
+    padding-bottom: 9.5px;
+    border-radius: 6px;
+    border: none;  
+}
