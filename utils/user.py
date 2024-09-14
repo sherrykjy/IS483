@@ -99,7 +99,7 @@ def create_user():
     try:
         db.session.add(new_user)
         db.session.commit()
-        return jsonify(new_user.json()), 201
+        return jsonify(new_user.json()), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
@@ -110,16 +110,16 @@ def get_users():
     users = User.query.all()
     return jsonify([user.json() for user in users]), 200
 
-# Get a user by ID
-@app.route('/user/<int:user_id>', methods=['GET'])
+# Get a user by Email
+@app.route('/user/<string:email>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get(user_id)
     if user:
         return jsonify(user.json()), 200
     return jsonify({"error": "User not found"}), 404
 
-# Update a user by ID
-@app.route('/user/<int:user_id>', methods=['PUT'])
+# Update a user by Email
+@app.route('/user/<string:email>', methods=['PUT'])
 def update_user(user_id):
     user = User.query.get(user_id)
     if user:
@@ -148,8 +148,8 @@ def update_user(user_id):
         
     return jsonify({"error": "User not found"}), 404
 
-# Delete a user by ID
-@app.route('/user/<int:user_id>', methods=['DELETE'])
+# Delete a user by Email
+@app.route('/user/<string:email>', methods=['DELETE'])
 def delete_user(user_id):
     user = User.query.get(user_id)
     if user:
