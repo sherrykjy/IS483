@@ -26,7 +26,7 @@ class User(db.Model):
     location_group = db.Column(db.String(64), nullable = False)
     school = db.Column(db.String(64), nullable = False)
     password = db.Column(db.String(64), nullable = False) 
-    parent_id = db.Column(db.String(64), db.ForeignKey('user_id'), nullable = True) 
+    parent_id = db.Column(db.String(64), db.ForeignKey('user.user_id'), nullable = True) 
     role = db.Column(db.String(64), nullable = False)
     created_date = db.Column(db.DateTime, nullable = False)
     last_login = db.Column(db.DateTime, nullable = False)
@@ -99,7 +99,7 @@ def create_user():
     try:
         db.session.add(new_user)
         db.session.commit()
-        return jsonify(new_user.json()), 200
+        return jsonify({"code": 200, "data": new_user.json()}), 200
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
@@ -112,16 +112,16 @@ def get_users():
 
 # Get a user by Email
 @app.route('/user/<string:email>', methods=['GET'])
-def get_user(user_id):
-    user = User.query.get(user_id)
+def get_user(email):
+    user = User.query.filter_by(email=email).first()
     if user:
-        return jsonify(user.json()), 200
-    return jsonify({"error": "User not found"}), 404
+        return jsonify({"code": 200, "data": user.json()}), 200
+    return jsonify({"code": 404, "error": "User not found"}), 404
 
 # Update a user by Email
 @app.route('/user/<string:email>', methods=['PUT'])
-def update_user(user_id):
-    user = User.query.get(user_id)
+def update_user(email):
+    user = User.query.filter_by(email=email).first()
     if user:
         data = request.json
         user.name = data.get('name', user.name)
@@ -150,8 +150,8 @@ def update_user(user_id):
 
 # Delete a user by Email
 @app.route('/user/<string:email>', methods=['DELETE'])
-def delete_user(user_id):
-    user = User.query.get(user_id)
+def delete_user(email):
+    user = User.query.filter_by(email=email).first()
     if user:
         try:
             db.session.delete(user)
