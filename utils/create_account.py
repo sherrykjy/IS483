@@ -40,7 +40,7 @@ def processUserInformation(user_information):
     print('user_result:', user_result)
     
     # 2. Check code
-    user_result_code = user_result[1]
+    user_result_code = user_result["code"]
     
     # 3. If response is 404 (No account found), create a new account
     # Invoke the user microservice
@@ -49,19 +49,19 @@ def processUserInformation(user_information):
         account_creation_result = invoke_http(user_URL, method='POST', json=user_information)
         print('account creation result:', account_creation_result)
         
-        account_creation_result_code = account_creation_result[1]
+        account_creation_result_code = account_creation_result["code"]
         
         if account_creation_result_code == 200:
             return {
                 "code": account_creation_result_code,
-                "data": {"account creation result": account_creation_result[0]},
+                "data": {"account creation result": account_creation_result["data"]},
                 "message": "User account creation success"
             }
             
         else:
             return {
                 "code": account_creation_result_code,
-                "data": {"account creation result": account_creation_result[0]},
+                "data": {"account creation result": account_creation_result["data"]},
                 "message": "User account creation failed due to internal error"
             }
     
@@ -69,8 +69,8 @@ def processUserInformation(user_information):
     elif user_result_code == 200:
         print('\n-----User email found, account creation aborted-----')
         return {
-                "code": 404,
-                "data": {"user result": user_result[0]},
+                "code": 400,
+                "data": {"user result": user_result["data"]},
                 "message": "User account creation failure as user email exists"
             }
         
@@ -78,6 +78,9 @@ def processUserInformation(user_information):
     else:
         return {
             "code": user_result_code,
-            "data": {"user result": user_result[0]},
+            "data": {"user result": user_result["data"]},
             "message": "An unexpected error occurred while checking for user"
         }
+
+if __name__ == '__main__':
+    app.run(port=5008, debug=True)

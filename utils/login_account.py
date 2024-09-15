@@ -47,11 +47,11 @@ def processLoginInformation(login_information):
     user_result = invoke_http(f"{user_URL}/{email}", method='GET')
     print('user_result:', user_result)
     
-    user_result_code = user_result[1]
+    user_result_code = user_result["code"]
     
     # 4. If user is found, verify the password
     if user_result_code == 200:
-        user_data = user_result[0]
+        user_data = user_result["data"]
         stored_password = user_data['password']
         
         if stored_password == password:
@@ -84,8 +84,8 @@ def processLoginInformation(login_information):
         return {
             "code": user_result_code,
             "message": "An error occurred while logging in",
-            "data": {"user_result": user_result[0]}
+            "data": {"user_result": user_result["data"]}
         }
 
 if __name__ == "__main__":
-    app.run(port=5002, debug=True)
+    app.run(port=5009, debug=True)
