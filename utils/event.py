@@ -195,9 +195,10 @@ def get_available_events():
                         available_events.append(event)
                     
             if available_events:
-                return jsonify([
-                    event.json() for event in available_events
-                ]), 200
+                return jsonify({
+                    "code": 200,
+                    "data": [event.json() for event in available_events]
+                }), 200
 
             else:
                 return jsonify({
@@ -215,6 +216,93 @@ def get_available_events():
             "code": 500,
             "message": f"An error occurred: {str(e)}"
         }), 500
+
+# Get events based on search on title and location, and filter by date
+@app.route('/event/search', methods=['GET'])
+def search_event():
+    try:
+        keyword = request.args.get('search_input')
+        date = request.args.get('date_input')
+
+        # Convert date_str to datetime object if provided
+        date_filter = None
+        if date:
+            try:
+                date_filter = datetime.strptime(date, '%Y-%m-%d').date()
+            except ValueError:
+                return jsonify({
+                    "code": 400,
+                    "message": "Invalid date format. Use 'YYYY-MM-DD'."
+                }), 400
+
+        # check if input provided
+        if keyword or date:
+            response = get_available_events()
+            # print(response[1])
+
+            if response[1] != 200:
+                return jsonify({
+                    "code": 400,
+                    "message": "No available events"
+                }), 400
+            
+            available_events = response[0].get_json()["data"]
+            search_results = []
+
+            for event in available_events:
+                title = event["title"].lower()
+                location = event["location"].lower()
+                start_date = datetime.strptime(event["start_date"], "%Y-%m-%dT%H:%M:%S").date()
+
+                # search input match
+                search_match = False
+                date_match = False
+
+                # using search
+                if keyword:
+                    if keyword.lower() in title or keyword.lower() in location:
+                        search_match = True
+
+                # not using search
+                else:
+                    search_match = True
+                
+                # using date filter
+                if date_filter:
+                    if start_date == date_filter:
+                        date_match = True
+
+                # not using date filer
+                else:
+                    date_match = True
+
+                if search_match and date_match:
+                    search_results.append(event)
+            
+            print(search_results)
+            
+            if search_results:
+                return jsonify({
+                    "code": 200,
+                    "data": search_results
+                }), 200
+            
+            return jsonify({
+                "code": 400,
+                "message": "No search results found"
+            }), 400
+        
+        return jsonify({
+            "code": 400,
+            "message": "No search keyword provided or date selected"
+        }), 400
+    
+    except Exception as e:
+        return jsonify({
+            "code": 500,
+            "message": f"An error occurred: {str(e)}"
+        }), 500
+
 
 if __name__ == '__main__':
     app.run(port=5002, debug=True)
