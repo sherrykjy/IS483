@@ -126,7 +126,7 @@ def get_events():
 def get_event(event_id):
     event = Event.query.get(event_id)
     if event:
-        return jsonify(event.json()), 200
+        return jsonify({"code": 200, "data": event.json()}), 200
     return jsonify({"error": "Event not found"}), 404
 
 # Update an event by ID
@@ -156,10 +156,70 @@ def update_event(event_id):
 
         try:
             db.session.commit()
-            return jsonify(event.json()), 200
+            return jsonify({"code": 200, "data": event.json()}), 200
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 400
+    return jsonify({"error": "Event not found"}), 404
+
+# Update partial fields of event by ID
+@app.route('/event/<int:event_id>', methods=['PATCH'])
+def partial_update_event(event_id):
+    event = Event.query.get(event_id)
+    if event:
+        data = request.json
+
+        # Update fields only if they are provided in the request
+        if 'title' in data:
+            event.title = data['title']
+        if 'second_title' in data:
+            event.second_title = data['second_title']
+        if 'description' in data:
+            event.description = data['description']
+        if 'location' in data:
+            event.location = data['location']
+        if 'start_date' in data:
+            try:
+                event.start_date = datetime.strptime(data['start_date'], '%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                return jsonify({"error": "Invalid date format for start_date. Use 'YYYY-MM-DD HH:MM:SS'."}), 400
+        if 'end_date' in data:
+            try:
+                event.end_date = datetime.strptime(data['end_date'], '%Y-%m-%d %H:%M:%S')
+            except ValueError:
+                return jsonify({"error": "Invalid date format for end_date. Use 'YYYY-MM-DD HH:MM:SS'."}), 400
+        if 'organiser' in data:
+            event.organiser = data['organiser']
+        if 'event_type' in data:
+            event.event_type = data['event_type']
+        if 'max_signups' in data:
+            event.max_signups = data['max_signups']
+        if 'current_signups' in data:
+            event.current_signups = data['current_signups']
+        if 'mode' in data:
+            event.mode = data['mode']
+        if 'participant_remark' in data:
+            event.participant_remark = data['participant_remark']
+        if 'entry_code' in data:
+            event.entry_code = data['entry_code']
+        if 'event_point' in data:
+            event.event_point = data['event_point']
+        if 'event_program' in data:
+            event.event_program = data['event_program']
+        if 'tier' in data:
+            event.tier = data['tier']
+        if 'organiser_phone' in data:
+            event.organiser_phone = data['organiser_phone']
+        if 'organiser_email' in data:
+            event.organiser_email = data['organiser_email']
+
+        try:
+            db.session.commit()
+            return jsonify({"code": 200, "data": event.json()}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+        
     return jsonify({"error": "Event not found"}), 404
 
 # Delete an event by ID
