@@ -55,6 +55,10 @@ def processLoginInformation(login_information):
         stored_password = user_data['password']
         
         if stored_password == password:
+            
+            # No fail condition to update today's datetime
+            user_result = invoke_http(f"{user_URL}/{email}", method='PUT')
+            user_data = user_result["data"]
             return {
                 "code": 200,
                 "message": "Login successful",

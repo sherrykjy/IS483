@@ -51,7 +51,7 @@ def create_user_card():
         return jsonify({"error": str(e)}), 400
 
 # Get all UserCards
-@app.route('/usercards', methods=['GET'])
+@app.route('/usercard', methods=['GET'])
 def get_user_cards():
     user_cards = UserCard.query.all()
     return jsonify([user_card.json() for user_card in user_cards]), 200
