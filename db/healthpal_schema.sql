@@ -7,7 +7,7 @@ CREATE DATABASE IF NOT EXISTS `healthpal`;
 USE healthpal;
 
 CREATE TABLE user (
-    user_id INT NOT NULL,
+    user_id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(40) NOT NULL,
     age INT NOT NULL,
     gender VARCHAR(40) NOT NULL,
@@ -32,7 +32,7 @@ CREATE TABLE user (
 );
 
 CREATE TABLE events (
-    event_id INT NOT NULL,
+    event_id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(40) NOT NULL,
     second_title TEXT NOT NULL,
     description TEXT NOT NULL,
@@ -56,7 +56,7 @@ CREATE TABLE events (
 );
 
 CREATE TABLE user_events (
-    user_event_id INT NOT NULL,
+    user_event_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     event_id INT NOT NULL,
     registered BOOLEAN NOT NULL,
@@ -67,7 +67,7 @@ CREATE TABLE user_events (
 );
 
 CREATE TABLE cards (
-    card_id INT NOT NULL,
+    card_id INT NOT NULL AUTO_INCREMENT,
     title VARCHAR(40) NOT NULL,
     card_type VARCHAR(40) NOT NULL,
     points_required INT NOT NULL,
@@ -79,7 +79,7 @@ CREATE TABLE cards (
 );
 
 CREATE TABLE user_cards (
-    user_card_id INT NOT NULL,
+    user_card_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     card_id INT NOT NULL,
     earned_date DATETIME NOT NULL,
@@ -89,7 +89,7 @@ CREATE TABLE user_cards (
 );
 
 CREATE TABLE health (
-    health_data_id INT NOT NULL,
+    health_data_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     recorded_date DATE NOT NULL,
     calories INT NOT NULL,
@@ -102,7 +102,7 @@ CREATE TABLE health (
 );
 
 CREATE TABLE health_recommendation (
-    recommendation_id INT NOT NULL,
+    recommendation_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     health_goal VARCHAR(40) NOT NULL,
     recommendation_text TEXT NOT NULL,
@@ -113,7 +113,7 @@ CREATE TABLE health_recommendation (
 );
 
 CREATE TABLE health_coin (
-    points_id INT NOT NULL,
+    points_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     points_earned INT NOT NULL,
     earned_date DATETIME NOT NULL,
@@ -123,7 +123,7 @@ CREATE TABLE health_coin (
 );
 
 CREATE TABLE performance (
-    record_id VARCHAR(40) NOT NULL,
+    record_id VARCHAR(40) NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     date DATETIME NOT NULL,
     remark TEXT NOT NULL,
