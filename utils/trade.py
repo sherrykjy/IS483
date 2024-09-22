@@ -124,11 +124,11 @@ def delete_trade(trade_id):
         try:
             db.session.delete(trade)
             db.session.commit()
-            return jsonify({"message": "Trade deleted"}), 200
+            return jsonify({"code": 200, "message": "Trade deleted"}), 200
         except Exception as e:
             db.session.rollback()
-            return jsonify({"error": str(e)}), 400
-    return jsonify({"error": "Trade not found"}), 404
+            return jsonify({"code": 400, "error": str(e)}), 400
+    return jsonify({"code": 404, "error": "Trade not found"}), 404
 
 if __name__ == '__main__':
     app.run(port=5010, debug=True)

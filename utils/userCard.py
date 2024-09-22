@@ -23,7 +23,8 @@ class UserCard(db.Model):
     card_id = db.Column(db.Integer, nullable=False)
     earned_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
-    def __init__(self, user_id, card_id, earned_date=None):
+    def __init__(self, user_card_id, user_id, card_id, earned_date=None):
+        self.user_card_id = user_card_id
         self.user_id = user_id
         self.card_id = card_id
         self.earned_date = datetime.now()
@@ -49,7 +50,7 @@ def create_user_card():
     try:
         db.session.add(new_user_card)
         db.session.commit()
-        return jsonify(new_user_card.json()), 201
+        return jsonify({"code": 201, "data": new_user_card.json()}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
