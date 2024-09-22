@@ -58,16 +58,16 @@ def processLoginInformation(login_information):
             
             # No fail condition to update today's datetime
             user_result = invoke_http(f"{user_URL}/{email}", method='PUT')
-            user_data = user_result["data"]
+            print(user_result)
             return {
                 "code": 200,
                 "message": "Login successful",
                 "data": {
-                    "user_id": user_data['user_id'],
-                    "name": user_data['name'],
-                    "email": user_data['email'],
-                    "role": user_data['role'],
-                    "last_login": user_data['last_login']
+                    "user_id": user_data,
+                    "name": user_data,
+                    "email": user_data,
+                    "role": user_data,
+                    "last_login": user_data
                 }
             }
         else:

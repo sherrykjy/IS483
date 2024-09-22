@@ -131,3 +131,15 @@ CREATE TABLE performance (
     FOREIGN KEY (user_id) REFERENCES user (user_id)
 );
 
+CREATE TABLE trade (
+    trade_id INT NOT NULL,
+    user_id INT NOT NULL,
+    card_one_id INT NOT NULL,
+    card_earned_date DATETIME NOT NULL,
+    card_two_id INT NOT NULL,
+    PRIMARY KEY (trade_id)
+    -- FOREIGN KEY (user_id) REFERENCES user (user_id),
+    -- FOREIGN KEY (card_one_id) REFERENCES user_cards (card_id)
+    -- FOREIGN KEY (card_two_id) REFERENCES user_cards (card_id)
+);
+

@@ -5,11 +5,12 @@ import requests
 from invokes import invoke_http
 from os import environ
 import hashlib
+from datetime import datetime
 
 app = Flask(__name__)
 
 userCard_URL = "http://localhost:5006/usercard"
-trade_URL = "http://localhost:5012/trade"
+trade_URL = "http://localhost:5010/trade"
 
 @app.route("/trade_card", methods=['POST'])
 def trade_card():
@@ -32,31 +33,67 @@ def trade_card():
             }), 500
             
 def processCardTrade(trade_details):
-    
     # 1. Remove Card1 from User1 - Card 1 already exist in trade details
     trade_id = trade_details['trade_id']
-    trader_one = trade_details['trader_one_id']
-    card_in_market = trade_details['card_one_id']
-    card_one_name = trade_details['card_one_name']
+    user_card_id_one = trade_details['user_card_id_one']
+    user_id_one = trade_details['user_id_one']
+    card_id_one = trade_details['card_id_one']
     
-    trader_two = trade_details['trader_two_id']
-    card_in_deck = trade_details['card_two_id']
-    card_two_name = trade_details['card_two_name']
+    user_card_id_two = trade_details['user_card_id_two']
+    user_id_two = trade_details['user_id_two']
+    card_id_two = trade_details['card_id_two']
+    card_remove_result = invoke_http(f"{userCard_URL}/{user_card_id_one}", method='DELETE')
     
-    card_remove_result = invoke_http(f"{userCard_URL}/{card_in_market}", method='DELETE')
+    if card_remove_result['code'] == 404: 
+        print("failed to remove card")
+    
+    else:
+        print(card_remove_result)
     
     # 2. Add Card1 to User2
-    card_information = 0
-    card_add_result = invoke_http(f"{userCard_URL}/{card_in_market}", method='POST', json=card_information)
+    card_information_one = {
+        "user_card_id": user_card_id_one,
+        "user_id": user_id_one,
+        "card_id": card_id_two,
+        "earned_date": datetime.now().isoformat()
+    }
+    card_add_result = invoke_http(f"{userCard_URL}/{user_card_id_one}", method='POST', json=card_information_one)
+    print(card_add_result)
+    if card_add_result['code'] == 404:
+        print("failed to add card to user 1")
+        
+    else:
+        print(card_add_result)
     
     # 3. Remove Card2 from User2
-    card_remove_result = invoke_http(f"{userCard_URL}/{card_in_deck}", method='DELETE')
+    card_remove_result = invoke_http(f"{userCard_URL}/{user_card_id_two}", method='DELETE')
     
+    if card_remove_result['code'] == 404: 
+        print("failed to remove card")
+    
+    else:
+        print(card_remove_result)
     # 4. Add Card2 to User1
-    card_information = 0
+    card_information_two = {
+        "user_card_id": user_card_id_two,
+        "user_id": user_id_two,
+        "card_id": card_id_one,
+        "earned_date": datetime.now().isoformat()
+    }
     
     
-    card_add_result = invoke_http(f"{userCard_URL}/{card_in_deck}", method='POST', json=card_information)
+    card_add_result = invoke_http(f"{userCard_URL}/{user_card_id_two}", method='POST', json=card_information_two)
+    # if card_add_result['code'] == 404:
+    #     print("failed to add card to user 1")
+        
+    # else:
+    print(card_add_result)
     
     # 5. Change traded to True
-    trade_result = invoke_http(f"{trade_URL}/{trade_id}", method='POST')
+    trade_result = invoke_http(f"{trade_URL}/{trade_id}", method='DELETE')
+    
+    if trade_result['code'] == 404:
+        print("trade failed")
+        
+if __name__ == '__main__':
+    app.run(port=5015, debug=True)

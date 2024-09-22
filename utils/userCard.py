@@ -7,7 +7,7 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
@@ -17,8 +17,10 @@ class UserCard(db.Model):
     __tablename__ = 'user_cards'
     
     user_card_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
-    card_id = db.Column(db.Integer, db.ForeignKey('card.card_id'), nullable=False)
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    # card_id = db.Column(db.Integer, db.ForeignKey('card.card_id'), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    card_id = db.Column(db.Integer, nullable=False)
     earned_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
     def __init__(self, user_id, card_id, earned_date=None):
@@ -39,8 +41,10 @@ class UserCard(db.Model):
 def create_user_card():
     data = request.json
     new_user_card = UserCard(
+        user_card_id = data.get('user_card_id'),
         user_id=data.get('user_id'),
-        card_id=data.get('card_id')
+        card_id=data.get('card_id'),
+        earned_date=data.get('earned_date')
     )
     try:
         db.session.add(new_user_card)
@@ -90,7 +94,8 @@ def delete_user_card(user_card_id):
         try:
             db.session.delete(user_card)
             db.session.commit()
-            return jsonify({"message": "UserCard deleted"}), 200
+            return jsonify({"message": "UserCard deleted",
+                            "code": 200}), 200
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 400

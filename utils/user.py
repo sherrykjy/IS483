@@ -153,24 +153,7 @@ def get_user(email):
 def update_user(email):
     user = User.query.filter_by(email=email).first()
     if user:
-        data = request.json
-        user.name = data.get('name', user.name)
-        user.age = data.get('age', user.age)
-        user.gender = data.get('gender', user.gender)
-        user.height = data.get('height', user.height)
-        user.weight = data.get('weight', user.weight)
-        user.contact_details = data.get('contact_details', user.contact_details)
-        user.nationality = data.get('nationality', user.nationality)
-        user.email = data.get('email', user.email)
-        user.location_group = data.get('location_group', user.location_group)
-        user.school = data.get('school', user.school)
-        user.password = data.get('password', user.password)
-        user.parent_id = data.get('parent_id', user.parent_id)
-        user.role = data.get('role', user.role)
         user.last_login = datetime.now()
-        user.workout_frequency = data.get('workout_frequency', user.workout_frequency)
-        user.preferred_intensity = data.get('preferred_intensity', user.preferred_intensity)
-        user.goal_date = datetime.strptime(data.get('goal_date'), '%Y-%m-%d')
         
         try:
             db.session.commit()
