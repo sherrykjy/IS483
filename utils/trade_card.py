@@ -99,9 +99,12 @@ def processCardTrade(trade_details):
     
     # 5. Change traded to True
     trade_result = invoke_http(f"{trade_URL}/{trade_id}", method='DELETE')
+    print(trade_result)
     
     if trade_result['code'] != 200:
         print("trade failed")
+    
+    return trade_result
         
 if __name__ == '__main__':
     app.run(port=5015, debug=True)

@@ -16,14 +16,16 @@ class Trade(db.Model):
     trade_id = db.Column(db.Integer, primary_key=True)
     
     # Trader One
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
-    card_one_id = db.Column(db.Integer, db.ForeignKey('card.card_id'), nullable=False)
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    # card_one_id = db.Column(db.Integer, db.ForeignKey('card.card_id'), nullable=False)
+    user_id = db.Column(db.Integer,  nullable=False)
+    card_one_id = db.Column(db.Integer,  nullable=False)
     # card_one_name = db.Column(db.String(255), nullable=False)
     card_earned_date = db.Column(db.DateTime, nullable=False)
     
     # Trader Two
     # trader_two_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=True)
-    card_two_id = db.Column(db.Integer, db.ForeignKey('card.card_id'), nullable=True)
+    card_two_id = db.Column(db.Integer,  nullable=True)
     # card_two_name = db.Column(db.String(255), nullable=True)
     # two_earned_date = db.Column(db.DateTime, nullable=True)
     
