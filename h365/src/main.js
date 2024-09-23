@@ -1,10 +1,11 @@
 import { createApp } from 'vue'
-import { create, NButton, NCard } from 'naive-ui'
 import App from './App.vue'
-
 import router from "./router"
+
+import { create, NTabs, NTab, NTabPane } from 'naive-ui'
+
 const naive = create({
-    components: [NButton, NCard]
+    components: [NTabs, NTab, NTabPane]
 })
 
 // const requireStyles = require.context('@/assets/styling', false, /\\.css$/);

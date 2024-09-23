@@ -8,13 +8,13 @@ const routes = [
     },
 
     {
-        path: "/",
+        path: "/info",
         name: "informationPage",
         component: () => import("@/views/informationPage.vue")
     },
 
     {
-        path: "/",
+        path: "/goals",
         name: "goalSettingPage",
         component: () => import("@/views/goalSettingPage.vue")
     },
@@ -26,9 +26,9 @@ const routes = [
     },
 
     {
-      path: "/explore",
-      name: "explorePage",
-      component: () => import("@/views/explorePage.vue")
+      path: "/events",
+      name: "eventsPage",
+      component: () => import("@/views/eventsPage.vue")
     },
 
     {

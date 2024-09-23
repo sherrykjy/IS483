@@ -13,7 +13,6 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
 
 import '@/assets/styling/general.css';
-// import '@/assets/styling/login.css';
 </script>
 
 <style>

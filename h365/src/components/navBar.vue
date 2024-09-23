@@ -10,8 +10,8 @@
                     </li>
 
                     <li class="nav-link">
-                        <router-link :to="{ name: 'explorePage' }">
-                            <a href="./views/explorePage.vue">Explore</a>
+                        <router-link :to="{ name: 'eventsPage' }">
+                            <a href="./views/eventsPage.vue">Explore</a>
                         </router-link>
                     </li>
 

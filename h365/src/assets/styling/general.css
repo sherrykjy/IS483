@@ -53,14 +53,13 @@
 }
 
 
+
+
 /* default classes */
 
-div {
+body {
     background-color: var(--grey);
     max-width: 390px;
-    margin: 0 auto;
-    padding: 16px;
-    overflow-x: hidden;
 }
 
 .center {
@@ -69,6 +68,94 @@ div {
     justify-content: center;
     align-items: center;
 }
+
+
+
+/* headers */
+.basicHeader {
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    font-family: text-semibold;
+
+    border-bottom: 1px solid rgba(123, 120, 116, 0.1);
+    width: calc(100% - 32px);
+    margin-left: 16px;
+    margin-right: 16px;
+
+    padding: 10px 16px 0px 16px;
+}
+
+.basicHeader p {
+    font-family: text-bold;
+    font-size: 20px;
+    color: var(--default-text);
+    margin-bottom: 5px;
+}
+
+.pageHeader {
+    text-align: center;
+    justify-content: center;
+    font-family: text-semibold;
+    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
+    justify-content: right;
+}
+
+.pageHeader p {
+    padding-top: 40px;
+    padding-bottom: 15px;
+}
+
+.pageHeading {
+    display: flex;
+    padding: 16px;
+}
+
+.pageHeading p {
+    margin: 0px;
+}
+
+.pageHeading img {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+}
+
+
+
+
+
+/* cards */
+
+.basicCard {
+    width: 100%;
+    border-radius: 6px;
+    display: flex;
+    padding: 0px;
+    align-items: stretch;
+}
+
+
+
+
+
+/* tab */
+.pageTab {
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+    font-family: text-semibold;
+    width: 100vw;
+    margin-bottom: 16px;
+}
+
+.n-tabs-nav-scroll-wrapper{
+    display: flex;
+    justify-content: center;
+}
+
+
+
 
 /* forms */
 
@@ -100,4 +187,46 @@ input[type="password"]:focus {
     padding-bottom: 9.5px;
     border-radius: 6px;
     border: none;  
+}
+
+
+
+
+
+/* search and filter */
+.search-bar {
+    display: flex;
+    align-items: center;
+    width: 70%;
+    border-radius: 6px;
+    background-color: var(--default-white);
+}
+
+.search-bar i {
+    font-size: 20px;
+    color: var(--text-highlight);
+    padding-left: 16px;
+}
+
+.search-bar input {
+    flex-grow: 1;
+    width: 100%;
+    padding: 8px 12px;
+    font-family: text-regular;
+    font-size: 11px;
+    color: var(--text-highlight);
+    border-bottom: 0px;
+}
+
+.searchAndFilter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 0 16px;
+    padding: 10px 0;
+}
+
+.filterButton {
+    width: 30%;
 }
