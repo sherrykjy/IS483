@@ -5,7 +5,7 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/healthpal'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
@@ -16,7 +16,7 @@ class User(db.Model):
     
     user_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64), nullable = False)
-    age = db.Column(db.Integer, nullable = False)
+    birthdate = db.Column(db.Date, nullable = False)
     gender = db.Column(db.String(64), nullable = False)
     height = db.Column(db.Float, nullable = False)
     weight = db.Column(db.Float, nullable = False)
@@ -33,14 +33,14 @@ class User(db.Model):
     total_point = db.Column(db.Integer, nullable = False)
     health_tier = db.Column(db.Integer, nullable = False)
     # children = db.relationship('User', backref = db.backref('parent', remote_side =[user_id]), lazy = True)
-    workout_frequency = db.Column(db.Integer, nullable = False)
+    target_minutes = db.Column(db.Integer, nullable = False)
     preferred_intensity = db.Column(db.Integer, nullable = False)
     goal_date = db.Column(db.Date, nullable = False)
     
-    def __init__(self, user_id, name, age, gender, height, weight, contact_details, nationality, email, location_group, school, password, workout_frequency, preferred_intensity, goal_date, parent_id=None, role='User', created_date=None, last_login=None, total_point=0, health_tier = 0):
+    def __init__(self, user_id, name, birthdate, gender, height, weight, contact_details, nationality, email, location_group, school, password, target_minutes, preferred_intensity, goal_date, parent_id=None, role='User', created_date=None, last_login=None, total_point=0, health_tier = 0):
         self.user_id = user_id
         self.name = name
-        self.age = age
+        self.birthdate = birthdate
         self.gender = gender
         self.height = height
         self.weight = weight
@@ -56,7 +56,7 @@ class User(db.Model):
         self.last_login = datetime.now()
         self.total_point = 0
         self.health_tier = 1 
-        self.workout_frequency = workout_frequency
+        self.target_minutes = target_minutes
         self.preferred_intensity = preferred_intensity
         self.goal_date = goal_date
 
@@ -64,7 +64,7 @@ class User(db.Model):
         return {
             "user_id": self.user_id,
             "name": self.name,
-            "age": self.age,
+            "birthdate": self.birthdate.isoformat(),
             "gender": self.gender,
             "height": self.height,
             "weight": self.weight,
@@ -80,7 +80,7 @@ class User(db.Model):
             "last_login": self.last_login.isoformat(),
             "total_point": self.total_point,
             "health_tier":self.health_tier,
-            "workout_frequency": self.workout_frequency,
+            "target_minutes": self.target_minutes,
             "preferred_intensity": self.preferred_intensity,
             "goal_date": self.goal_date.isoformat()
         }
@@ -110,7 +110,7 @@ def create_user():
     new_user = User(
         user_id=next_user_id,
         name=data.get('name'),
-        age=data.get('age'),
+        birthdate=datetime.strptime(data.get('birthdate'), '%Y-%m-%d'),
         gender=data.get('gender'),
         height=data.get('height'),
         weight=data.get('weight'),
@@ -122,7 +122,7 @@ def create_user():
         password=data.get('password'),
         parent_id=data.get('parent_id'),
         role=data.get('role', 'User'),
-        workout_frequency=data.get('workout_frequency'),
+        target_minutes=data.get('target_minutes'),
         preferred_intensity=data.get('preferred_intensity'),
         goal_date=datetime.strptime(data.get('goal_date'), '%Y-%m-%d')
     )
@@ -164,6 +164,58 @@ def update_user(email):
         
     return jsonify({"error": "User not found"}), 404
 
+# Update partial fields of user by Email
+@app.route('/user/<string:email>', methods=['PATCH'])
+def partial_update_user(email):
+    user = User.query.filter_by(email=email).first()
+    if user:
+        data = request.json
+
+        # Update fields only if they are provided in the request
+        if 'name' in data:
+            user.name = data['name']
+        if 'birthdate' in data:
+            user.birthdate = datetime.strptime(data['birthdate'], '%Y-%m-%d')
+        if 'gender' in data:
+            user.gender = data['gender']
+        if 'height' in data:
+            user.height = data['height']
+        if 'weight' in data:
+            user.weight = data['weight']
+        if 'contact_details' in data:
+            user.contact_details = data['contact_details']
+        if 'nationality' in data:
+            user.nationality = data['nationality']
+        if 'location_group' in data:
+            user.location_group = data['location_group']
+        if 'school' in data:
+            user.school = data['school']
+        if 'password' in data:
+            user.password = data['password']
+        if 'role' in data:
+            user.role = data['role']
+        if 'last_login' in data:
+            user.last_login = data['last_login']
+        if 'total_point' in data:
+            user.total_point = data['total_point']
+        if 'health_tier' in data:
+            user.health_tier = data['health_tier']
+        if 'target_minutes' in data:
+            user.target_minutes = data['target_minutes']
+        if 'preferred_intensity' in data:
+            user.preferred_intensity = data['preferred_intensity']
+        if 'goal_date' in data:
+            user.goal_date = datetime.strptime(data['goal_date'], '%Y-%m-%d')
+        
+        try:
+            db.session.commit()
+            return jsonify({"code": 200, "data": user.json()}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    
+    return jsonify({"error": "User not found"}), 404
+            
 # Delete a user by Email
 @app.route('/user/<string:email>', methods=['DELETE'])
 def delete_user(email):
@@ -176,6 +228,20 @@ def delete_user(email):
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 400
+    return jsonify({"error": "User not found"}), 404
+
+# Get User's Profile Information
+@app.route('/user/profile/<string:email>', methods=['GET'])
+def get_user_profile(email):
+    user = User.query.filter_by(email=email).first()
+    if user:
+        formatted_date = user.birthdate.strftime("%d %B %Y")
+        return jsonify({"code": 200,
+                        "data": {"name": user.name, "birthdate": formatted_date, "gender": user.gender, 
+                                "school": user.school, "location_group": user.location_group, 
+                                "height": user.height, "weight": user.weight, 
+                                "target_minutes": user.target_minutes, "preferred_intensity": user.preferred_intensity}}), 200
+    
     return jsonify({"error": "User not found"}), 404
 
 if __name__ == '__main__':

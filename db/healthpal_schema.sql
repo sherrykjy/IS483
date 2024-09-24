@@ -9,7 +9,7 @@ USE healthpal;
 CREATE TABLE user (
     user_id INT NOT NULL AUTO_INCREMENT,
     name VARCHAR(40) NOT NULL,
-    age INT NOT NULL,
+    birthdate DATE NOT NULL,
     gender VARCHAR(40) NOT NULL,
     height FLOAT(3) NOT NULL,
     weight FLOAT(5) NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE user (
     last_login DATETIME NOT NULL,
     total_point INT NOT NULL,
     health_tier INT NOT NULL,
-    workout_frequency INT NOT NULL,
+    target_minutes INT NOT NULL,
     preferred_intensity INT NOT NULL,
     goal_date DATE NOT NULL,
     PRIMARY KEY (user_id)
