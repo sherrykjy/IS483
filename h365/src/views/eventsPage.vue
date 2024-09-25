@@ -1,6 +1,6 @@
 <template>
     <div class="pageHeader">
-        <p>Explore Page</p>
+        <p>Events</p>
     </div>
 
     <n-tabs type="line" class="pageTab">
@@ -35,53 +35,56 @@
 
 
     <!-- v-for however many events there are -->
-    <div class="basicCard">
-        <div class="cardImage">
-            <img src="../assets/icons/events/event1.png">
+    <router-link :to="{ name: 'viewEventPage'}">
+                                
+        <div class="basicCard">
+            <div class="cardImage">
+                <img src="../assets/icons/events/event1.png">
+            </div>
+
+            <div class="cardText">
+                <!-- v-if few slots left -->
+                <div class="lowSlotAlert">
+                    Few Slots Left
+                </div>
+
+                <!-- programme name -->
+                <p class="programmeName">Active Family Programme</p>
+
+                <!-- activity name -->
+                <p class="eventName">Pilates</p>
+
+                <!-- date, day, and time  -->
+                <div class="eventInfo">
+                    <i class="uil uil-schedule eventIcon"></i>
+                    <div class=eventDetails>
+                        <p>2 September 2024, Monday</p>
+                        <p>6.15pm - 7.15pm</p>
+                    </div>
+                </div>
+
+                <!-- location -->
+                <div class="eventInfo">
+                    <i class="uil uil-map-pin eventIcon"></i>
+                    <div class=eventDetails>
+                        <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
+                    </div>
+                </div>
+
+                <div class="eventBtnIntensity">
+                    <form action="">
+                        <button class="bookEventBtn">Book Now</button>
+                    </form>
+
+                    <!-- intensity -->
+                    <div class="intensity">
+                        <p>Intensity: </p>
+                        <img src="../assets/icons/events/intensity1.png">
+                    </div>
+                </div>
+            </div>
         </div>
-
-        <div class="cardText">
-            <!-- v-if few slots left -->
-            <div class="lowSlotAlert">
-                Few Slots Left
-            </div>
-
-            <!-- programme name -->
-            <p class="programmeName">Active Family Programme</p>
-
-            <!-- activity name -->
-            <p class="eventName">Pilates</p>
-
-            <!-- date, day, and time  -->
-            <div class="eventInfo">
-                <i class="uil uil-schedule eventIcon"></i>
-                <div class=eventDetails>
-                    <p>2 September 2024, Monday</p>
-                    <p>6.15pm - 7.15pm</p>
-                </div>
-            </div>
-
-            <!-- location -->
-            <div class="eventInfo">
-                <i class="uil uil-map-pin eventIcon"></i>
-                <div class=eventDetails>
-                    <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
-                </div>
-            </div>
-
-            <div class="eventBtnIntensity">
-                <form action="">
-                    <button class="bookEventBtn">Book Now</button>
-                </form>
-
-                <!-- intensity -->
-                <div class="intensity">
-                    <p>Intensity: </p>
-                    <img src="../assets/icons/events/intensity1.png">
-                </div>
-            </div>
-        </div>
-    </div>
+    </router-link>
 
     <div class="basicCard">
         <div class="cardImage">
@@ -259,7 +262,6 @@
     background-color: var(--default-white);
     margin: 0 auto;
     margin-bottom: 20px;
-    /* padding: 16px; */
 }
 
 .basicCard .cardImage, .basicCard .cardText {
@@ -315,8 +317,6 @@
 
 .eventIcon {
     color: var(--text-highlight);
-    /* width: 16px;
-    height: 16px; */
 }
 
 .eventInfo {

@@ -99,9 +99,25 @@ body {
     font-family: text-semibold;
     box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.1);
     justify-content: right;
+
+    display: flex;
+    align-items: center;
+    position: relative;
 }
 
 .pageHeader p {
+    padding-top: 40px;
+    padding-bottom: 15px;
+
+    flex: 1;
+    text-align: center;
+    margin-bottom: 0px;
+}
+
+.pageHeader i {
+    position: absolute;
+    left: 16px;
+    font-size: 40px;
     padding-top: 40px;
     padding-bottom: 15px;
 }
@@ -152,6 +168,7 @@ body {
 .n-tabs-nav-scroll-wrapper{
     display: flex;
     justify-content: center;
+    padding-top: 12px;
 }
 
 
@@ -230,3 +247,15 @@ input[type="password"]:focus {
 .filterButton {
     width: 30%;
 }
+
+
+
+/* router */
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: none;
+}
+
