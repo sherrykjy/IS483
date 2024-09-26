@@ -65,7 +65,7 @@ def get_cards():
 def get_card(card_id):
     card = Card.query.get(card_id)
     if card:
-        return jsonify(card.json()), 200
+        return jsonify({"code": 200, "data": card.json()}), 200
     return jsonify({"error": "Card not found"}), 404
 
 # Update a Card by ID

@@ -123,7 +123,7 @@ CREATE TABLE health_coin (
 );
 
 CREATE TABLE performance (
-    record_id VARCHAR(40) NOT NULL AUTO_INCREMENT,
+    record_id INT NOT NULL AUTO_INCREMENT,
     user_id INT NOT NULL,
     date DATETIME NOT NULL,
     remark TEXT NOT NULL,

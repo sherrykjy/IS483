@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from datetime import datetime
+from invokes import invoke_http
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
@@ -9,6 +10,9 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 db = SQLAlchemy(app)
 CORS(app)
+
+userURL = "http://localhost:5001/user"
+cardURL = "http://localhost:5003/card"
 
 class Trade(db.Model):
     __tablename__ = 'trade'
@@ -83,8 +87,40 @@ def create_trade():
 # Get all Trades
 @app.route('/trades', methods=['GET'])
 def get_trades():
-    trades = Trade.query.all()
-    return jsonify([trade.json() for trade in trades]), 200
+    try:
+        trades = Trade.query.all()
+        output = []
+        for trade in trades:
+            trade_id = trade.trade_id
+            user_id = trade.user_id
+            card_one_id = trade.card_one_id
+            card_two_id = trade.card_two_id
+
+            user_response = invoke_http(userURL+f"/id/{user_id}")
+            card_one_response = invoke_http(cardURL+f"/{card_one_id}")
+            card_two_response = invoke_http(cardURL+f"/{card_two_id}")
+            # print(user_response)
+            # print(card_one_response)
+            # print(card_two_response)
+
+            if user_response["code"] == 200 and card_one_response["code"] == 200 and card_two_response["code"] == 200:
+                # print("check 1")
+                name = user_response["data"]["name"]
+                card_one_title = card_one_response["data"]["title"]
+                card_one_type = card_one_response["data"]["card_type"]
+                card_two_title = card_two_response["data"]["title"]
+                card_one_type = card_two_response["data"]["card_type"]
+                output.append({"trade_id": trade_id, "user_id": user_id, "name": name, 
+                            "card_one_id": card_one_id, "card_one_title": card_one_title, "card_one_type": card_one_type, 
+                            "card_two_id": card_two_id, "card_two_title": card_two_title, "card_two_type": card_one_type})
+
+        return jsonify({"code": 200, "data": output}), 200
+
+    except Exception as e:
+        return jsonify({
+            "code": 500,
+            "message": f"An error occurred: {str(e)}"
+        }), 500
 
 # Get a Trade by ID
 @app.route('/trade/<int:trade_id>', methods=['GET'])
