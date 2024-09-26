@@ -1,18 +1,20 @@
 <script setup>
-import { RouterView } from 'vue-router'
-import navBar from './components/navBar.vue'
+  import { RouterView, useRoute } from 'vue-router'
+  import navBar from './components/navBar.vue'
+
+  const route = useRoute();
 </script>
 
 <template>
-  <navBar />
+  <navBar v-if="!route.meta.hideNavBar" />  
   <RouterView />
 </template>
 
 <script>
-import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap.min.js";
+  import "bootstrap/dist/css/bootstrap.min.css";
+  import "bootstrap/dist/js/bootstrap.min.js";
 
-import '@/assets/styling/general.css';
+  import '@/assets/styling/general.css';
 </script>
 
 <style>

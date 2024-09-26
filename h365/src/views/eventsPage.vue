@@ -1,42 +1,94 @@
 <template>
-    <div class="pageHeader">
-        <p>Events</p>
-    </div>
-
-    <n-tabs type="line" class="pageTab">
-        <n-tab name="allEvents">
-            All
-        </n-tab>
-        <n-tab name="bookedEvents">
-            Booked
-        </n-tab>
-    </n-tabs>
-
-    <div class="searchAndFilter">
-        <div class="search-bar">
-            <i class="uil uil-search"></i>
-            <input type="text" placeholder="Search by event or location" />
+    <div class="stickyHeader">
+        <div class="pageHeader">
+            <p>Events</p>
         </div>
 
-        <div class="filterButton">
-            <datePicker />
+        <n-tabs type="line" class="pageTab">
+            <n-tab name="allEvents">
+                All
+            </n-tab>
+            <n-tab name="bookedEvents">
+                Booked
+            </n-tab>
+        </n-tabs>
+    </div>
+
+    <div class="pagePad">
+        <div class="searchAndFilter">
+            <div class="search-bar">
+                <i class="uil uil-search"></i>
+                <input type="text" placeholder="Search by event or location" />
+            </div>
+
+            <div class="filterButton">
+                <datePicker />
+            </div>
         </div>
-    </div>
 
-    <div class="basicHeader">
-        <p>2 September 2024</p>    
-    </div>
+        <div class="basicHeader">
+            <p>2 September 2024</p>    
+        </div>
 
-    <div class="pageHeading">
-        <img src="../assets/icons/events/star.png">
-        <p>Recommended for you</p>
-    </div>
-
+        <div class="pageHeading">
+            <img src="../assets/icons/events/star.png">
+            <p>Recommended for you</p>
+        </div>
 
 
-    <!-- v-for however many events there are -->
-    <router-link :to="{ name: 'viewEventPage'}">
-                                
+
+        <!-- v-for however many events there are -->
+        <router-link :to="{ name: 'viewEventPage'}">
+                                    
+            <div class="basicCard">
+                <div class="cardImage">
+                    <img src="../assets/icons/events/event1.png">
+                </div>
+
+                <div class="cardText">
+                    <!-- v-if few slots left -->
+                    <div class="lowSlotAlert">
+                        Few Slots Left
+                    </div>
+
+                    <!-- programme name -->
+                    <p class="programmeName">Active Family Programme</p>
+
+                    <!-- activity name -->
+                    <p class="eventName">Pilates</p>
+
+                    <!-- date, day, and time  -->
+                    <div class="eventInfo">
+                        <i class="uil uil-schedule eventIcon"></i>
+                        <div class=eventDetails>
+                            <p>2 September 2024, Monday</p>
+                            <p>6.15pm - 7.15pm</p>
+                        </div>
+                    </div>
+
+                    <!-- location -->
+                    <div class="eventInfo">
+                        <i class="uil uil-map-pin eventIcon"></i>
+                        <div class=eventDetails>
+                            <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
+                        </div>
+                    </div>
+
+                    <div class="eventBtnIntensity">
+                        <form action="">
+                            <button class="bookEventBtn">Book Now</button>
+                        </form>
+
+                        <!-- intensity -->
+                        <div class="intensity">
+                            <p>Intensity: </p>
+                            <img src="../assets/icons/events/intensity1.png">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </router-link>
+
         <div class="basicCard">
             <div class="cardImage">
                 <img src="../assets/icons/events/event1.png">
@@ -84,157 +136,109 @@
                 </div>
             </div>
         </div>
-    </router-link>
 
-    <div class="basicCard">
-        <div class="cardImage">
-            <img src="../assets/icons/events/event1.png">
-        </div>
-
-        <div class="cardText">
-            <!-- v-if few slots left -->
-            <div class="lowSlotAlert">
-                Few Slots Left
+        <div class="basicCard">
+            <div class="cardImage">
+                <img src="../assets/icons/events/event1.png">
             </div>
 
-            <!-- programme name -->
-            <p class="programmeName">Active Family Programme</p>
-
-            <!-- activity name -->
-            <p class="eventName">Pilates</p>
-
-            <!-- date, day, and time  -->
-            <div class="eventInfo">
-                <i class="uil uil-schedule eventIcon"></i>
-                <div class=eventDetails>
-                    <p>2 September 2024, Monday</p>
-                    <p>6.15pm - 7.15pm</p>
+            <div class="cardText">
+                <!-- v-if few slots left -->
+                <div class="lowSlotAlert">
+                    Few Slots Left
                 </div>
-            </div>
 
-            <!-- location -->
-            <div class="eventInfo">
-                <i class="uil uil-map-pin eventIcon"></i>
-                <div class=eventDetails>
-                    <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
+                <!-- programme name -->
+                <p class="programmeName">Active Family Programme</p>
+
+                <!-- activity name -->
+                <p class="eventName">Pilates</p>
+
+                <!-- date, day, and time  -->
+                <div class="eventInfo">
+                    <i class="uil uil-schedule eventIcon"></i>
+                    <div class=eventDetails>
+                        <p>2 September 2024, Monday</p>
+                        <p>6.15pm - 7.15pm</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="eventBtnIntensity">
-                <form action="">
-                    <button class="bookEventBtn">Book Now</button>
-                </form>
-
-                <!-- intensity -->
-                <div class="intensity">
-                    <p>Intensity: </p>
-                    <img src="../assets/icons/events/intensity1.png">
+                <!-- location -->
+                <div class="eventInfo">
+                    <i class="uil uil-map-pin eventIcon"></i>
+                    <div class=eventDetails>
+                        <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="basicCard">
-        <div class="cardImage">
-            <img src="../assets/icons/events/event1.png">
-        </div>
+                <div class="eventBtnIntensity">
+                    <form action="">
+                        <button class="bookEventBtn">Book Now</button>
+                    </form>
 
-        <div class="cardText">
-            <!-- v-if few slots left -->
-            <div class="lowSlotAlert">
-                Few Slots Left
-            </div>
-
-            <!-- programme name -->
-            <p class="programmeName">Active Family Programme</p>
-
-            <!-- activity name -->
-            <p class="eventName">Pilates</p>
-
-            <!-- date, day, and time  -->
-            <div class="eventInfo">
-                <i class="uil uil-schedule eventIcon"></i>
-                <div class=eventDetails>
-                    <p>2 September 2024, Monday</p>
-                    <p>6.15pm - 7.15pm</p>
-                </div>
-            </div>
-
-            <!-- location -->
-            <div class="eventInfo">
-                <i class="uil uil-map-pin eventIcon"></i>
-                <div class=eventDetails>
-                    <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
-                </div>
-            </div>
-
-            <div class="eventBtnIntensity">
-                <form action="">
-                    <button class="bookEventBtn">Book Now</button>
-                </form>
-
-                <!-- intensity -->
-                <div class="intensity">
-                    <p>Intensity: </p>
-                    <img src="../assets/icons/events/intensity1.png">
+                    <!-- intensity -->
+                    <div class="intensity">
+                        <p>Intensity: </p>
+                        <img src="../assets/icons/events/intensity1.png">
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <br>
+        <br>
 
-    <div class="pageHeading">
-        <img src="../assets/icons/events/folder.png">
-        <p>All Events</p>
-    </div>
-
-
-
-    <!-- v-for however many events there are -->
-    <div class="basicCard">
-        <div class="cardImage">
-            <img src="../assets/icons/events/event2.png">
+        <div class="pageHeading">
+            <img src="../assets/icons/events/folder.png">
+            <p>All Events</p>
         </div>
 
-        <div class="cardText">
-            <!-- v-if few slots left -->
-            <div class="lowSlotAlert">
-                Few Slots Left
+
+
+        <!-- v-for however many events there are -->
+        <div class="basicCard">
+            <div class="cardImage">
+                <img src="../assets/icons/events/event2.png">
             </div>
 
-            <!-- programme name -->
-            <p class="programmeName">Active Family Programme</p>
-
-            <!-- activity name -->
-            <p class="eventName">Cardio Dance Fitness</p>
-
-            <!-- date, day, and time  -->
-            <div class="eventInfo">
-                <i class="uil uil-schedule eventIcon"></i>
-                <div class=eventDetails>
-                    <p>2 September 2024, Monday</p>
-                    <p>10.00am - 11.00am</p>
+            <div class="cardText">
+                <!-- v-if few slots left -->
+                <div class="lowSlotAlert">
+                    Few Slots Left
                 </div>
-            </div>
 
-            <!-- location -->
-            <div class="eventInfo">
-                <i class="uil uil-map-pin eventIcon"></i>
-                <div class=eventDetails>
-                    <p>TAMPINES, Asia Green</p>
+                <!-- programme name -->
+                <p class="programmeName">Active Family Programme</p>
+
+                <!-- activity name -->
+                <p class="eventName">Cardio Dance Fitness</p>
+
+                <!-- date, day, and time  -->
+                <div class="eventInfo">
+                    <i class="uil uil-schedule eventIcon"></i>
+                    <div class=eventDetails>
+                        <p>2 September 2024, Monday</p>
+                        <p>10.00am - 11.00am</p>
+                    </div>
                 </div>
-            </div>
 
-            <div class="eventBtnIntensity">
-                <form action="">
-                    <button class="bookEventBtn">Book Now</button>
-                </form>
+                <!-- location -->
+                <div class="eventInfo">
+                    <i class="uil uil-map-pin eventIcon"></i>
+                    <div class=eventDetails>
+                        <p>TAMPINES, Asia Green</p>
+                    </div>
+                </div>
 
-                <!-- intensity -->
-                <div class="intensity">
-                    <p>Intensity: </p>
-                    <img src="../assets/icons/events/intensity3.png">
+                <div class="eventBtnIntensity">
+                    <form action="">
+                        <button class="bookEventBtn">Book Now</button>
+                    </form>
+
+                    <!-- intensity -->
+                    <div class="intensity">
+                        <p>Intensity: </p>
+                        <img src="../assets/icons/events/intensity3.png">
+                    </div>
                 </div>
             </div>
         </div>
@@ -246,6 +250,10 @@
 
 <style scoped>
 
+.stickyHeader {
+    top: 0;
+}
+
 .basicHeader {
     text-align: left;
     font-family: text-bold;
@@ -254,6 +262,10 @@
 
 .pageHeader {
     background-color: var(--yellow);
+}
+
+.pageTab {
+    background-color: var(--grey);
 }
 
 .basicCard {
@@ -284,7 +296,7 @@
 }
 
 .basicCard .cardText {
-    padding: 20px;
+    padding: 16px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -295,10 +307,6 @@
     font-size: 8px;
     color: var(--default-white);
     background-color: var(--red);
-    border-radius: 15px;
-    padding: 3px 10px;
-    display: inline-block;
-    width: fit-content;
 }
 
 .programmeName {
@@ -313,6 +321,7 @@
     font-size: 16px;
     color: var(--default-text);
     margin-bottom: 0px;
+    line-height: 16px;
 }
 
 .eventIcon {
@@ -329,7 +338,7 @@
 .eventDetails {
     font-family: text-semibold;
     color: var(--text-highlight);
-    font-size: 10px;
+    font-size: 9px;
     padding-left: 10px;
 }
 
@@ -366,7 +375,7 @@
     font-family: text-semibold;
     font-size: 10px;
     color: var(--text-highlight);
-    margin: 5px;
+    margin: 5px 5px 0 0;
 }
 
 </style>

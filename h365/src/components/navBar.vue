@@ -1,5 +1,5 @@
 <template>
-    <div id="app">
+    <!-- <div id="app"> -->
         <nav>
             <ul>
                 <div class="navbar">
@@ -42,7 +42,7 @@
                 </div>
             </ul>
         </nav>
-    </div>
+    <!-- </div> -->
 </template>
 
 <script>

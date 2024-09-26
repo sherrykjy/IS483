@@ -4,19 +4,22 @@ const routes = [
     {
         path: "/",
         name: "loginPage",
-        component: () => import("@/views/loginPage.vue")
+        component: () => import("@/views/loginPage.vue"),
+        meta: { hideNavBar: true }
     },
 
     {
         path: "/info",
         name: "informationPage",
-        component: () => import("@/views/informationPage.vue")
+        component: () => import("@/views/informationPage.vue"),
+        meta: { hideNavBar: true }
     },
 
     {
         path: "/goals",
         name: "goalSettingPage",
-        component: () => import("@/views/goalSettingPage.vue")
+        component: () => import("@/views/goalSettingPage.vue"),
+        meta: { hideNavBar: true }
     },
 
     {

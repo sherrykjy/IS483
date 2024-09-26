@@ -1,85 +1,92 @@
 <template>
-    <div class="pageHeader">
-        <i class="uil uil-angle-left"></i>
-        <p>Event details</p>
-    </div>
-
-    <div class="eventDetails">
-        <div class="eventImage">
-            <img src="../assets/icons/events/event1.png">
+    <div class="pageContainer">
+        <div class="pageHeader">
+            <i class="uil uil-angle-left"></i>
+            <p>Event details</p>
         </div>
 
-        <div class="eventText">
-            <!-- programme name -->
-            <p class="eventName"> Active Family Programme </p>
+        <div class="eventDetails">
+            <div class="eventImage">
+                <img src="../assets/icons/events/event1.png">
+            </div>
 
-            <!-- activity name -->
-            <p class="activityName"> Pilates </p>
+            <div class="eventText">
+                <!-- programme name -->
+                <p class="eventName"> Active Family Programme </p>
 
-            <!-- activity description -->
-            <p class="activityDesc">
-                Pilates is a low-impact exercise that focuses on core strength, flexibility, 
-                and overall body control. It involves a series of controlled movements that 
-                improve posture, balance, and coordination, making it an ideal workout for 
-                the mind and body.
+                <!-- activity name -->
+                <p class="activityName"> Pilates </p>
+
+                <!-- activity description -->
+                <p class="activityDesc">
+                    Pilates is a low-impact exercise that focuses on core strength, flexibility, 
+                    and overall body control. It involves a series of controlled movements that 
+                    improve posture, balance, and coordination, making it an ideal workout for 
+                    the mind and body.
+                </p>
+            </div>
+        </div>
+
+        <div class="eventInfo">
+            <div class="detailLabel">
+                <i class="uil uil-schedule eventIcon"></i>
+                <p> WHEN </p>
+            </div>
+
+            <div class=detailText>
+                <p>2 September 2024, Monday</p>
+                <p>6.15pm - 7.15pm</p>
+            </div>
+
+            <div class="splitRow">
+                <div class="splitStack">
+                    <div class="detailLabel">
+                        <i class="uil uil-map-pin eventIcon"></i>
+                        <p> WHERE </p>
+                    </div>
+                
+                    <div class=detailText>
+                        <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
+                    </div>
+                </div>
+
+                <div class="detailLabel intensity">
+                    <p>Intensity: </p>
+                    <img src="../assets/icons/events/intensity1.png">
+                </div>
+            </div>
+        </div>
+
+        <div class="reminder">
+            <p>Please arrive early for the session as latecomers who miss the pre-activity 
+                safety and well-being checks will not be allowed to participate.
             </p>
         </div>
-    </div>
 
-    <div class="eventInfo">
-        <div class="detailLabel">
-            <i class="uil uil-schedule eventIcon"></i>
-            <p> WHEN </p>
-        </div>
 
-        <div class=detailText>
-            <p>2 September 2024, Monday</p>
-            <p>6.15pm - 7.15pm</p>
-        </div>
+        <div class="eventInfo">
+            <p class="activityName" style="margin-bottom: 0;">Organiser</p>
 
-        <div class="splitRow">
-            <div class="splitStack">
-                <div class="detailLabel">
-                    <i class="uil uil-map-pin eventIcon"></i>
-                    <p> WHERE </p>
-                </div>
-            
-                <div class=detailText>
-                    <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
-                </div>
+            <!-- organiser name -->
+            <p class="eventName" style="margin-bottom: 10px;">Exer-Fit Consultancy Services</p>
+
+            <div class="organiserContact">
+                <i class="uil uil-phone-volume"></i>
+                <p>91234567</p>
             </div>
 
-            <div class="detailLabel intensity">
-                <p>Intensity: </p>
-                <img src="../assets/icons/events/intensity1.png">
+            <div class="organiserContact">
+                <i class="uil uil-envelope"></i>
+                <p>enquiries@exer-fit.com.sg</p>
             </div>
         </div>
-    </div>
 
-    <div class="reminder">
-        <p>Please arrive early for the session as latecomers who miss the pre-activity 
-            safety and well-being checks will not be allowed to participate.
-        </p>
-    </div>
-
-
-    <div class="eventInfo">
-        <p class="activityName" style="margin-bottom: 0;">Organiser</p>
-
-        <!-- organiser name -->
-        <p class="eventName" style="margin-bottom: 10px;">Exer-Fit Consultancy Services</p>
-
-        <div class="organiserContact">
-            <i class="uil uil-phone-volume"></i>
-            <p>91234567</p>
-        </div>
-
-        <div class="organiserContact">
-            <i class="uil uil-envelope"></i>
-            <p>enquiries@exer-fit.com.sg</p>
+        <div class="bookNowContainer">
+            <form action="">
+                <button class="bookButton">Book Now</button>
+            </form>
         </div>
     </div>
-
 
 </template>
 
@@ -87,6 +94,10 @@
 </script>
 
 <style scoped>
+.pageContainer {
+    padding-bottom: 100px;
+}
+
 .pageHeader {
     background-color: var(--yellow);
 }
@@ -204,7 +215,6 @@
 .organiser {
     padding: 0 32px;
     background-color: var(--default-white);
-    border-radius: 
 }
 
 .organiserContact {
@@ -221,6 +231,23 @@
     font-family: text-bold;
     font-size: 12px;
     margin-bottom: 0;
+}
+
+.bookButton {
+    background-color: var(--blue);
+    color: var(--grey);
+    font-family: text-medium;
+    font-size: 13px;
+    border: none;
+    width: 100%;
+    padding: 16px 0px;
+    position: fixed;
+    bottom: 81.75px;
+}
+
+.bookNowContainer {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+    z-index: 10;
 }
 
 </style>
