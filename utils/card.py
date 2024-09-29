@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 from flask_cors import CORS, cross_origin
+from collections import defaultdict
 
 # from .event import Event
 
@@ -20,12 +21,16 @@ class Card(db.Model):
     card_type = db.Column(db.String(64), nullable=False)
     points_required = db.Column(db.Integer, nullable=False)
     event_id = db.Column(db.Integer, db.ForeignKey('event.event_id'), nullable=True)
+    description = db.Column(db.String(200), nullable=False)
+    recommendation = db.Column(db.String(300), nullable=False)
 
-    def __init__(self, title, card_type, points_required, event_id=None):
+    def __init__(self, title, card_type, points_required, description, recommendation, event_id=None):
         self.title = title
         self.card_type = card_type
         self.points_required = points_required
         self.event_id = event_id
+        self.description = description
+        self.recommendation = recommendation
 
     def json(self):
         return {
@@ -33,7 +38,9 @@ class Card(db.Model):
             "title": self.title,
             "card_type": self.card_type,
             "points_required": self.points_required,
-            "event_id": self.event_id
+            "event_id": self.event_id,
+            "description": self.description,
+            "recommendation": self.recommendation
         }
 
 # Create a new Card
@@ -44,7 +51,9 @@ def create_card():
         title=data.get('title'),
         card_type=data.get('card_type'),
         points_required=data.get('points_required'),
-        event_id=data.get('event_id')
+        event_id=data.get('event_id'),
+        description=data.get('description'),
+        recommendation=data.get('recommendation')
     )
     try:
         db.session.add(new_card)
@@ -59,6 +68,22 @@ def create_card():
 def get_cards():
     cards = Card.query.all()
     return jsonify([card.json() for card in cards]), 200
+
+# Get all Cards grouped by card_type
+@app.route('/cards/grouped', methods=['GET'])
+def get_cards_grouped():
+    try:
+        cards = Card.query.all()
+        grouped_cards = defaultdict(list)
+        print(cards)
+
+        for card in cards:
+            grouped_cards[card.card_type].append(card.json())
+        
+        return jsonify({"code": 200, "data": grouped_cards}), 200
+    
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 # Get a Card by ID
 @app.route('/card/<int:card_id>', methods=['GET'])
@@ -78,6 +103,8 @@ def update_card(card_id):
         card.card_type = data.get('card_type', card.card_type)
         card.points_required = data.get('points_required', card.points_required)
         card.event_id = data.get('event_id', card.event_id)
+        card.description = data.get('description', card.description)
+        card.recommendation = data.get('recommendation', card.recommendation)
         
         try:
             db.session.commit()
