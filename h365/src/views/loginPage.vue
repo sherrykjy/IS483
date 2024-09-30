@@ -59,6 +59,11 @@
     padding: 16px;
 }
 
+.image-container img {
+    padding-top: 50px;
+    padding-bottom: 30px;
+}
+
 #loginErrorMsg {
     width: 100%;
     padding-left: 0px;
