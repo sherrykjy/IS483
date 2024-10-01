@@ -4,7 +4,22 @@ const routes = [
     {
         path: "/",
         name: "loginPage",
-        component: () => import("@/views/loginPage.vue")
+        component: () => import("@/views/loginPage.vue"),
+        meta: { hideNavBar: true }
+    },
+
+    {
+        path: "/info",
+        name: "informationPage",
+        component: () => import("@/views/informationPage.vue"),
+        meta: { hideNavBar: true }
+    },
+
+    {
+        path: "/goal",
+        name: "goalSettingPage",
+        component: () => import("@/views/goalSettingPage.vue"),
+        meta: { hideNavBar: true }
     },
 
     {
@@ -14,9 +29,15 @@ const routes = [
     },
 
     {
-      path: "/explore",
-      name: "explorePage",
-      component: () => import("@/views/explorePage.vue")
+      path: "/events",
+      name: "eventsPage",
+      component: () => import("@/views/eventsPage.vue")
+    },
+
+    {
+      path: "/viewEvent",
+      name: "viewEventPage",
+      component: () => import("@/views/viewEventPage.vue")
     },
 
     {
