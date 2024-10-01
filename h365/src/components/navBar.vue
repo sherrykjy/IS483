@@ -69,6 +69,7 @@ ul {
 
     position: fixed;
     bottom: 0;
+    z-index: 1000;
 }
 
 .nav-link {
