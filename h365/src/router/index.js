@@ -16,7 +16,7 @@ const routes = [
     },
 
     {
-        path: "/goals",
+        path: "/goal",
         name: "goalSettingPage",
         component: () => import("@/views/goalSettingPage.vue"),
         meta: { hideNavBar: true }

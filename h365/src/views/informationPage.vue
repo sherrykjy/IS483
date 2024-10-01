@@ -1,5 +1,5 @@
 <template>
-    <div class="basicHeader">
+    <div class="pageHeader">
         <p>Tell us more!</p>
     </div>
 
