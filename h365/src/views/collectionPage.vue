@@ -42,39 +42,54 @@
         </div>
 
         <div class="colDisplay">
-            <div class="card" @click="openPopup">
+            <div class="card" @click="openInfoPopup('Selena', 'Fruit Basket', 'Description of Selena', '../assets/icons/collection/fruit_basket/selena_strawberry.png')">
                 <img src="../assets/icons/collection/fruit_basket/selena_strawberry.png">
                 <p class="cardName"> Selena </p>
                 <p class="cardSet"> Fruit Basket </p>
             </div>
 
-            <div class="card" @click="openPopup">
+            <div class="card" @click="openInfoPopup('Gracia', 'Fruit Basket', 'Description of Gracia', '../assets/icons/collection/fruit_basket/gracia_grape.png')">
                 <img src="../assets/icons/collection/fruit_basket/gracia_grape.png">
                 <p class="cardName"> Gracia </p>
                 <p class="cardSet"> Fruit Basket </p>
             </div>
 
-            <div class="card" @click="openPopup">
+            <div class="card" @click="openUnlockPopup('Sweet Squad', '200')">
                 <img src="../assets/icons/collection/wellness_wonders/sweat_squad.png">
                 <p class="cardName"> Sweet Squad </p>
                 <p class="cardSet"> Wellness Wonders </p>
             </div>
 
-            <div class="card" @click="openPopup">
+            <div class="card" @click="openInfoPopup('Hydration Hero', 'Wellness Wonders', 'Description of Hydration Hero', '../assets/icons/collection/wellness_wonders/hydration_hero.png')">
                 <img src="../assets/icons/collection/wellness_wonders/hydration_hero.png">
                 <p class="cardName"> Hydration Hero </p>
                 <p class="cardSet"> Wellness Wonders </p>
             </div>
 
-            <div class="card" @click="openPopup">
+            <div class="card" @click="openInfoPopup('Cardio Champ', 'Wellness Wonders', 'Description of Cardio Champ', '../assets/icons/collection/wellness_wonders/cardio_champ.png')">
                 <img src="../assets/icons/collection/wellness_wonders/cardio_champ.png">
                 <p class="cardName"> Cardio Champ </p>
                 <p class="cardSet"> Wellness Wonders </p>
             </div>
 
         </div>
-        <Popup ref="popup" />
-
+        
+        <!-- info pop up -->
+        <Popup
+            ref="popup"
+            :visible="isPopupVisible"
+            :type="popupType"
+            :cardName="selectedCardName"
+            :cardPrice="selectedCardPrice"
+            :tradeCardName="tradeCardName"
+            :receiveCardName="receiveCardName"
+            :tradeWith="tradeWith"
+            :cardImage="selectedCardImage"
+            :cardSet="selectedCardSet"
+            :cardDescription="selectedCardDescription"
+            @close="closePopup"
+            @confirm="handleConfirm"
+        />
     </div>
     
 </template>
@@ -82,15 +97,41 @@
 <script>
 import Popup from '@/components/popUp.vue';
 
+// info pop up
 export default {
     components: {
-        Popup,
+        Popup
     },
-    methods: {
-        openPopup() {
-            this.$refs.popup.show();
+    data() {
+        return {
+            isPopupVisible: false,
+            popupType: '', // 'unlock', 'trade', 'info'
+            selectedCardName: '',
+            selectedCardPrice: 0,
+            tradeCardName: '',
+            receiveCardName: '',
+            tradeWith: '',
+            selectedCardImage: '',
+            selectedCardSet: '',
+            selectedCardDescription: ''
+        };
         },
-    },
+        methods: {
+        openInfoPopup(cardName, cardSet, cardDescription) {
+            this.selectedCardName = cardName;
+            this.selectedCardSet = cardSet;
+            this.selectedCardDescription = cardDescription;
+            this.popupType = 'info';
+            this.isPopupVisible = true;
+        },
+        closePopup() {
+            this.isPopupVisible = false;
+        },
+        handleConfirm() {
+            console.log('Action confirmed');
+            this.isPopupVisible = false;
+        }
+    }
 };
 </script>
 
