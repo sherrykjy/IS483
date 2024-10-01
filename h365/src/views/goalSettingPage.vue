@@ -30,7 +30,7 @@
     </div>
 
     <div class="container">
-        <form action="">
+        <form @submit.prevent="submitGoal">
             <div class="question">
                 <div class="label">
                     What is your target number of MVPA minutes per week?
@@ -105,10 +105,43 @@
 </template>
 
 <script>
+import { useStore } from 'vuex';
+import { computed } from 'vue';
+
 export default {
+    setup() {
+        console.log("goal setting page");
+        const store = useStore(); // Import useStore from vuex
+        const userId = computed(() => store.state.userId); // Access userId from the store
+        const userEmail = computed(() => store.state.userEmail) // Access userEmail from the store
+        
+        return {
+            userId,
+            userEmail
+        };
+    },
     data() {
         return {
-            selectedIntensity: ''
+            selectedIntensity: '',
+            goal: ''
+        }
+    },
+    methods: {
+        async submitGoal() {
+            try {
+                console.log("Submit goal attempt");
+                console.log("User email:", this.userEmail);
+                const response = await this.$http.patch("http://127.0.0.1:5001/user/" + this.userEmail, {
+                        target_minutes: this.goal,
+                        preferred_intensity: this.selectedIntensity,
+                })
+                console.log(response);
+
+                this.$router.push('/home');
+            }
+            catch (error) {
+                console.log(error);
+            }
         }
     }
 }

@@ -13,16 +13,16 @@
         </div>
 
         <div class="loginForm">
-            <form>
+            <form @submit.prevent="userLogin">
                 <label for="userName" class="formLabel">Email:</label><br> <!-- need to add form handling here -->
-                <input type="text" id="userName" class="formInput"><br><br>
+                <input v-model="email" type="text" id="userName" class="formInput"><br><br>
 
                 <label for="userName" class="formLabel">Password:</label><br> <!-- need to add form handling here -->
-                <input type="password" id="userName" class="formInput"><br><br>
+                <input v-model="password" type="password" id="userName" class="formInput"><br><br>
 
-                <p id="loginErrorMsg"> Invalid email or password. </p> <!-- need to add v-if else here -->
+                <p id="loginErrorMsg" v-if="loginError"> {{ loginError }} </p> <!-- need to add v-if else here -->
 
-                <button class="formButton" style="color: var(--default-white); 
+                <button type="submit" class="formButton" style="color: var(--default-white); 
                 background: var(--blue);"> <!-- need to add form handling here -->
                     Log in
                 </button>
@@ -97,4 +97,58 @@
 </style>
 
 <script>
+export default {
+    data() {
+        return {
+            email: '', // Bind to the email input
+            password: '', // Bind to the password input
+            loginError: '' // To store any login error message
+        };
+    },
+    methods: {
+        // Send HTTP Post for user login
+        async userLogin() {
+            console.log("User login attempt");
+            
+            try {
+                const response = await this.$http.post("http://127.0.0.1:5009/user_login", {
+                        email: this.email,
+                        password: this.password
+                })
+                this.loginError = "";
+                console.log("Login successful:", response.data);
+
+                // Check for first login from user
+                const userResponse = await this.$http.get("http://127.0.0.1:5001/user/" + this.email);
+                console.log(userResponse);
+                const userData = userResponse["data"]["data"];
+                console.log(userData);
+
+                const userId = userData["user_id"];
+                const userEmail = userData["email"];
+
+                 // Store user data in session storage
+                sessionStorage.setItem('userId', userId);
+                sessionStorage.setItem('userEmail', userEmail);
+
+                // Set userId and userEmail in Vuex
+                this.$store.commit('setUserId', userId);
+                this.$store.commit('setUserEmail', userEmail);
+
+                // If goal data is 0, goal has not been set yet, therefore first login
+                if (userData["preferred_intensity"] == 0 || userData["target_minutes"] == 0 ) {
+                    this.$router.push('/info');
+                }
+                // If goal data has been set, redirect to home page
+                else {
+                    this.$router.push('/home');
+                }
+
+            } catch (error) {
+                this.loginError = "Invalid email or password.";
+                console.log("Login error:", error);
+            }
+        }
+    }
+};
 </script>
