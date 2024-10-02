@@ -53,10 +53,22 @@ const routes = [
     },
 
     {
-      path: "/test",
-      name: "testTest",
-      component: () => import("@/components/testTest.vue")
+      path: "/store",
+      name: "storePage",
+      component: () => import("@/views/storePage.vue")
     },
+
+    {
+      path: "/trade",
+      name: "tradePage",
+      component: () => import("@/views/tradePage.vue")
+    },
+
+    // {
+    //   path: "/test",
+    //   name: "testTest",
+    //   component: () => import("@/components/testTest.vue")
+    // },
 
     {
       path: "/profile",

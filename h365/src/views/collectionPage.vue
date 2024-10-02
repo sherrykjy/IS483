@@ -23,15 +23,19 @@
         </div>
 
         <div class="buttonGroup">
-            <button class="storeButton">
-                <label> Store </label>
-                <i class="uil uil-store"> </i>
-            </button>
+            <router-link :to="{ name: 'storePage'}">
+                <button class="storeButton">
+                    <label> Store </label>
+                    <i class="uil uil-store"> </i>
+                </button>
+            </router-link>
 
-            <button class="tradeButton">
-                <label> Trade </label>
-                <i class="uil uil-exchange"> </i>
-            </button>
+            <router-link :to="{ name: 'tradePage'}">
+                <button class="tradeButton">
+                    <label> Trade </label>
+                    <i class="uil uil-exchange"> </i>
+                </button>
+            </router-link>
         </div>
     </div>
 
@@ -54,7 +58,7 @@
                 <p class="cardSet"> Fruit Basket </p>
             </div>
 
-            <div class="card" @click="openUnlockPopup('Sweet Squad', '200')">
+            <div class="card" @click="openInfoPopup('Gracia', 'Fruit Basket', 'Description of Gracia', '../assets/icons/collection/fruit_basket/gracia_grape.png')">
                 <img src="../assets/icons/collection/wellness_wonders/sweat_squad.png">
                 <p class="cardName"> Sweet Squad </p>
                 <p class="cardSet"> Wellness Wonders </p>
@@ -219,6 +223,11 @@ button {
     all: unset;
     padding: 11px 24px;
     border-radius: 6px;
+    color: var(--default-white);
+}
+
+button label {
+    margin-right: 5px;
 }
 
 .storeButton {
