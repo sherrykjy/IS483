@@ -157,9 +157,45 @@
 
     </div>
 
+    <Popup
+        v-if="isPopupVisible"
+        :visible="isPopupVisible"
+        :type="popupType"
+        :cardName="cardName"
+        :cardPrice="cardPrice"
+        @close="closePopup"
+    />
+
 </template>
 
-<script></script>
+<script>
+import Popup from '@/components/popUp.vue';
+
+export default {
+    components: {
+        Popup
+    },
+    data() {
+        return {
+            isPopupVisible: false,  // Controls popup visibility
+            cardName: 'Strawberry Card',  // Example data
+            cardPrice: '100',  // Example price
+            popupType: ''
+        };
+    },
+    methods: {
+        openUnlockPopup(cardName, cardPrice) {
+            this.cardName = cardName;
+            this.cardPrice = cardPrice;
+            this.popupType = 'unlock';
+            this.isPopupVisible = true;
+        },
+        closePopup() {
+            this.isPopupVisible = false;
+        }
+    }
+};
+</script>
 
 <style scoped>
 .pageHeader {
