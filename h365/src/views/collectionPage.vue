@@ -281,10 +281,10 @@ div .search-bar {
 }
 
 .colDisplay {
-    display: grid; /* Use CSS Grid for layout */
-    grid-template-columns: repeat(2, 1fr); /* Create 2 equal columns */
-    gap: 16px; /* Space between the cards */
-    width: 100%; /* Optional: set the width of the container */
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    width: 100%;
     padding-top: 16px;
 }
 
