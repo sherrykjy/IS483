@@ -43,6 +43,63 @@
 
                     <!-- recommended events cards -->
                     <div v-for="event in recommendedEvents[date]" :key="event.event_id">
+                        <router-link :to="{ name: 'viewEventPage', params: { eventId: event.event_id } }">
+                            <div class="basicCard">
+                                <div class="cardImage">
+                                    <img src="../assets/icons/events/event1.png">
+                                </div>
+                                <div class="cardText">
+                                    <!-- v-if few slots left -->
+                                    <div class="lowSlotAlert" v-if="event.slots_left <= 5">
+                                        Few Slots Left
+                                    </div>
+                                    <!-- programme name -->
+                                    <p class="programmeName" v-if="event.event_program != 'Null'">{{ event.event_program }}</p>
+                                    <!-- activity name -->
+                                    <p class="eventName">{{ event.title }}</p>
+                                    <!-- date, day, and time  -->
+                                    <div class="eventInfo">
+                                        <i class="uil uil-schedule eventIcon"></i>
+                                        <div class=eventDetails>
+                                            <p>{{ formattedDate(event.start_date) }}</p>
+                                            <p>{{ formattedTime(event.start_date, event.end_date) }}</p>
+                                        </div>
+                                    </div>
+                                    <!-- location -->
+                                    <div class="eventInfo">
+                                        <i class="uil uil-map-pin eventIcon"></i>
+                                        <div class=eventDetails>
+                                            <p>{{ event.location }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="eventBtnIntensity">
+                                        <form action="">
+                                            <button class="bookEventBtn">Book Now</button>
+                                        </form>
+                                        <!-- intensity -->
+                                        <div class="intensity">
+                                            <p>Intensity: </p>
+                                            <img v-if="event.tier === 1" src="../assets/icons/events/intensity1.png">
+                                            <img v-else-if="event.tier === 2" src="../assets/icons/events/intensity2.png">
+                                            <img v-else-if="event.tier === 3" src="../assets/icons/events/intensity3.png">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </router-link>
+                    </div>
+
+                    <br>
+                </div>
+                
+                <!-- all events header -->
+                <div class="pageHeading">
+                    <img src="../assets/icons/events/folder.png">
+                    <p>All Events</p>
+                </div>
+                <!-- all events cards -->
+                <div v-for="event in filteredEventsData[date]" :key="event.event_id">
+                    <router-link :to="{ name: 'viewEventPage', params: { eventId: event.event_id } }">
                         <div class="basicCard">
                             <div class="cardImage">
                                 <img src="../assets/icons/events/event1.png">
@@ -85,60 +142,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
-
-                    <br>
-                </div>
-                
-                <!-- all events header -->
-                <div class="pageHeading">
-                    <img src="../assets/icons/events/folder.png">
-                    <p>All Events</p>
-                </div>
-                <!-- all events cards -->
-                <div v-for="event in filteredEventsData[date]" :key="event.event_id">
-                    <div class="basicCard">
-                        <div class="cardImage">
-                            <img src="../assets/icons/events/event1.png">
-                        </div>
-                        <div class="cardText">
-                            <!-- v-if few slots left -->
-                            <div class="lowSlotAlert" v-if="event.slots_left <= 5">
-                                Few Slots Left
-                            </div>
-                            <!-- programme name -->
-                            <p class="programmeName" v-if="event.event_program != 'Null'">{{ event.event_program }}</p>
-                            <!-- activity name -->
-                            <p class="eventName">{{ event.title }}</p>
-                            <!-- date, day, and time  -->
-                            <div class="eventInfo">
-                                <i class="uil uil-schedule eventIcon"></i>
-                                <div class=eventDetails>
-                                    <p>{{ formattedDate(event.start_date) }}</p>
-                                    <p>{{ formattedTime(event.start_date, event.end_date) }}</p>
-                                </div>
-                            </div>
-                            <!-- location -->
-                            <div class="eventInfo">
-                                <i class="uil uil-map-pin eventIcon"></i>
-                                <div class=eventDetails>
-                                    <p>{{ event.location }}</p>
-                                </div>
-                            </div>
-                            <div class="eventBtnIntensity">
-                                <form action="">
-                                    <button class="bookEventBtn">Book Now</button>
-                                </form>
-                                <!-- intensity -->
-                                <div class="intensity">
-                                    <p>Intensity: </p>
-                                    <img v-if="event.tier === 1" src="../assets/icons/events/intensity1.png">
-                                    <img v-else-if="event.tier === 2" src="../assets/icons/events/intensity2.png">
-                                    <img v-else-if="event.tier === 3" src="../assets/icons/events/intensity3.png">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </router-link>
                 </div>
                 
             </div>
