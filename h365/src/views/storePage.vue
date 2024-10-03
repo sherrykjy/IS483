@@ -7,7 +7,7 @@
         <div class="displayBlock">
             <div class="blockLeft">
                 <div class="blockText">
-                    <p> 1080 </p>
+                    <p style="margin-right: 5px"> 1080 </p>
                     <span> <img src="../assets/icons/collection/coin.png"> </span>
                 </div>
                 <p> My Healthcoins </p>
@@ -15,7 +15,7 @@
 
             <div class="blockRight">
                 <div class="blockText">
-                    <img src="../assets/icons/collection/lock.png" style="width: 25px; height: auto; margin-right: 3px;">
+                    <img src="../assets/icons/collection/lock.png" style="margin-right: 5px;">
                     <p> <span> 2 </span> / 108 </p>
                 </div>
                 <p> Collectibles Unlocked </p>
@@ -262,9 +262,10 @@ export default {
 }
 
 .blockText img, .card .price img {
-    width: 30px;
-    height: 30px;
-    vertical-align: middle;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
 }
 
 .info {
