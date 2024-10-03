@@ -10,7 +10,7 @@
                 All
             </n-tab>
             <n-tab name="myTrades">
-                My Requests
+                My Trades
             </n-tab>
         </n-tabs>
     </div>
