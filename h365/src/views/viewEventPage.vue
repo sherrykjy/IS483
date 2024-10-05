@@ -12,17 +12,14 @@
 
             <div class="eventText">
                 <!-- programme name -->
-                <p class="eventName"> Active Family Programme </p>
+                <p class="eventName"> {{ programName }} </p>
 
                 <!-- activity name -->
-                <p class="activityName"> Pilates </p>
+                <p class="activityName"> {{ eventTitle }} </p>
 
                 <!-- activity description -->
                 <p class="activityDesc">
-                    Pilates is a low-impact exercise that focuses on core strength, flexibility, 
-                    and overall body control. It involves a series of controlled movements that 
-                    improve posture, balance, and coordination, making it an ideal workout for 
-                    the mind and body.
+                    {{ eventDescription }}
                 </p>
             </div>
         </div>
@@ -34,8 +31,8 @@
             </div>
 
             <div class=detailText>
-                <p>2 September 2024, Monday</p>
-                <p>6.15pm - 7.15pm</p>
+                <p>{{ formattedDate(eventStartDate) }}</p>
+                <p>{{ formattedTime(eventStartDate, eventEndDate) }}</p>
             </div>
 
             <div class="splitRow">
@@ -46,13 +43,15 @@
                     </div>
                 
                     <div class=detailText>
-                        <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
+                        <p>{{ eventLocation }}</p>
                     </div>
                 </div>
 
                 <div class="detailLabel intensity">
                     <p>Intensity: </p>
-                    <img src="../assets/icons/events/intensity1.png">
+                    <img v-if="eventTier === 1" src="../assets/icons/events/intensity1.png">
+                    <img v-else-if="eventTier === 2" src="../assets/icons/events/intensity2.png">
+                    <img v-else-if="eventTier === 3" src="../assets/icons/events/intensity3.png">
                 </div>
             </div>
         </div>
@@ -68,16 +67,16 @@
             <p class="activityName" style="margin-bottom: 0;">Organiser</p>
 
             <!-- organiser name -->
-            <p class="eventName" style="margin-bottom: 10px;">Exer-Fit Consultancy Services</p>
+            <p class="eventName" style="margin-bottom: 10px;">{{ eventOrganiserName }}</p>
 
             <div class="organiserContact">
                 <i class="uil uil-phone-volume"></i>
-                <p>91234567</p>
+                <p>{{ eventOrganiserPhone }}</p>
             </div>
 
             <div class="organiserContact">
                 <i class="uil uil-envelope"></i>
-                <p>enquiries@exer-fit.com.sg</p>
+                <p>{{ eventOrganiserEmail }}</p>
             </div>
         </div>
 
@@ -97,19 +96,116 @@
 
 <script>
 import Popup from '@/components/popUp.vue';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 
-export default ({
+export default {
+    name: 'viewEventPage',
     components: {
         Popup
     },
-
-    data() {
+    setup() {
+        console.log("view event page");
+        const store = useStore(); // Import useStore from vuex
+        const userId = computed(() => store.state.userId); // Access userId from the store
+        const userEmail = computed(() => store.state.userEmail) // Access userEmail from the store
+                
         return {
-            isPopupVisible: false,
-            popupType: 'event-code'
+            userId,
+            userEmail
         };
     },
+    data() {
+        return {
+            eventId: null,
+            programName: "",
+            eventTitle: "",
+            eventDescription: "",
+            eventStartDate: null,
+            eventEndDate: null,
+            eventLocation: "",
+            eventTier: "",
+            eventOrganiserName: "",
+            eventOrganiserEmail: "",
+            eventOrganiserPhone: "",
+            entryCode: "",
+            isPopupVisible: false,
+            popupType: 'event-code'
+        }
+    },
+    async mounted() {
+        const eventId = this.$route.params.eventId;
+        console.log("eventID:", eventId);
+
+        try {
+            const response = await this.$http.get("http://127.0.0.1:5002/event/" + eventId);
+            const eventData = response.data.data;
+            console.log(eventData);
+
+            this.eventId = eventId;
+            this.programName = eventData["event_program"];
+            this.eventTitle = eventData["title"];
+            this.eventDescription = eventData["description"];
+            this.eventStartDate = eventData["start_date"];
+            this.eventEndDate = eventData["end_date"];
+            this.eventLocation = eventData["location"];
+            this.eventTier = eventData["tier"];
+            this.eventOrganiserName = eventData["organiser"];
+            this.eventOrganiserEmail = eventData["organiser_email"];
+            this.eventOrganiserPhone = eventData["organiser_phone"];
+            this.entryCode = eventData["entry_code"];
+
+        }
+        catch (error) {
+            console.log("error:", error);
+        }
+    },
     methods: {
+        // Format date as '2 September 2024, Monday'
+        formattedDate(dateStr) {
+            const date = new Date(dateStr);
+
+            // Get the formatted day, month, and year
+            const day = date.getDate(); // 1
+            const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date); // August
+            const year = date.getFullYear(); // 2024
+            const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date); // e.g., Wednesday
+
+            return `${day} ${month} ${year}, ${weekday}`;
+        },
+        // Format time as '10.00am - 11.00am'
+        formattedTime(startDateStr, endDateStr) {
+            const startDate = new Date(startDateStr);
+            const endDate = new Date(endDateStr);
+
+            const formatTime = date => {
+                return new Intl.DateTimeFormat('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+                }).format(date);
+            };
+
+            return `${formatTime(startDate)} - ${formatTime(endDate)}`;
+        },
+        async joinEvent() {
+            console.log("join event attempt");
+
+            try {
+                const response = await this.$http.post("http://127.0.0.1:5007/userevent/enrol", {
+                    user_id: this.userId,
+                    event_id: this.eventId,
+                    entry_code: "DRAMA2024" // TO DO: should be this.entry_code once popup has been added ; tested with event id 22
+                })
+                console.log(response);
+                console.log("Join event successful");
+
+                // this.$router.push('/booked'); // TO DO: uncomment once merged bookedEvents page
+            }
+            catch (error) {
+                console.log("Join Event:", error);
+            }
+        },
         openCodePopup(eventName) {
             this.eventName = eventName;
             this.isPopupVisible = true;
@@ -118,8 +214,7 @@ export default ({
             this.isPopupVisible = false;
         }
     }
-});
-
+}
 </script>
 
 <style scoped>

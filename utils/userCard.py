@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 # from .user import User
 # from .card import Card  
 from flask_cors import CORS, cross_origin
+from invokes import invoke_http
 
 from datetime import datetime
 
@@ -13,15 +14,20 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 db = SQLAlchemy(app)
 CORS(app)
 
+cardURL = "http://localhost:5003/card/"
+
 class UserCard(db.Model):
     __tablename__ = 'user_cards'
     
     user_card_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
-    card_id = db.Column(db.Integer, db.ForeignKey('card.card_id'), nullable=False)
+    # user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    # card_id = db.Column(db.Integer, db.ForeignKey('card.card_id'), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
+    card_id = db.Column(db.Integer, nullable=False)
     earned_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
 
-    def __init__(self, user_id, card_id, earned_date=None):
+    def __init__(self, user_card_id, user_id, card_id, earned_date=None):
+        self.user_card_id = user_card_id
         self.user_id = user_id
         self.card_id = card_id
         self.earned_date = datetime.now()
@@ -39,19 +45,21 @@ class UserCard(db.Model):
 def create_user_card():
     data = request.json
     new_user_card = UserCard(
+        user_card_id = data.get('user_card_id'),
         user_id=data.get('user_id'),
-        card_id=data.get('card_id')
+        card_id=data.get('card_id'),
+        earned_date=data.get('earned_date')
     )
     try:
         db.session.add(new_user_card)
         db.session.commit()
-        return jsonify(new_user_card.json()), 201
+        return jsonify({"code": 201, "data": new_user_card.json()}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
 
 # Get all UserCards
-@app.route('/usercards', methods=['GET'])
+@app.route('/usercard', methods=['GET'])
 def get_user_cards():
     user_cards = UserCard.query.all()
     return jsonify([user_card.json() for user_card in user_cards]), 200
@@ -63,6 +71,38 @@ def get_user_card(user_card_id):
     if user_card:
         return jsonify(user_card.json()), 200
     return jsonify({"error": "UserCard not found"}), 404
+
+# Get all UserCards by User ID
+@app.route('/usercard/user/<int:user_id>', methods=['GET'])
+def get_user_cards_by_user(user_id):
+    try:
+        user_cards = UserCard.query.filter_by(user_id=user_id).all()
+        if user_cards:
+            count = len(user_cards)
+            all_cards_info = []
+            for card in user_cards:
+                response = invoke_http(cardURL + str(card.card_id), method='GET')
+                card_info = response["data"]
+                all_cards_info.append({
+                    "user_card_id": card.user_card_id,
+                    "user_id": card.user_id,
+                    "card_id": card.card_id,
+                    "earned_date": card.earned_date,
+                    "card_type": card_info['card_type'],
+                    "title": card_info['title'],
+                    "points_required": card_info['points_required'],
+                    "event_id": card_info['event_id'],
+                    "description": card_info['description'],
+                    "recommendation": card_info['recommendation']
+                })
+            return jsonify({
+                "code": 200, 
+                "data": {"count_redeemed": count,
+                        "cards": all_cards_info}
+            }), 200
+        return jsonify({"code": 404, "error": "No cards found for this user ID"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 # Update a UserCard by ID
 @app.route('/usercard/<int:user_card_id>', methods=['PUT'])
@@ -90,7 +130,8 @@ def delete_user_card(user_card_id):
         try:
             db.session.delete(user_card)
             db.session.commit()
-            return jsonify({"message": "UserCard deleted"}), 200
+            return jsonify({"message": "UserCard deleted",
+                            "code": 200}), 200
         except Exception as e:
             db.session.rollback()
             return jsonify({"error": str(e)}), 400

@@ -18,7 +18,7 @@
     </div>
 
     <div class="container">
-        <form action="">
+        <form @submit.prevent="submitProfileDetails">
 
             <div class="question">
                 <div class="label">
@@ -238,7 +238,22 @@ ul.dropdown-list {
 </style>
 
 <script>
+import { useStore } from 'vuex';
+import { computed } from 'vue';
+import store from '../store';
+
 export default {
+    setup() {
+        console.log("information page");
+        const store = useStore(); // Import useStore from vuex
+        const userId = computed(() => store.state.userId); // Access userId from the store
+        const userEmail = computed(() => store.state.userEmail) // Access userEmail from the store
+
+        return {
+            userId,
+            userEmail
+        };
+    },
     data() {
         return {
             height: null,
@@ -293,6 +308,31 @@ export default {
             this.searchSchool = school.text;
             this.selectedSchool = school.value;
             this.showSchoolDropdown = false;
+        },
+        async submitProfileDetails() {
+            console.log("Submission attempt");
+            console.log("Height:", this.height);
+            console.log("Weight:", this.weight);
+            console.log("Selected School:", this.searchSchool);
+            console.log("Selected Region:", this.searchTerm);
+
+            try {
+                console.log("Update information attempt");
+                console.log("Current Store State:", store.state);
+                console.log(this.userEmail);
+                const response = await this.$http.patch("http://127.0.0.1:5001/user/" + this.userEmail, {
+                        height: this.height,
+                        weight: this.weight,
+                        school: this.searchSchool,
+                        location_group: this.searchTerm
+                })
+                console.log(response);
+
+                this.$router.push('/goal');
+            }
+            catch (error) {
+                console.log(error);
+            }
         }
     },
     mounted() {

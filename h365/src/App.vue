@@ -15,6 +15,22 @@
   import "bootstrap/dist/js/bootstrap.min.js";
 
   import '@/assets/styling/general.css';
+
+  import store from './store';
+
+  export default {
+    mounted() {
+      const storedUserId = sessionStorage.getItem('userId');
+      const storedUserEmail = sessionStorage.getItem('userEmail');
+
+      if (storedUserId) {
+          store.commit('setUserId', storedUserId); // Commit directly from session storage
+      }
+      if (storedUserEmail) {
+          store.commit('setUserEmail', storedUserEmail); // Commit directly from session storage
+      }
+    }
+  }
 </script>
 
 <style>
