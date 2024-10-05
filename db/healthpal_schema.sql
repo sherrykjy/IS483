@@ -144,3 +144,22 @@ CREATE TABLE trade (
     -- FOREIGN KEY (card_two_id) REFERENCES user_cards (card_id)
 );
 
+CREATE TABLE goal (
+    goal_id INT NOT NULL AUTO_INCREMENT,
+    user_id INT NOT NULL,
+    goal_description VARCHAR(256) NOT NULL,
+    tier INT NOT NULL,
+    date_created DATETIME NOT NULL,
+    target INT NOT NULL,
+    PRIMARY KEY (goal_id)
+);
+
+CREATE TABLE streak (
+    streak_id INT NOT NULL AUTO_INCREMENT,
+    goal_id INT NOT NULL,
+    week_started INT NOT NULL,
+    week_current INT NOT NULL,
+    streak_count INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (streak_id)
+);
+

@@ -19,16 +19,14 @@ class Goal(db.Model):
     goal_description = db.Column(db.String(256), nullable=False)
     tier = db.Column(db.Integer, nullable=False)
     date_created = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    completed = db.Column(db.Boolean, default=False, nullable=False)
-    date_completed = db.Column(db.DateTime, nullable=True)
+    target = db.Column(db.Integer, nullable = False)
 
-    def __init__(self, user_id, goal_description, tier, completed=False, date_completed=None):
+    def __init__(self, user_id, goal_description, tier, target):
         self.user_id = user_id
         self.goal_description = goal_description
         self.tier = tier
-        self.completed = completed
         self.date_created = datetime.now()
-        self.date_completed = date_completed
+        self.date_completed = target
 
     def json(self):
         return {
@@ -37,8 +35,7 @@ class Goal(db.Model):
             "goal_description": self.goal_description,
             "tier": self.tier,
             "date_created": self.date_created.isoformat(),
-            "completed": False,
-            "date_completed": None
+            "target": self.target,
         }
 
 # Create a new goal
@@ -50,7 +47,7 @@ def create_goal():
         goal_description=data.get('goal_description'),
         tier=data.get('tier'),
         completed=data.get('completed', False),
-        date_completed=data.get('date_completed')
+        target=data.get('target')
     )
     try:
         db.session.add(new_goal)
@@ -84,10 +81,7 @@ def update_goal(goal_id):
         data = request.json
         goal.goal_description = data.get('goal_description', goal.goal_description)
         goal.tier = data.get('tier', goal.tier)
-        goal.completed = data.get('completed', goal.completed)
-        if goal.completed and not goal.date_completed:
-            goal.date_completed = datetime.now()
-        
+        goal.target = data.get('target', goal.target)
         try:
             db.session.commit()
             return jsonify(goal.json()), 200

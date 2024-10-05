@@ -2,6 +2,7 @@ import os
 import requests
 from flask import Flask, redirect, request, jsonify, session, url_for
 import time
+from datetime import datetime
 # from dotenv import load_dotenv
 
 # Load environment variables
@@ -68,13 +69,13 @@ def callback():
 
     session['user_id'] = user_id
 
-    return jsonify({'message': 'Strava account connected successfully', 'user_id': user_id})
+    return jsonify(users)
 
 # Step 3: Fetch user activities from Strava
 @app.route('/activities', methods=['GET'])
 def get_activities():
+
     user_id = session.get('user_id')
-    print(users)
 
     if not user_id or user_id not in users:
         return jsonify({'error': 'User not authenticated or access token missing'}), 403
