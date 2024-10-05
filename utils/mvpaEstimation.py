@@ -54,7 +54,7 @@ def processStravaInformation():
             break
             
     weekly_speed_in_m_per_s = distance/time
-    met = (weekly_speed_in_m_per_s*0.2) + 3.5
+    met = (weekly_speed_in_m_per_s / 0.2) + 3.5
     
     return {
         "code": 200,
