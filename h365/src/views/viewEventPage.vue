@@ -81,20 +81,30 @@
         </div>
 
         <div class="bookNowContainer">
-            <form @submit.prevent="joinEvent">
-                <button class="bookButton">Book Now</button>
-            </form>
+            <button class="bookButton" @click="openCodePopup('Pilates')"> Book Now </button>
         </div>
     </div>
+
+    <Popup
+        v-if="isPopupVisible"
+        :visible="isPopupVisible"
+        :type="popupType"
+        :eventName="eventName"
+        @close="closePopup"
+    />
 
 </template>
 
 <script>
+import Popup from '@/components/popUp.vue';
 import { useStore } from 'vuex';
 import { computed } from 'vue';
 
 export default {
     name: 'viewEventPage',
+    components: {
+        Popup
+    },
     setup() {
         console.log("view event page");
         const store = useStore(); // Import useStore from vuex
@@ -119,7 +129,10 @@ export default {
             eventOrganiserName: "",
             eventOrganiserEmail: "",
             eventOrganiserPhone: "",
-            entryCode: ""
+            entryCode: "",
+            isPopupVisible: false,
+            eventName: '',
+            popupType: 'event-code'
         }
     },
     async mounted() {
@@ -194,6 +207,13 @@ export default {
             catch (error) {
                 console.log("Join Event:", error);
             }
+        },
+        openCodePopup(eventName) {
+            this.eventName = eventName;
+            this.isPopupVisible = true;
+        },
+        closePopup() {
+            this.isPopupVisible = false;
         }
     }
 }

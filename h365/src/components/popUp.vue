@@ -71,6 +71,32 @@
                 <button style="background-color: var(--blue);" @click="closePopup"> Cool! </button>
             </div>
         </div>
+
+        <!-- event code pop up -->
+        <div v-if="type === 'event-code'">
+
+            <div class="head-event" style="margin-bottom: 7px">
+                <p> Event Entry Code </p>
+                <div class="close-button" @click="closePopup">
+                    <i class="uil uil-times"></i>
+                </div>
+            </div>
+
+            <p class="code"> 
+                This event requires a special entry code. Check with your admin 
+                to get your access code and join the fun! 
+            </p>
+
+            <label for="eventCode" class="formLabel code" style="margin-bottom: 0px;"> 
+                Please enter code 
+            </label><br>
+
+            <input type="text" id="eventCode" class="formInput"><br><br>
+            <button class="formButton" style="color: var(--default-white); background: var(--blue); width: 100%;">
+                Enter
+            </button>
+        </div>
+
       </div>
     </div>
 </template>
@@ -83,7 +109,7 @@ props: {
         default: false
     },
     type: {
-        type: String,  // 'unlock', 'trade', or 'info'
+        type: String,  // 'unlock', 'trade', 'info' or 'event-code'
         default: ''
     },
     cardName: {
@@ -116,6 +142,10 @@ props: {
     },
     cardDescription: {
         type: String, // Used for info popup
+        default: ''
+    },
+    eventName: {
+        type: String,
         default: ''
     }
 },
@@ -193,6 +223,20 @@ methods: {
     display: flex;
 }
 
+.head-event {
+    font-family: text-bold;
+    font-size: 17px;
+    color: var(--default-text);
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between
+}
+
+.head-event p {
+    margin: 0;
+}
+
 .head img {
     width: 25px;
     height: 25px;
@@ -244,6 +288,18 @@ button {
 .coolButton {
     display: flex;
     justify-content: center;
+}
+
+.popupContent {
+    text-align: justify;
+}
+
+.code {
+    font-family: text-medium;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--text-highlight);
+    margin-bottom: 10px;
 }
 
 </style>  
