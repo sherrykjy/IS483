@@ -323,24 +323,6 @@ button label {
     background: linear-gradient(180deg, #814FF0, #462D7F);
 }
 
-.carousel {
-    display: flex;
-    overflow-x: auto; /* Enable horizontal scroll */
-    gap: 16px; /* Spacing between cards */
-    padding: 10px; /* Add some padding around the carousel */
-    scroll-snap-type: x mandatory; /* Optional: for snap scrolling */
-    scrollbar-width: thin; /* Firefox scrollbar */
-}
-
-.carousel::-webkit-scrollbar {
-    height: 8px; /* Adjust height of the scrollbar */
-}
-
-.carousel::-webkit-scrollbar-thumb {
-    background-color: var(--grey); /* Color of scrollbar thumb */
-    border-radius: 10px;
-}
-
 .card {
     display: flex;
     flex: 0 0 auto;

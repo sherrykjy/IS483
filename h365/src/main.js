@@ -1,6 +1,8 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from "./router"
+import Chart from 'chart.js/auto';
+
 
 import { create, NTabs, NTab, NTabPane, NProgress, NSpace } from 'naive-ui'
 

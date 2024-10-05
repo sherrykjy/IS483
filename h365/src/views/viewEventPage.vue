@@ -82,7 +82,7 @@
         </div>
 
         <div class="bookNowContainer">
-            <button class="bookButton" @click="openCodePopup('Pilates')"> Book Now </button>
+            <button class="bookButton" @click="openCodePopup()"> Book Now </button>
         </div>
     </div>
 
@@ -90,7 +90,6 @@
         v-if="isPopupVisible"
         :visible="isPopupVisible"
         :type="popupType"
-        :eventName="eventName"
         @close="closePopup"
     />
 
@@ -107,7 +106,6 @@ export default ({
     data() {
         return {
             isPopupVisible: false,
-            eventName: '',
             popupType: 'event-code'
         };
     },

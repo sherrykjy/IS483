@@ -71,9 +71,7 @@
                     </div>
 
                     <div class="eventBtnIntensity">
-                        <form action="">
-                            <button class="bookEventBtn">Book Now</button>
-                        </form>
+                        <button class="bookEventBtn"> Withdraw </button>
 
                         <!-- intensity -->
                         <div class="intensity">
