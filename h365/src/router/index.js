@@ -4,7 +4,22 @@ const routes = [
     {
         path: "/",
         name: "loginPage",
-        component: () => import("@/views/loginPage.vue")
+        component: () => import("@/views/loginPage.vue"),
+        meta: { hideNavBar: true }
+    },
+
+    {
+        path: "/info",
+        name: "informationPage",
+        component: () => import("@/views/informationPage.vue"),
+        meta: { hideNavBar: true }
+    },
+
+    {
+        path: "/goal",
+        name: "goalSettingPage",
+        component: () => import("@/views/goalSettingPage.vue"),
+        meta: { hideNavBar: true }
     },
 
     {
@@ -14,9 +29,21 @@ const routes = [
     },
 
     {
-      path: "/explore",
-      name: "explorePage",
-      component: () => import("@/views/explorePage.vue")
+      path: "/events",
+      name: "eventsPage",
+      component: () => import("@/views/eventsPage.vue")
+    },
+
+    {
+      path: "/booked",
+      name: "bookedEventsPage",
+      component: () => import("@/views/bookedEventsPage.vue")
+    },
+
+    {
+      path: "/event/:eventId",
+      name: "viewEventPage",
+      component: () => import("@/views/viewEventPage.vue")
     },
 
     {
@@ -24,6 +51,30 @@ const routes = [
       name: "collectionPage",
       component: () => import("@/views/collectionPage.vue")
     },
+
+    {
+      path: "/popup",
+      name: "popup",
+      component: () => import("@/components/popUp.vue")
+    },
+
+    {
+      path: "/store",
+      name: "storePage",
+      component: () => import("@/views/storePage.vue")
+    },
+
+    {
+      path: "/trade",
+      name: "tradePage",
+      component: () => import("@/views/tradePage.vue")
+    },
+
+    // {
+    //   path: "/test",
+    //   name: "testTest",
+    //   component: () => import("@/components/testTest.vue")
+    // },
 
     {
       path: "/profile",

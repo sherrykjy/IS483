@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 # from .user import User
 # from .card import Card  
 from flask_cors import CORS, cross_origin
+from invokes import invoke_http
 
 from datetime import datetime
 
@@ -12,6 +13,8 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
 CORS(app)
+
+cardURL = "http://localhost:5003/card/"
 
 class UserCard(db.Model):
     __tablename__ = 'user_cards'
@@ -68,6 +71,38 @@ def get_user_card(user_card_id):
     if user_card:
         return jsonify(user_card.json()), 200
     return jsonify({"error": "UserCard not found"}), 404
+
+# Get all UserCards by User ID
+@app.route('/usercard/user/<int:user_id>', methods=['GET'])
+def get_user_cards_by_user(user_id):
+    try:
+        user_cards = UserCard.query.filter_by(user_id=user_id).all()
+        if user_cards:
+            count = len(user_cards)
+            all_cards_info = []
+            for card in user_cards:
+                response = invoke_http(cardURL + str(card.card_id), method='GET')
+                card_info = response["data"]
+                all_cards_info.append({
+                    "user_card_id": card.user_card_id,
+                    "user_id": card.user_id,
+                    "card_id": card.card_id,
+                    "earned_date": card.earned_date,
+                    "card_type": card_info['card_type'],
+                    "title": card_info['title'],
+                    "points_required": card_info['points_required'],
+                    "event_id": card_info['event_id'],
+                    "description": card_info['description'],
+                    "recommendation": card_info['recommendation']
+                })
+            return jsonify({
+                "code": 200, 
+                "data": {"count_redeemed": count,
+                        "cards": all_cards_info}
+            }), 200
+        return jsonify({"code": 404, "error": "No cards found for this user ID"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400
 
 # Update a UserCard by ID
 @app.route('/usercard/<int:user_card_id>', methods=['PUT'])

@@ -7,6 +7,7 @@ from os import environ
 import hashlib
 
 app = Flask(__name__)
+CORS(app)
 
 user_URL = "http://localhost:5001/user"
 

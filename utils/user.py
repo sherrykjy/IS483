@@ -148,6 +148,14 @@ def get_user(email):
         return jsonify({"code": 200, "data": user.json()}), 200
     return jsonify({"code": 404, "error": "User not found"}), 404
 
+# Get a user by ID
+@app.route('/user/id/<int:user_id>', methods=['GET'])
+def get_user_by_id(user_id):
+    user = User.query.get(user_id)
+    if user:
+        return jsonify({"code": 200, "data": user.json()}), 200
+    return jsonify({"code": 404, "error": "User not found"}), 404
+
 # Update a user by Email
 @app.route('/user/<string:email>', methods=['PUT'])
 def update_user(email):
