@@ -4,10 +4,16 @@ import router from "./router"
 import axios from 'axios';
 import store from './store';
 
-import { create, NTabs, NTab, NTabPane } from 'naive-ui'
+import { create, NTabs, NTab, NTabPane, NProgress, NSpace } from 'naive-ui'
 
 const naive = create({
-    components: [NTabs, NTab, NTabPane]
+    components: [
+        NTabs,
+        NTab,
+        NTabPane,
+        NProgress,
+        NSpace
+    ]
 })
 
 // const requireStyles = require.context('@/assets/styling', false, /\\.css$/);

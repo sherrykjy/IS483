@@ -35,6 +35,12 @@ const routes = [
     },
 
     {
+      path: "/booked",
+      name: "bookedEventsPage",
+      component: () => import("@/views/bookedEventsPage.vue")
+    },
+
+    {
       path: "/event/:eventId",
       name: "viewEventPage",
       component: () => import("@/views/viewEventPage.vue")
@@ -45,6 +51,30 @@ const routes = [
       name: "collectionPage",
       component: () => import("@/views/collectionPage.vue")
     },
+
+    {
+      path: "/popup",
+      name: "popup",
+      component: () => import("@/components/popUp.vue")
+    },
+
+    {
+      path: "/store",
+      name: "storePage",
+      component: () => import("@/views/storePage.vue")
+    },
+
+    {
+      path: "/trade",
+      name: "tradePage",
+      component: () => import("@/views/tradePage.vue")
+    },
+
+    // {
+    //   path: "/test",
+    //   name: "testTest",
+    //   component: () => import("@/components/testTest.vue")
+    // },
 
     {
       path: "/profile",
