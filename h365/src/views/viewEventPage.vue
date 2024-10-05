@@ -82,15 +82,46 @@
         </div>
 
         <div class="bookNowContainer">
-            <form action="">
-                <button class="bookButton">Book Now</button>
-            </form>
+            <button class="bookButton" @click="openCodePopup('Pilates')"> Book Now </button>
         </div>
     </div>
+
+    <Popup
+        v-if="isPopupVisible"
+        :visible="isPopupVisible"
+        :type="popupType"
+        :eventName="eventName"
+        @close="closePopup"
+    />
 
 </template>
 
 <script>
+import Popup from '@/components/popUp.vue';
+
+export default ({
+    components: {
+        Popup
+    },
+
+    data() {
+        return {
+            isPopupVisible: false,
+            eventName: '',
+            popupType: 'event-code'
+        };
+    },
+    methods: {
+        openCodePopup(eventName) {
+            this.eventName = eventName;
+            this.isPopupVisible = true;
+        },
+        closePopup() {
+            this.isPopupVisible = false;
+        }
+    }
+});
+
 </script>
 
 <style scoped>

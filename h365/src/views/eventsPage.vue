@@ -246,8 +246,6 @@
 
 </template>
 
-<script></script>
-
 <style scoped>
 
 .stickyHeader {
@@ -386,8 +384,8 @@ import { defineComponent } from "vue";
 import datePicker from '../components/datePicker.vue';
 
 export default defineComponent({
-  components: {
-    datePicker
-  }
+    components: {
+        datePicker
+    }
 });
 </script>

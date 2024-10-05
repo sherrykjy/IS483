@@ -70,11 +70,11 @@ const routes = [
       component: () => import("@/views/tradePage.vue")
     },
 
-    // {
-    //   path: "/test",
-    //   name: "testTest",
-    //   component: () => import("@/components/testTest.vue")
-    // },
+    {
+      path: "/test",
+      name: "testTest",
+      component: () => import("@/components/testTest.vue")
+    },
 
     {
       path: "/profile",
