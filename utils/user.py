@@ -5,7 +5,7 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
@@ -223,6 +223,7 @@ def partial_update_user(email):
             return jsonify({"error": str(e)}), 400
     
     return jsonify({"error": "User not found"}), 404
+
             
 # Delete a user by Email
 @app.route('/user/<string:email>', methods=['DELETE'])

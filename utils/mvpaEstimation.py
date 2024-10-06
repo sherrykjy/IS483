@@ -34,32 +34,60 @@ def estimate_mvpa():
 def processStravaInformation():
     
     # Log into Strava
-    connect_result = invoke_http(f"{strava_URL}/connect", method='GET')
+    activities = invoke_http(f"{strava_URL}/connect", method='GET')["data"]
     
-    print(connect_result)
+    print(activities)
     # Get all activities
-    activities = invoke_http(f"{strava_URL}/activities", method='GET')
-    print(2)
+    # session = connect_result
+    # activities = invoke_http(f"{strava_URL}/activities", method='GET')["data"]
+
     # Get all activities within a week
     current_week = datetime.date(datetime.now()).isocalendar()[1]
-    distance = 0
-    time = 0
+    weekly_distance = 0
+    weekly_time = 0
+    
+    to_return = {
+        "weekly_met": 0,
+        "weekly_time_lapse": 0,
+        "daily_time_lapse": 0,
+        "monthly_top_activity": ""
+    }
+    
+    activity_dict = {}
     
     for activity in activities:
-        print(activities)
-        if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").isocalendar()[1] == 39:
-            distance += activity["distance"]
-            time += activity["elapsed_time"]
+        # check if it is within current month:
+        if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").month == datetime.now().month:
+            # initalise top activity
+            if activity["sport_type"] not in activity_dict:
+                activity_dict[activity["sport_type"]] = 1
+            else: 
+                activity_dict[activity["sport_type"]] += 1
+                
+            if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").isocalendar()[1] == current_week:
+                weekly_distance += activity["distance"]
+                weekly_time += activity["elapsed_time"]
+                
+                if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ") == datetime.now().date():
+                    daily_met = ((activity["distance"]/activity["elapsed_time"])/ 0.2) + 3.5
+                    
+                    if daily_met >= 3:
+                        to_return["daily_time_lapse"] = round(activity["elapsed_time"]/60, 0)
+                        
         else:
             break
             
-    weekly_speed_in_m_per_s = distance/time
-    met = (weekly_speed_in_m_per_s / 0.2) + 3.5
+    weekly_speed_in_m_per_s = weekly_distance/weekly_time
+    to_return["weekly_met"] = (weekly_speed_in_m_per_s / 0.2) + 3.5
+    to_return["weekly_time_lapse"] = round(weekly_time/60,0)
     
-    return {
-        "code": 200,
-        "met": met
-    }
+    res = [key for key in activity_dict if all(activity_dict[temp] <= activity_dict[key] for temp in activity_dict)]
+    
+    to_return["monthly_top_activity"] = res
+    
+    print(to_return)
+    
+    return to_return
     
 if __name__ == "__main__":
     app.run(port=5009, debug=True)

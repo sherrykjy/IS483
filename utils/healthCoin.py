@@ -6,7 +6,7 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
@@ -16,13 +16,12 @@ class HealthCoins(db.Model):
     __tablename__ = 'health_coin'
     
     points_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, nullable=False)
     points_earned = db.Column(db.Integer, nullable=False)
     earned_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
     source = db.Column(db.String(64), nullable=False)
 
-    def __init__(self, points_id, user_id, points_earned, source, earned_date=None):
-        self.points_id = points_id
+    def __init__(self, user_id, points_earned, source, earned_date=None):
         self.user_id = user_id
         self.points_earned = points_earned
         self.earned_date = datetime.now()
@@ -44,12 +43,13 @@ def create_health_coins():
     new_health_coins = HealthCoins(
         user_id=data.get('user_id'),
         points_earned=data.get('points_earned'),
+        earned_date=data.get('earned_date'),
         source=data.get('source')
     )
     try:
         db.session.add(new_health_coins)
         db.session.commit()
-        return jsonify(new_health_coins.json()), 201
+        return jsonify({"data": new_health_coins.json()}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400

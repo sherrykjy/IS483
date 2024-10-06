@@ -61,27 +61,28 @@ def callback():
     
     # In this case, we'll store user tokens in a dictionary using session to track the user
     user_id = token_data['athlete']['id']
-    users[user_id] = {
+    session['user_id'] = user_id  # Store just the user_id
+    session['token_info'] = {  # Store token info in a separate dictionary
         'access_token': access_token,
         'refresh_token': refresh_token,
-        'expires_at': expires_at,
+        'expires_at': expires_at
     }
 
-    session['user_id'] = user_id
-
-    return jsonify(users)
+    print(session)
+    return redirect(url_for('get_activities'))
 
 # Step 3: Fetch user activities from Strava
 @app.route('/activities', methods=['GET'])
 def get_activities():
-
+    
     user_id = session.get('user_id')
+    token_info = session.get('token_info')
 
-    if not user_id or user_id not in users:
-        return jsonify({'error': 'User not authenticated or access token missing'}), 403
+    # if not user_id or user_id not in users:
+    #     return jsonify({'error': 'User not authenticated or access token missing'}), 403
 
     # Check if the access token is expired, and refresh if necessary
-    token_info = users[user_id]
+    print(session)
     if token_info['expires_at'] < time.time():
         token_info = refresh_access_token(user_id)
 
@@ -93,7 +94,7 @@ def get_activities():
     if response.status_code != 200:
         return jsonify({'error': 'Failed to fetch activities'}), response.status_code
 
-    return jsonify(response.json())
+    return jsonify({"data": response.json()})
 
 # Helper function to refresh the access token
 def refresh_access_token(user_id):

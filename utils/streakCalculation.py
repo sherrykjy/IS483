@@ -13,6 +13,8 @@ CORS(app)
 goal_URL = "http://localhost:5008/goal"
 streak_URL = "http://localhost:5010/streak"
 mvp_URL = "http://localhost:5020/estimate_mvpa"
+coin_URL = "http://localhost:5004/healthcoins"
+user_URL = "http://localhost:5001/user"
 
 @app.route('/update_streak', methods=['GET'])
 def update_streak_if_mvpa():
@@ -53,12 +55,13 @@ def processStreakInformation(streak_information):
     # Get Streak 
     
     estimated_met = met_result["met"]
-    streak_json = {}
     streak_result = invoke_http(f"{streak_URL}/{user_id}")
+    coinEarned = 0
+    streak_json = {}
+    
     if streak_result["week_current"] + 1 == datetime.date(datetime.now()).isocalendar()[1]:
         if (estimated_met >= 3) and (goal_result["target"]):
             streak_count = streak_result["streak_count"] + 1
-            print(streak_count)
             streak_json = {
                 "streak_id": streak_result["streak_id"],
                 "goal_id": streak_result["goal_id"],
@@ -66,6 +69,18 @@ def processStreakInformation(streak_information):
                 "week_current": datetime.date(datetime.now()).isocalendar()[1],
                 "streak_count": streak_count
                 }
+            coinEarned = 10 + streak_count * 5
+            
+    elif streak_result["week_current"] == datetime.date(datetime.now()).isocalendar()[1]:
+            streak_json = {
+                "streak_id": streak_result["streak_id"],
+                "goal_id": streak_result["goal_id"],
+                "week_started": streak_result["week_started"],
+                "week_current": streak_result["week_current"],
+                "streak_count": streak_result["streak_count"]
+                }
+            coinEarned = 0
+            
     else:
         streak_json = {
             "streak_id": streak_result["streak_id"],
@@ -74,11 +89,33 @@ def processStreakInformation(streak_information):
             "week_current": datetime.date(datetime.now()).isocalendar()[1],
             "streak_count": 1
             }
-        print(streak_json)
-    
-    print(streak_json)
+        
+        coinEarned = 10
+
     streak_update_result = invoke_http(f"{streak_URL}/{streak_id}", method='PUT', json=streak_json)
+
+    # create a new coin transaction
+    coin_json = {
+        "user_id": user_id,
+        "points_earned": coinEarned,
+        "earned_date": datetime.now().isoformat(),
+        "source": "streak"
+    }
+    coin_result = invoke_http(f"{coin_URL}", method='POST', json=coin_json)
+    print(coin_result)
     
+    user_result = invoke_http(f"{user_URL}/id/{user_id}", method='GET')
+    user_email = user_result["data"]["email"]
+    user_total_coin = user_result["data"]["total_point"]
+    
+    print(user_total_coin + coinEarned)
+    # update user's coins
+    user_json = {
+        "total_point": user_total_coin + coinEarned
+    }
+    
+    user_result = invoke_http(f"{user_URL}/{user_email}", method='PATCH', json=user_json)
+
     return {"code": streak_update_result}
 
 if __name__ == '__main__':
