@@ -1,0 +1,10 @@
+import pickle
+
+# Your raw Redis session data (replace this with the actual binary string you get from Redis)
+session_data = b'\x84\xa7user_id\xce\x06\xec\xc9J\xacaccess_token\xd9(3cb44fd194fd2860c6982a02e87b8d81672c8ab1\xadrefresh_token\xd9(7d11be572c3ef91b96f831cd389632453cbb244c\xaaexpires_at\xceg\x01\xb3u'
+
+# Decode the binary Pickle data
+decoded_data = pickle.loads(session_data)
+
+# Print the decoded session data
+print(decoded_data)
