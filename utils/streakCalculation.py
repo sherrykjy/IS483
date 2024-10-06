@@ -14,7 +14,7 @@ goal_URL = "http://localhost:5008/goal"
 streak_URL = "http://localhost:5010/streak"
 mvp_URL = "http://localhost:5020/estimate_mvpa"
 
-@app.route('/update_streak/<int:user_id>/<int:goal_id>', methods=['GET'])
+@app.route('/update_streak', methods=['GET'])
 def update_streak_if_mvpa():
     if request.is_json:
         try:
@@ -44,34 +44,43 @@ def processStreakInformation(streak_information):
     goal_result = invoke_http(f"{goal_URL}/{user_id}", method='GET')
     
     # Get Estimated MET
-    met_result = invoke_http(f"{mvp_URL}")
+    # met_result = invoke_http(f"{mvp_URL}")
+    
+    met_result =  {
+        "code": 200,
+        "met": 19
+    }
     # Get Streak 
     
     estimated_met = met_result["met"]
-    streak_json= None
-    
-    if (estimated_met >= 3) and (goal_result["target"]):
-        streak_result = invoke_http(f"{streak_URL}/{user_id}")
-        
-        if streak_result["week_current"] + 1 == datetime.date(datetime.now()).isocalendar()[1]:
+    streak_json = {}
+    streak_result = invoke_http(f"{streak_URL}/{user_id}")
+    if streak_result["week_current"] + 1 == datetime.date(datetime.now()).isocalendar()[1]:
+        if (estimated_met >= 3) and (goal_result["target"]):
+            streak_count = streak_result["streak_count"] + 1
+            print(streak_count)
             streak_json = {
-                "streak_id": streak_result.streak_id,
-                "goal_id": streak_result.goal_id,
-                "week_started": streak_result.week_started,
+                "streak_id": streak_result["streak_id"],
+                "goal_id": streak_result["goal_id"],
+                "week_started": streak_result["week_started"],
                 "week_current": datetime.date(datetime.now()).isocalendar()[1],
-                "streak_count": streak_result.streak_count + 1
+                "streak_count": streak_count
                 }
     else:
         streak_json = {
-            "streak_id": streak_result.streak_id,
-            "goal_id": streak_result.goal_id,
+            "streak_id": streak_result["streak_id"],
+            "goal_id": streak_result["goal_id"],
             "week_started": datetime.date(datetime.now()).isocalendar()[1],
             "week_current": datetime.date(datetime.now()).isocalendar()[1],
             "streak_count": 1
             }
-        
+        print(streak_json)
+    
+    print(streak_json)
     streak_update_result = invoke_http(f"{streak_URL}/{streak_id}", method='PUT', json=streak_json)
     
-    return streak_update_result
-            
+    return {"code": streak_update_result}
+
+if __name__ == '__main__':
+    app.run(port=5030, debug=True)
         

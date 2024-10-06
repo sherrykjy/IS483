@@ -1,6 +1,6 @@
 <!-- CODE ON HOW TO CALL ALL 3 POP UPS -->
 
-<template>
+<!-- <template>
     <div class="stickyHeader">
         <div class="pageHeader">
             <p> My Collectibles </p>
@@ -48,7 +48,7 @@
                 <img src="../assets/icons/collection/fruit_basket/selena_strawberry.png">
                 <p class="cardName"> Selena </p>
                 <p class="cardSet"> Fruit Basket </p>
-            </div>
+            </div> -->
 
             <!-- <div class="card" @click="openTradePopup('Williams', 'Selena', 'Alice Tan')">
                 <img src="../assets/icons/collection/fruit_basket/gracia_grape.png">
@@ -74,10 +74,10 @@
                 <p class="cardSet"> Wellness Wonders </p>
             </div> -->
 
-        </div>
+        <!-- </div> -->
         
         <!-- info pop up -->
-        <Popup
+        <!-- <Popup
             ref="popup"
             :visible="isPopupVisible"
             :type="popupType"
@@ -91,7 +91,7 @@
             :cardDescription="selectedCardDescription"
             @close="closePopup"
             @confirm="handleConfirm"
-        />
+        /> -->
 
         <!-- unlock pop up -->
         <!-- <Popup
@@ -114,11 +114,11 @@
             @close="closePopup"
         /> -->
 
-    </div>
+    <!-- </div>
     
-</template>
+</template> -->
 
-<script>
+<!-- <script>
 import Popup from '@/components/popUp.vue';
 
 // info pop up
@@ -157,10 +157,10 @@ export default {
       this.isPopupVisible = false;
     }
   }
-};
+}; -->
 
 
-// unlock pop up
+<!-- // unlock pop up
 // export default {
 //     components: {
 //         Popup
@@ -213,7 +213,7 @@ export default {
 //     }
 //   }
 // };
-</script>
+// </script> -->
 
 
 
@@ -226,7 +226,7 @@ export default {
 
 <!-- POP-UPS GOOD CODE -->
 
-<!-- <template>
+<template>
     <div class="card">
         <div class="container">
             <p class="head">
@@ -296,6 +296,29 @@ export default {
             <div class="coolButton">
                 <button style="background-color: var(--blue);"> Cool! </button>
             </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="container">
+            <div class="close-button" @click="closePopup">
+                <i class="uil uil-times"></i>
+            </div>
+
+            <div class="head" style="margin-bottom: 7px">
+                <p> Event Entry Code </p>
+            </div>
+
+            <p class="code"> This event requires a special entry code. Check with your admin 
+                to get your access code and join the fun! </p>
+
+            <label for="eventCode" class="formLabel code" style="margin-bottom: 0px;"> Please enter code </label><br>
+            <input type="text" id="eventCode" class="formInput"><br><br>
+
+            <button class="formButton" style="color: var(--default-white); 
+                background: var(--blue); width: 100%;">
+                Enter
+            </button>
         </div>
     </div>
 </template>
@@ -396,4 +419,26 @@ button {
     display: flex;
     justify-content: center;
 }
-</style> -->
+
+
+
+
+.code {
+    font-family: text-medium;
+    font-style: italic;
+    font-size: 11px;
+    color: var(--text-highlight);
+    text-align: justify;
+    margin-bottom: 10px;
+}
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    cursor: pointer;
+    font-size: 1.5em;
+    color: var(--text-highlight);
+}
+
+</style>
