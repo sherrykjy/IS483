@@ -137,7 +137,7 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import text 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
@@ -152,8 +152,7 @@ class strava_users(db.Model):
     refresh_token = db.Column(db.String(200), nullable=False)
     expires_at = db.Column(db.Integer, nullable=False)
 
-    def __init__(self, id, strava_id, access_token, refresh_token, expires_at):
-        self.id = id
+    def __init__(self, strava_id, access_token, refresh_token, expires_at):
         self.strava_id = strava_id
         self.access_token = access_token
         self.refresh_token = refresh_token
@@ -168,6 +167,8 @@ class strava_users(db.Model):
             "expires_at": self.expires_at
         }
         
+app.secret_key = os.getenv('FLASK_SECRET_KEY', 'default_secret_key')
+
 # Get credentials from environment variables
 CLIENT_ID = "136238"
 CLIENT_SECRET = "763de85e0d51a7f9d8f518947e85181084d772c9"
@@ -217,6 +218,7 @@ def callback():
         user.access_token = token_data['access_token']
         user.refresh_token = token_data['refresh_token']
         user.expires_at = token_data['expires_at']
+        db.session.commit()
     else:
         # Create a new user
         user = strava_users(
@@ -226,8 +228,9 @@ def callback():
             expires_at=token_data['expires_at']
         )
         db.session.add(user)
+        db.session.commit()
 
-    db.session.commit()
+    # db.session.commit()
 
     session['user_id'] = user_id
 
@@ -236,13 +239,15 @@ def callback():
 # Step 3: Fetch user activities from Strava
 @app.route('/activities', methods=['GET'])
 def get_activities():
-    user_id = session.get('user_id')
-    token_info = session.get('token_info')
+    # user_id = session.get('user_id')
+    # token_info = session.get('token_info')
 
-    if not user_id:
-        return jsonify({'error': 'User not authenticated'}), 403
+    # if not user_id:
+    #     return jsonify({'error': 'User not authenticated'}), 403
 
-    user = strava_users.query.filter_by(strava_id=user_id).first()
+    user = strava_users.query.first()
+
+    print(user)
 
     if not user:
         return jsonify({'error': 'User not found'}), 404

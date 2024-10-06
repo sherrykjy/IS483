@@ -34,12 +34,10 @@ def estimate_mvpa():
 def processStravaInformation():
     
     # Log into Strava
-    activities = invoke_http(f"{strava_URL}/connect", method='GET')["data"]
+    connect_result = invoke_http(f"{strava_URL}/connect", method='GET')
     
-    print(activities)
-    # Get all activities
-    # session = connect_result
-    # activities = invoke_http(f"{strava_URL}/activities", method='GET')["data"]
+
+    activities = invoke_http(f"{strava_URL}/activities", method='GET')["data"]
 
     # Get all activities within a week
     current_week = datetime.date(datetime.now()).isocalendar()[1]
