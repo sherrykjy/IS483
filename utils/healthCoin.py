@@ -6,7 +6,7 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/healthpal'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
@@ -21,7 +21,8 @@ class HealthCoins(db.Model):
     earned_date = db.Column(db.DateTime, nullable=False, default=datetime.now())
     source = db.Column(db.String(64), nullable=False)
 
-    def __init__(self, user_id, points_earned, source, earned_date=None):
+    def __init__(self, points_id, user_id, points_earned, source, earned_date=None):
+        self.points_id = points_id
         self.user_id = user_id
         self.points_earned = points_earned
         self.earned_date = datetime.now()
@@ -36,11 +37,30 @@ class HealthCoins(db.Model):
             "source": self.source
         }
 
+# Get the next points_id
+def get_next_points_id():
+    try:
+        # Get the maximum points_id from the table
+        max_points_id = db.session.query(db.func.max(HealthCoins.points_id)).scalar()
+        # If there are no UserCards yet, start with points_id 1
+        if max_points_id is None:
+            return 1
+        return max_points_id + 1
+    except Exception as e:
+        print(f"Error getting next points_id: {str(e)}")
+        return None
+    
 # Create a new HealthCoins entry
 @app.route('/healthcoins', methods=['POST'])
 def create_health_coins():
     data = request.json
+    next_points_id = get_next_points_id()
+
+    if next_points_id is None:
+        return jsonify({"error": "Unable to generate points_id"}), 400
+
     new_health_coins = HealthCoins(
+        points_id=next_points_id,
         user_id=data.get('user_id'),
         points_earned=data.get('points_earned'),
         earned_date=data.get('earned_date'),
@@ -49,7 +69,7 @@ def create_health_coins():
     try:
         db.session.add(new_health_coins)
         db.session.commit()
-        return jsonify({"data": new_health_coins.json()}), 201
+        return jsonify({"code": 201, "data": new_health_coins.json()}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400

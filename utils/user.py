@@ -5,7 +5,7 @@ from flask_cors import CORS, cross_origin
 from datetime import datetime
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/healthpal'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 
 db = SQLAlchemy(app)
@@ -224,6 +224,57 @@ def partial_update_user(email):
     
     return jsonify({"error": "User not found"}), 404
 
+# Update partial fields of user by user ID
+@app.route('/user/id/<int:user_id>', methods=['PATCH'])
+def partial_update_user_by_id(user_id):
+    user = User.query.get(user_id)
+    if user:
+        data = request.json
+
+        # Update fields only if they are provided in the request
+        if 'name' in data:
+            user.name = data['name']
+        if 'birthdate' in data:
+            user.birthdate = datetime.strptime(data['birthdate'], '%Y-%m-%d')
+        if 'gender' in data:
+            user.gender = data['gender']
+        if 'height' in data:
+            user.height = data['height']
+        if 'weight' in data:
+            user.weight = data['weight']
+        if 'contact_details' in data:
+            user.contact_details = data['contact_details']
+        if 'nationality' in data:
+            user.nationality = data['nationality']
+        if 'location_group' in data:
+            user.location_group = data['location_group']
+        if 'school' in data:
+            user.school = data['school']
+        if 'password' in data:
+            user.password = data['password']
+        if 'role' in data:
+            user.role = data['role']
+        if 'last_login' in data:
+            user.last_login = data['last_login']
+        if 'total_point' in data:
+            user.total_point = data['total_point']
+        if 'health_tier' in data:
+            user.health_tier = data['health_tier']
+        if 'target_minutes' in data:
+            user.target_minutes = data['target_minutes']
+        if 'preferred_intensity' in data:
+            user.preferred_intensity = data['preferred_intensity']
+        if 'goal_date' in data:
+            user.goal_date = datetime.strptime(data['goal_date'], '%Y-%m-%d')
+        
+        try:
+            db.session.commit()
+            return jsonify({"code": 200, "data": user.json()}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    
+    return jsonify({"error": "User not found"}), 404
             
 # Delete a user by Email
 @app.route('/user/<string:email>', methods=['DELETE'])
