@@ -81,7 +81,7 @@
         </div>
 
         <div class="bookNowContainer">
-            <button class="bookButton" @click="openCodePopup('Pilates')"> Book Now </button>
+            <button class="bookButton" @click="openCodePopup"> Book Now </button>
         </div>
     </div>
 
@@ -90,7 +90,9 @@
         :visible="isPopupVisible"
         :type="popupType"
         :eventName="eventName"
+        :errorMessage="errorMessage"
         @close="closePopup"
+        @validate-code="validateCode"
     />
 
 </template>
@@ -132,7 +134,9 @@ export default {
             entryCode: "",
             isPopupVisible: false,
             eventName: '',
-            popupType: 'event-code'
+            popupType: 'event-code',
+            userEntryCode: "",
+            errorMessage: '' 
         }
     },
     async mounted() {
@@ -197,24 +201,49 @@ export default {
                 const response = await this.$http.post("http://127.0.0.1:5007/userevent/enrol", {
                     user_id: this.userId,
                     event_id: this.eventId,
-                    entry_code: "DRAMA2024" // TO DO: should be this.entry_code once popup has been added ; tested with event id 22
+                    entry_code: this.entryCode
                 })
                 console.log(response);
                 console.log("Join event successful");
 
-                // this.$router.push('/booked'); // TO DO: uncomment once merged bookedEvents page
+                this.$router.push('/booked');
             }
             catch (error) {
                 console.log("Join Event:", error);
+                var responseError = error.response.data.error;
+                console.log(responseError);
+                if (responseError == "User is already registered for this event") {
+                    this.errorMessage = "User is already registered for this event.";
+                    alert("User is already registered for this event.")
+                }
+                else {
+                    this.errorMessage = "Failed to join the event. Please try again.";
+                }   
             }
         },
-        openCodePopup(eventName) {
-            this.eventName = eventName;
-            this.isPopupVisible = true;
+        openCodePopup() {
+            if (this.entryCode != "Null") {
+                this.isPopupVisible = true;
+            }
+            else {
+                // calling joinEvent method for event with no entry code
+                this.joinEvent();
+            }
         },
         closePopup() {
             this.isPopupVisible = false;
-        }
+            this.errorMessage = ''; 
+        },
+        validateCode(userEntryCode) {
+            // Compare the user input with the event's entry code
+            if (userEntryCode === this.entryCode) {
+                console.log("Correct entry code entered");
+                this.joinEvent(); // Call the joinEvent method if the code is correct
+            } else {
+                console.log("Invalid entry code");
+                this.errorMessage = "Invalid event code. Please try again.";
+            }
+        },
     }
 }
 </script>
