@@ -162,6 +162,7 @@ def delete_user_card(user_card_id):
 def buy_new_card():
     try:
         data = request.json
+        print(data)
         user_id = data.get('user_id')
         card_id = data.get('card_id')
 
@@ -198,6 +199,7 @@ def buy_new_card():
 
         try:
             db.session.add(new_user_card)
+            print("user card added")
 
             # (5) Deduct the points from user's total points
             deductionResponse = invoke_http(userURL + "id/" + str(user_id), method='PATCH', json={"total_point": user_points - card_points})
@@ -207,8 +209,8 @@ def buy_new_card():
                 raise Exception("Error deducting points from user's total points")
 
             # (6) Add record in healthcoins db
-            healthCoinResponse = invoke_http(healthCoinURL, method='POST', json={"user_id": user_id, "points_earned": -card_points, "earned_date": datetime.now(), "source": "Card Purchase"})
-            # print(healthCoinResponse)
+            healthCoinResponse = invoke_http(healthCoinURL, method='POST', json={"user_id": user_id, "points_earned": -card_points, "earned_date": str(datetime.now()), "source": "Card Purchase"})
+            print(healthCoinResponse)
             if healthCoinResponse["code"] != 201:
                 # db.session.rollback() # rollback addition of card and points deduction
                 # return jsonify({"code": 400, "error": "Error adding record in healthcoins db"}), 400

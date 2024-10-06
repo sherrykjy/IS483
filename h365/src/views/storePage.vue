@@ -7,7 +7,7 @@
         <div class="displayBlock">
             <div class="blockLeft">
                 <div class="blockText">
-                    <p style="margin-right: 5px"> 1080 </p>
+                    <p style="margin-right: 5px"> {{ numHealthCoins }} </p>
                     <span> <img src="../assets/icons/collection/coin.png"> </span>
                 </div>
                 <p> My Healthcoins </p>
@@ -16,7 +16,7 @@
             <div class="blockRight">
                 <div class="blockText">
                     <img src="../assets/icons/collection/lock.png" style="margin-right: 5px;">
-                    <p> <span> 2 </span> / 108 </p>
+                    <p> <span> {{ numUnlocked }} </span> / {{ numCards }} </p>
                 </div>
                 <p> Collectibles Unlocked </p>
             </div>
@@ -45,112 +45,42 @@
             </router-link>
         </div>
 
-        <div class="set">
-            <p> Fruit Basket </p>
-            <div class="carousel">
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
-                    </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
-                </div>
+        <div v-for="(cards, cardType) in allCards" :key="cardType" class="set">
+            <div class="set">
+                <p> {{ cardType }} </p>
+                <div class="carousel">
+                    <div v-for="card in cards" :key="card.card_id">
+                        <div class="card">
+                            <p class="cardName"> {{ card.title }} </p>
 
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
-                    </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
-                </div>
+                            <img v-if="card.title == 'Oliver'" src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                            <img v-else-if="card.title == 'Selena'" src="../assets/icons/collection/fruit_basket/selena_strawberry.png">
+                            <img v-else-if="card.title == 'Benny'" src="../assets/icons/collection/fruit_basket/benny_banana.png">
+                            <img v-else-if="card.title == 'Gracia'" src="../assets/icons/collection/fruit_basket/gracia_grape.png">
+                            <img v-else-if="card.title == 'Penny'" src="../assets/icons/collection/fruit_basket/penny_pineapply.png">
 
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
-                    </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
-                </div>
+                            <img v-else-if="card.title == 'LeBron'" src="../assets/icons/collection/weekend_action/lebron.png">
+                            <img v-else-if="card.title == 'Williams'" src="../assets/icons/collection/weekend_action/williams.png">
+                            <img v-else-if="card.title == 'Weber'" src="../assets/icons/collection/weekend_action/weber.png">
+                            <img v-else-if="card.title == 'Valdez'" src="../assets/icons/collection/weekend_action/valdez.png">
+                            <img v-else-if="card.title == 'Dele'" src="../assets/icons/collection/weekend_action/dele.png">
 
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
-                    </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
-                </div>
+                            <div class="price">
+                                <img src="../assets/icons/collection/coin.png">
+                                <p> {{ card.points_required }} </p>
+                            </div>
 
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
-                    </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
-                </div>
-            </div>
-        </div>
+                            <button 
+                                v-if="userCards.includes(card.card_id)"
+                                class="viewCardBtn" @click="openInfoPopup(card.card_id, card.description, card.recommendation)"> View 
+                            </button>
 
-        <div class="set">
-            <p> Fruit Basket </p>
-            <div class="carousel">
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
+                            <button 
+                                v-else
+                                class="bookEventBtn" @click="openUnlockPopup(card.title, card.points_required, card.card_id)"> Unlock 
+                            </button>
+                        </div>
                     </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
-                </div>
-
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
-                    </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
-                </div>
-
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
-                    </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
-                </div>
-
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
-                    </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
-                </div>
-
-                <div class="card">
-                    <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                    <div class="price">
-                        <img src="../assets/icons/collection/coin.png">
-                        <p> 200 </p>
-                    </div>
-                    <button class="bookEventBtn" @click="openUnlockPopup('Oliver', '200')"> Unlock </button>
                 </div>
             </div>
         </div>
@@ -163,13 +93,20 @@
         :type="popupType"
         :cardName="cardName"
         :cardPrice="cardPrice"
+        :cardId="cardId"
+        :errorMessage="errorMessage"
+        :cardDescription="cardDesc"
+        :cardRecommendation="cardRec"
         @close="closePopup"
+        @unlock-card="unlockCard"
     />
 
 </template>
 
 <script>
 import Popup from '@/components/popUp.vue';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
     components: {
@@ -179,19 +116,139 @@ export default {
         return {
             isPopupVisible: false,  // Controls popup visibility
             cardName: 'Strawberry Card',  // Example data
-            cardPrice: '100',  // Example price
-            popupType: ''
+            cardPrice: 100,  // Example price
+            cardId: '',
+            cardDesc: '',
+            cardRec: '',
+            popupType: '',
+            numHealthCoins: 0,
+            numUnlocked: 0,
+            numCards: 0,
+            allCards: {},
+            userCards: [],
+            errorMessage: ''
         };
     },
     methods: {
-        openUnlockPopup(cardName, cardPrice) {
+        openUnlockPopup(cardName, cardPrice, cardId) {
             this.cardName = cardName;
             this.cardPrice = cardPrice;
+            this.cardId = cardId;
             this.popupType = 'unlock';
             this.isPopupVisible = true;
         },
         closePopup() {
             this.isPopupVisible = false;
+            this.errorMessage = ''; 
+        },
+        openInfoPopup(cardId, cardDesc, cardRec) {
+            this.cardId = cardId;
+            this.cardDesc = cardDesc;
+            this.cardRec = cardRec;
+            this.popupType = 'info';
+            this.isPopupVisible = true;
+        },
+        async unlockCard(cardId) {
+            console.log("unlocking card with ID:", cardId);
+
+            try {
+                const response = await this.$http.post("http://127.0.0.1:5006/usercard/buy", {
+                    user_id: this.userId,
+                    card_id: cardId
+                })
+                console.log(response);
+                console.log("unlock card successful");
+
+                // refresh user cards and points
+                await this.fetchUserData();
+                await this.fetchUserCards();
+
+                this.isPopupVisible = false;
+            }
+            catch (error) {
+                console.log("Unlock Card:", error);
+                let responseError = error.response.data.error;
+                console.log(responseError);
+                if (responseError == "Insufficient HealthCoins to buy this card") {
+                    this.errorMessage = "Insufficient HealthCoins to buy this card";
+                }
+                else {
+                    this.errorMessage = "Failed to join the event. Please try again.";
+                }  
+            }
+        },
+        // Fetch user data
+        async fetchUserData() {
+            try {
+                const userReponse = await this.$http.get("http://127.0.0.1:5001/user/" + this.userEmail);
+                const userData = userReponse.data.data;
+                this.numHealthCoins = userData["total_point"];
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        },
+        // Fetch user cards
+        async fetchUserCards() {
+            try {
+                const userCardResponse = await this.$http.get("http://127.0.0.1:5006/usercard/user/" + this.userId);
+                const userCardData = userCardResponse.data.data;
+                
+                this.userCards = userCardData["cards"].map(card => card["card_id"]);
+                this.numUnlocked = userCardData["count_redeemed"];
+            } catch (error) {
+                console.error("Error fetching user cards:", error);
+            }
+        }
+    },
+    setup() {
+        console.log("store page");
+        const store = useStore(); // Import useStore from vuex
+        const userId = computed(() => store.state.userId); // Access userId from the store
+        const userEmail = computed(() => store.state.userEmail) // Access userEmail from the store
+        
+        console.log(userEmail.value);
+        
+        return {
+            userId,
+            userEmail
+        };
+    },
+    async mounted() {
+        try {
+            // user data
+            const userReponse = await this.$http.get("http://127.0.0.1:5001/user/" + this.userEmail);
+            const userData = userReponse.data.data;
+            this.numHealthCoins = userData["total_point"];
+
+            const cardReponse = await this.$http.get("http://127.0.0.1:5003/cards");
+            const cardData = cardReponse.data;
+            for (let i = 0; i < cardData.length; i++) {
+                let card_type = cardData[i]["card_type"];
+                if (!this.allCards[card_type]) {
+                    this.allCards[card_type] = [];
+                }
+                this.allCards[card_type].push(cardData[i]);
+            }
+            this.numCards = cardData.length;
+            console.log("cards", this.allCards);
+
+            const userCardResponse = await this.$http.get("http://127.0.0.1:5006/usercard/user/" + this.userId);
+            const userCardData = userCardResponse.data.data;
+            // console.log(userCardData);
+            for (let i = 0; i < userCardData["cards"].length; i++) {
+                let card_id = userCardData["cards"][i]["card_id"]
+                if (!this.userCards.includes(card_id)) {
+                    this.userCards.push(card_id);
+                }
+            }
+            this.numUnlocked = userCardData["count_redeemed"];  
+            console.log("user's cards", this.userCards);       
+        }
+        catch (error) {
+            console.log("error:", error);
+
+            this.numUnlocked = 0;
+            
         }
     }
 };
@@ -388,6 +445,18 @@ button label {
     color: var(--grey);
     font-size: 10px;
     background-color: var(--green);
+    border-radius: 5px;
+    border: none;
+    padding: 5px 10px;
+    width: 85px;
+    text-align: center;
+}
+
+.card .viewCardBtn {
+    font-family: text-medium;
+    color: var(--grey);
+    font-size: 10px;
+    background-color: var(--blue);
     border-radius: 5px;
     border: none;
     padding: 5px 10px;

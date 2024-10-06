@@ -17,9 +17,12 @@
                 HealthCoins 
             </p>
 
+            <!-- Display error message -->
+            <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
             <div class="buttonBlock">
                 <button style="background-color: var(--text-highlight);" @click="closePopup"> Cancel </button>
-                <button style="background-color: var(--blue);" @click="confirmAction"> Confirm </button>
+                <button style="background-color: var(--blue);" @click="confirmUnlock"> Confirm </button>
             </div>
         </div>
   
@@ -52,8 +55,7 @@
             </div>
 
             <p class="cbody">
-                Strawberries aren’t true berries by botanical definition. 
-                They are part of the rose family!
+                {{ cardDescription }}
             </p>
 
             <div class="head">
@@ -62,9 +64,7 @@
             </div>
 
             <p class="cbody">
-                The daily fruit intake recommendation is 1.5-2 cups of fruit 
-                per day. Munch on 12-16 strawberries as part of your healthy 
-                diet with this rich source of vitamin C, fibre, and antioxidants.
+               {{ cardRecommendation }}
             </p>
 
             <div class="coolButton">
@@ -120,6 +120,10 @@ props: {
         type: String,
         default: ''
     },
+    cardId: {
+        type: [String, Number],
+        default: ''
+    },
     cardPrice: {
         type: Number, // Used for unlock popup
         default: 0
@@ -148,6 +152,10 @@ props: {
         type: String, // Used for info popup
         default: ''
     },
+    cardRecommendation: {
+        type: String, 
+        default: ''
+    },
     eventName: {
         type: String,
         default: ''
@@ -171,6 +179,9 @@ methods: {
     submitEventCode() {
         // Emit the event code input by the user to the parent
         this.$emit('validate-code', this.userEntryCode);
+    },
+    confirmUnlock() {
+        this.$emit('unlock-card', this.cardId);
     }
 }
 }
