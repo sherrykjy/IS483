@@ -168,7 +168,7 @@ CREATE TABLE strava_users (
     strava_id VARCHAR(50) UNIQUE,  
     access_token VARCHAR(200) NOT NULL,  
     refresh_token VARCHAR(200) NOT NULL, 
-    expires_at INT NOT NULL   
-    PRIMARY KEY (streak_id)
+    expires_at INT NOT NULL,   
+    PRIMARY KEY (id)
 );
 
