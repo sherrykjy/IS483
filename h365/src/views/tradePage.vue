@@ -28,7 +28,7 @@
                         <p class="head"> Trade Request </p>
                         <p class="body"> {{ trade.name }} </p>
                     </div>
-                    <div class="acceptBtn" @click="openTradePopup(trade.card_one_title, trade.card_two_title, trade.name)">
+                    <div class="acceptBtn" @click="openTradePopup(trade.card_one_title, trade.card_two_title, trade.name, trade.trade_id)">
                         <p> Accept </p>
                         <i class="uil uil-thumbs-up"></i>
                     </div>
@@ -63,7 +63,9 @@
             :tradeCardName="tradeCardName"
             :receiveCardName="receiveCardName"
             :tradeWith="tradeWith"
+            :tradeId="selectedTradeId"
             @close="closePopup"
+            @confirm="acceptTrade"
         />
 
     </div>
@@ -75,9 +77,10 @@
 </template>
 
 <script>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useRouter } from 'vue-router';
 import Popup from '@/components/popUp.vue';
+import { useStore } from 'vuex';
 
 export default {
     components: {
@@ -87,6 +90,9 @@ export default {
         console.log("all trades page");
         const selectedTab = ref('allTrades');
         const router = useRouter();
+        const store = useStore(); // Import useStore from vuex
+        const userId = computed(() => store.state.userId); // Access userId from the store
+        const userEmail = computed(() => store.state.userEmail) // Access userEmail from the store
 
         watch(selectedTab, (newTab) => {
             if (newTab === 'allTrades') {
@@ -97,7 +103,9 @@ export default {
         });
 
         return {
-            selectedTab
+            selectedTab,
+            userId,
+            userEmail
         };
     },
     data() {
@@ -106,6 +114,7 @@ export default {
             tradeCardName: 'Card A',  // Example data
             receiveCardName: 'Card B',  // Example data
             tradeWith: 'User123',  // Example data
+            selectedTradeId: '',
             trades: [],
             searchInput: '',
             searchResults: []
@@ -118,10 +127,11 @@ export default {
             this.popupType = 'info';
             this.isPopupVisible = true;
         },
-        openTradePopup(tradeCardName, receiveCardName, tradeWith) {
+        openTradePopup(tradeCardName, receiveCardName, tradeWith, tradeId) {
             this.tradeCardName = tradeCardName;
             this.receiveCardName = receiveCardName;
             this.tradeWith = tradeWith;
+            this.selectedTradeId = tradeId;
             this.popupType = 'trade';
             this.isPopupVisible = true;
         },
@@ -169,6 +179,48 @@ export default {
             } catch (error) {
                 console.log("Error in searching for trades:" + error);
             }
+        },
+        async acceptTrade(tradeId) {
+            console.log("trade id accepted:", tradeId);
+            try {
+                const tradeResponse = await this.$http.get("http://127.0.0.1:5013/trade/" + tradeId);
+                // console.log(tradeResponse);
+                const tradeData = tradeResponse.data;
+                console.log(tradeData);
+
+                const userOneResponse = await this.$http.get("http://127.0.0.1:5006/usercard/user/" + tradeData.user_id);
+                const userOneCards = userOneResponse.data.data.cards;
+                console.log(userOneCards);
+                const userOneTargetCard = userOneCards.find(card => card.card_id == tradeData.card_one_id);
+                const user_card_id_one = userOneTargetCard.user_card_id;
+
+                const userTwoResponse = await this.$http.get("http://127.0.0.1:5006/usercard/user/" + this.userId);
+                const userTwoCards = userTwoResponse.data.data.cards;
+                const userTwoTargetCard = userTwoCards.find(card => card.card_id == tradeData.card_two_id);
+                const user_card_id_two = userTwoTargetCard.user_card_id;
+
+                // console.log(user_card_id_one);
+                // console.log(user_card_id_two);
+
+                const processTradeResponse = await this.$http.post("http://127.0.0.1:5015/trade_card", {
+                    trade_id: tradeId,
+                    user_card_id_one: user_card_id_one,
+                    user_id_one: tradeData.user_id,
+                    card_id_one: tradeData.card_one_id,
+                    user_card_id_two: user_card_id_two,
+                    user_id_two: this.userId,
+                    card_id_two: tradeData.card_two_id
+                });
+                console.log(processTradeResponse);
+
+                await this.fetchAllTrades();
+                this.isPopupVisible = false;
+                this.$router.push('/collection');
+
+            } catch (error) {
+                console.log("Error in processing trade:" + error);
+            }
+
         }
     },
     mounted() {

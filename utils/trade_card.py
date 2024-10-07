@@ -11,7 +11,7 @@ app = Flask(__name__)
 CORS(app)
 
 userCard_URL = "http://localhost:5006/usercard"
-trade_URL = "http://localhost:5010/trade"
+trade_URL = "http://localhost:5013/trade"
 
 @app.route("/trade_card", methods=['POST'])
 def trade_card():

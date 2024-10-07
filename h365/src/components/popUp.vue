@@ -45,7 +45,7 @@
 
             <div class="buttonBlock">
                 <button style="background-color: var(--text-highlight);" @click="closePopup"> Cancel </button>
-                <button style="background-color: var(--blue);" @click="confirmAction"> Confirm </button>
+                <button style="background-color: var(--blue);" @click="confirmTrade"> Confirm </button>
             </div>
         </div>
 
@@ -168,6 +168,10 @@ props: {
     },
     errorMessage: { 
         type: String, default: '' 
+    },
+    tradeId: {
+        type: [String, Number], 
+        default: ''
     }
 },
 data() {
@@ -179,8 +183,8 @@ methods: {
     closePopup() {
         this.$emit('close');
     },
-    confirmAction() {
-        this.$emit('confirm');
+    confirmTrade() {
+        this.$emit('confirm', this.tradeId);
     },
     submitEventCode() {
         // Emit the event code input by the user to the parent

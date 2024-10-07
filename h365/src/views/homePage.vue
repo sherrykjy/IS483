@@ -2,14 +2,14 @@
     <div class="stickyHeader">
         <div class="pageHeader">
             <p> Welcome back, 
-                <span> Sherry </span> 
+                <span> {{ userName }} </span> 
             </p>
         </div>
 
         <div class="displayBlock">
             <div class="blockLeft">
                 <div class="blockText">
-                    <p style="margin-right: 5px"> 1080 </p>
+                    <p style="margin-right: 5px"> {{ numHealthCoins }} </p>
                     <span> <img src="../assets/icons/homepage/coin.png"> </span>
                 </div>
                 <p> My Healthcoins </p>
@@ -338,7 +338,9 @@ export default {
             currentWeekly: 75,
             goalWeekly: 150,
             minutesToday: 30,
-            lastMonth: "August"
+            lastMonth: "August",
+            numHealthCoins: 0,
+            userName: ""
         }
     },
 
@@ -349,7 +351,29 @@ export default {
             }
             return 0;
         }
-    }
+    },
+
+    methods: {
+        async fetchUserData() {
+            try {
+                const userReponse = await this.$http.get("http://127.0.0.1:5001/user/" + this.userEmail);
+                const userData = userReponse.data.data;
+                this.numHealthCoins = userData["total_point"];
+                this.userName = userData["name"];
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            }
+        },
+    },
+
+    async mounted() {
+        try {
+            this.fetchUserData();
+        }
+        catch (error) {
+            console.log("error:", error);            
+        }
+    },
 }
 
 </script>
