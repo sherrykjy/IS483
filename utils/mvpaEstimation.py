@@ -100,6 +100,10 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:root@localhost:3306/healthpal'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
+
+db = SQLAlchemy(app)
 CORS(app)
 
 class strava_users(db.Model):
@@ -139,9 +143,9 @@ def estimate_mvpa():
         if not user:
             return jsonify({"code": 404, "message": "User not found"}), 404
 
-        # Step 2: Check if the token has expired, refresh if necessary
-        if user.expires_at < time.time():
-            user = refresh_access_token(user)
+        # # Step 2: Check if the token has expired, refresh if necessary
+        # if user.expires_at < time.time():
+        #     user = refresh_access_token(user)
 
         # Step 3: Call the Strava API to get activities
         result = processStravaInformation(user.access_token)
@@ -186,8 +190,14 @@ def processStravaInformation(access_token):
             "message": "No activities found for the current week."
         }
 
-    weekly_speed_in_m_per_s = distance / time_spent
-    met = (weekly_speed_in_m_per_s / 0.2) + 3.5
+    # weekly_speed_in_m_per_s = distance / time_spent
+    # met = (weekly_speed_in_m_per_s / 0.2) + 3.5
+
+    if time_spent == 0:
+        met = 0  # Set to 0 or an appropriate value if no time is recorded
+    else:
+        weekly_speed_in_m_per_s = distance / time_spent
+        met = (weekly_speed_in_m_per_s / 0.2) + 3.5
 
     return {
         "code": 200,
@@ -254,26 +264,26 @@ def processStravaInformation(access_token):
     return to_return
 
 # Helper function to refresh the access token
-def refresh_access_token(user):
-    token_response = requests.post(
-        TOKEN_URL,
-        data={
-            'client_id': CLIENT_ID,
-            'client_secret': CLIENT_SECRET,
-            'grant_type': 'refresh_token',
-            'refresh_token': user.refresh_token,
-        }
-    )
+# def refresh_access_token(user):
+#     token_response = requests.post(
+#         TOKEN_URL,
+#         data={
+#             'client_id': CLIENT_ID,
+#             'client_secret': CLIENT_SECRET,
+#             'grant_type': 'refresh_token',
+#             'refresh_token': user.refresh_token,
+#         }
+#     )
     
-    new_token_data = token_response.json()
-    user.access_token = new_token_data['access_token']
-    user.refresh_token = new_token_data['refresh_token']
-    user.expires_at = new_token_data['expires_at']
+#     new_token_data = token_response.json()
+#     user.access_token = new_token_data['access_token']
+#     user.refresh_token = new_token_data['refresh_token']
+#     user.expires_at = new_token_data['expires_at']
     
-    db.session.commit()
+#     db.session.commit()
     
-    return user
+#     return user
 
-if name == "__main__":
-    app.run(port=5009, debug=True)
-    
+
+if __name__ == '__main__':
+    app.run(port=5021, debug=True)
