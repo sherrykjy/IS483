@@ -1,7 +1,7 @@
 <template>
     <div class="pageContainer">
         <div class="pageHeader">
-            <i class="uil uil-angle-left"></i>
+            <i class="uil uil-angle-left" @click="goBack"></i>
             <p>Event details</p>
         </div>
 
@@ -244,6 +244,9 @@ export default {
                 this.errorMessage = "Invalid event code. Please try again.";
             }
         },
+        goBack() {
+            this.$router.go(-1);
+        }
     }
 }
 </script>

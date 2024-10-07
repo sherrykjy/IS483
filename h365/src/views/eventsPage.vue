@@ -4,7 +4,7 @@
             <div class="pageHeader">
                 <p>Events</p>
             </div>
-            <n-tabs type="line" class="pageTab">
+            <n-tabs v-model:value="selectedTab" type="line" class="pageTab">
                 <n-tab name="allEvents">
                     All
                 </n-tab>
@@ -293,12 +293,32 @@
 
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref, watch } from "vue";
+import { useRouter } from 'vue-router';
 import datePicker from '../components/datePicker.vue';
 
 export default defineComponent({
     components: {
         datePicker
+    },
+    setup() {
+        console.log("all events page");
+        const selectedTab = ref('allEvents');
+        const router = useRouter();
+
+        watch(selectedTab, (newTab) => {
+            if (newTab === 'allEvents') {
+                // Navigate to /events route
+                router.push({ path: '/events' });
+            } else if (newTab === 'bookedEvents') {
+                // Navigate to /booked route
+                router.push({ path: '/booked' });
+            }
+        });
+
+        return {
+            selectedTab
+        };
     },
     async mounted() {
         // to update eventData

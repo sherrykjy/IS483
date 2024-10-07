@@ -50,20 +50,22 @@
                 <p> {{ cardType }} </p>
                 <div class="carousel">
                     <div v-for="card in cards" :key="card.card_id">
-                        <div class="card">
+                        <div :class="['card', { 'card-owned': userCards.includes(card.card_id) }]">
                             <p class="cardName"> {{ card.title }} </p>
 
-                            <img v-if="card.title == 'Oliver'" src="../assets/icons/collection/fruit_basket/oliver_orange.png">
-                            <img v-else-if="card.title == 'Selena'" src="../assets/icons/collection/fruit_basket/selena_strawberry.png">
-                            <img v-else-if="card.title == 'Benny'" src="../assets/icons/collection/fruit_basket/benny_banana.png">
-                            <img v-else-if="card.title == 'Gracia'" src="../assets/icons/collection/fruit_basket/gracia_grape.png">
-                            <img v-else-if="card.title == 'Penny'" src="../assets/icons/collection/fruit_basket/penny_pineapply.png">
+                            <!-- <img v-if="card.title == 'Oliver'" src="../assets/icons/collection/fruit_basket/oliver.png">
+                            <img v-else-if="card.title == 'Selena'" src="../assets/icons/collection/fruit_basket/selena.png">
+                            <img v-else-if="card.title == 'Benny'" src="../assets/icons/collection/fruit_basket/benny.png">
+                            <img v-else-if="card.title == 'Gracia'" src="../assets/icons/collection/fruit_basket/gracia.png">
+                            <img v-else-if="card.title == 'Penny'" src="../assets/icons/collection/fruit_basket/penny.png">
 
                             <img v-else-if="card.title == 'LeBron'" src="../assets/icons/collection/weekend_action/lebron.png">
                             <img v-else-if="card.title == 'Williams'" src="../assets/icons/collection/weekend_action/williams.png">
                             <img v-else-if="card.title == 'Weber'" src="../assets/icons/collection/weekend_action/weber.png">
                             <img v-else-if="card.title == 'Valdez'" src="../assets/icons/collection/weekend_action/valdez.png">
-                            <img v-else-if="card.title == 'Dele'" src="../assets/icons/collection/weekend_action/dele.png">
+                            <img v-else-if="card.title == 'Dele'" src="../assets/icons/collection/weekend_action/dele.png"> -->
+
+                            <img :src="getCardImage(card.title, card.card_type)" />
 
                             <div class="price">
                                 <img src="../assets/icons/collection/coin.png">
@@ -198,7 +200,30 @@ export default {
             } catch (error) {
                 console.error("Error fetching user cards:", error);
             }
-        }
+        },
+        async fetchAllCards() {
+            const cardReponse = await this.$http.get("http://127.0.0.1:5003/cards");
+            const cardData = cardReponse.data;
+            for (let i = 0; i < cardData.length; i++) {
+                let card_type = cardData[i]["card_type"];
+                if (!this.allCards[card_type]) {
+                    this.allCards[card_type] = [];
+                }
+                this.allCards[card_type].push(cardData[i]);
+            }
+            this.numCards = cardData.length;
+        },
+        getCardImage(card_title, card_set) {
+            if (!card_title || !card_set) {
+                console.error("Invalid card_title or card_set:", card_title, card_set);
+                return ;
+            }
+
+            const formattedTitle = card_title.toLowerCase().replace(/\s+/g, "_");
+            // console.log(formattedTitle);
+            const formattedSetName = card_set.toLowerCase().replace(/\s+/g, "_");
+            return require(`@/assets/icons/collection/${formattedSetName}/${formattedTitle}.png`);
+        },
     },
     setup() {
         console.log("store page");
@@ -215,34 +240,9 @@ export default {
     },
     async mounted() {
         try {
-            // user data
-            const userReponse = await this.$http.get("http://127.0.0.1:5001/user/" + this.userEmail);
-            const userData = userReponse.data.data;
-            this.numHealthCoins = userData["total_point"];
-
-            const cardReponse = await this.$http.get("http://127.0.0.1:5003/cards");
-            const cardData = cardReponse.data;
-            for (let i = 0; i < cardData.length; i++) {
-                let card_type = cardData[i]["card_type"];
-                if (!this.allCards[card_type]) {
-                    this.allCards[card_type] = [];
-                }
-                this.allCards[card_type].push(cardData[i]);
-            }
-            this.numCards = cardData.length;
-            console.log("cards", this.allCards);
-
-            const userCardResponse = await this.$http.get("http://127.0.0.1:5006/usercard/user/" + this.userId);
-            const userCardData = userCardResponse.data.data;
-            // console.log(userCardData);
-            for (let i = 0; i < userCardData["cards"].length; i++) {
-                let card_id = userCardData["cards"][i]["card_id"]
-                if (!this.userCards.includes(card_id)) {
-                    this.userCards.push(card_id);
-                }
-            }
-            this.numUnlocked = userCardData["count_redeemed"];  
-            console.log("user's cards", this.userCards);       
+            this.fetchUserData();
+            this.fetchAllCards();
+            this.fetchUserCards(); 
         }
         catch (error) {
             console.log("error:", error);
@@ -444,6 +444,10 @@ button label {
     padding: 5px 10px;
     width: 85px;
     text-align: center;
+}
+
+.card-owned {
+    background-color: #D8D8D5;
 }
 
 </style>

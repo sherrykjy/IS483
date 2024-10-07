@@ -18,121 +18,75 @@
         <div class="searchAndFilter">
             <div class="search-bar">
                 <i class="uil uil-search"></i>
-                <input type="text" placeholder="Search by event or location" />
+                <input type="text" v-model="searchInput" @input="searchEvents" placeholder="Search by event or location" />
             </div>
 
             <div class="filterButton">
-                <datePicker />
+                <datePicker v-model="dateInput" @update:modelValue="searchEvents" />
             </div>
         </div>        
 
-        <!-- loop for each date -->
-        <!-- <div v-for="date in sortedDates" :key="date"> -->
-            <!-- date header -->
-            <!-- <div class="basicHeader"> -->
-                <!-- <p>{{ formattedDateHeader(date) }}</p> -->
-
-        <div class="basicHeader">
-            <p>2 September 2024</p>    
+        <!-- Check if there are no filtered events or eventData -->
+        <div v-if="Object.keys(filteredEventsData).length === 0">
+            <p class="no-events-found">No matching events found</p>
         </div>
 
-        <div class="divider"></div>
-
-
-        <!-- v-for however many events there are -->
-        <router-link :to="{ name: 'viewEventPage'}">
-                                    
-            <div class="basicCard">
-                <div class="cardImage">
-                    <img src="../assets/icons/events/event1.png">
+        <!-- loop for each date -->
+        <div v-for="date in sortedDates" :key="date" v-else>
+            <div v-if="filteredEventsData[date] && filteredEventsData[date].length">
+                <!-- date header -->
+                <div class="basicHeader">
+                    <p>{{ formattedDateHeader(date) }}</p>
                 </div>
 
-                <div class="cardText">
-                    <!-- v-if few slots left -->
-                    <div class="lowSlotAlert">
-                        Few Slots Left
-                    </div>
+                <div class="divider"></div>
 
-                    <!-- programme name -->
-                    <p class="programmeName">Active Family Programme</p>
-
-                    <!-- activity name -->
-                    <p class="eventName">Pilates</p>
-
-                    <!-- date, day, and time  -->
-                    <div class="eventInfo">
-                        <i class="uil uil-schedule eventIcon"></i>
-                        <div class=eventDetails>
-                            <p>2 September 2024, Monday</p>
-                            <p>6.15pm - 7.15pm</p>
+                <div v-for="event in filteredEventsData[date]" :key="event.event_id">
+                    <router-link :to="{ name: 'viewEventPage', params: { eventId: event.event_id } }">
+                        <div class="basicCard">
+                            <div class="cardImage">
+                                <img src="../assets/icons/events/event1.png">
+                            </div>
+                            <div class="cardText">
+                                <!-- v-if few slots left -->
+                                <div class="lowSlotAlert" v-if="event.slots_left <= 5">
+                                    Few Slots Left
+                                </div>
+                                <!-- programme name -->
+                                <p class="programmeName" v-if="event.event_program != 'Null'">{{ event.event_program }}</p>
+                                <!-- activity name -->
+                                <p class="eventName">{{ event.title }}</p>
+                                <!-- date, day, and time  -->
+                                <div class="eventInfo">
+                                    <i class="uil uil-schedule eventIcon"></i>
+                                    <div class=eventDetails>
+                                        <p>{{ formattedDate(event.start_date) }}</p>
+                                        <p>{{ formattedTime(event.start_date, event.end_date) }}</p>
+                                    </div>
+                                </div>
+                                <!-- location -->
+                                <div class="eventInfo">
+                                    <i class="uil uil-map-pin eventIcon"></i>
+                                    <div class=eventDetails>
+                                        <p>{{ event.location }}</p>
+                                    </div>
+                                </div>
+                                <div class="eventBtnIntensity">
+                                    <form action="">
+                                        <button class="bookEventBtn">Book Now</button>
+                                    </form>
+                                    <!-- intensity -->
+                                    <div class="intensity">
+                                        <p>Intensity: </p>
+                                        <img v-if="event.tier === 1" src="../assets/icons/events/intensity1.png">
+                                        <img v-else-if="event.tier === 2" src="../assets/icons/events/intensity2.png">
+                                        <img v-else-if="event.tier === 3" src="../assets/icons/events/intensity3.png">
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- location -->
-                    <div class="eventInfo">
-                        <i class="uil uil-map-pin eventIcon"></i>
-                        <div class=eventDetails>
-                            <p>PAYA LEBAR, Paya Lebar Precinct (Paya Lebar Quarter Mall)</p>
-                        </div>
-                    </div>
-
-                    <div class="eventBtnIntensity">
-                        <button class="bookEventBtn"> Withdraw </button>
-
-                        <!-- intensity -->
-                        <div class="intensity">
-                            <p>Intensity: </p>
-                            <img src="../assets/icons/events/intensity1.png">
-                        </div>
-                    </div>
+                    </router-link>
                 </div>
-            </div>
-            <div class="divider"></div>
-            <div v-for="event in eventData[date]" :key="event.event_id">
-                <router-link :to="{ name: 'viewEventPage', params: { eventId: event.event_id } }">
-                    <div class="basicCard">
-                        <div class="cardImage">
-                            <img src="../assets/icons/events/event1.png">
-                        </div>
-                        <div class="cardText">
-                            <!-- v-if few slots left -->
-                            <div class="lowSlotAlert" v-if="event.slots_left <= 5">
-                                Few Slots Left
-                            </div>
-                            <!-- programme name -->
-                            <p class="programmeName" v-if="event.event_program != 'Null'">{{ event.event_program }}</p>
-                            <!-- activity name -->
-                            <p class="eventName">{{ event.title }}</p>
-                            <!-- date, day, and time  -->
-                            <div class="eventInfo">
-                                <i class="uil uil-schedule eventIcon"></i>
-                                <div class=eventDetails>
-                                    <p>{{ formattedDate(event.start_date) }}</p>
-                                    <p>{{ formattedTime(event.start_date, event.end_date) }}</p>
-                                </div>
-                            </div>
-                            <!-- location -->
-                            <div class="eventInfo">
-                                <i class="uil uil-map-pin eventIcon"></i>
-                                <div class=eventDetails>
-                                    <p>{{ event.location }}</p>
-                                </div>
-                            </div>
-                            <div class="eventBtnIntensity">
-                                <form action="">
-                                    <button class="bookEventBtn">Book Now</button>
-                                </form>
-                                <!-- intensity -->
-                                <div class="intensity">
-                                    <p>Intensity: </p>
-                                    <img v-if="event.tier === 1" src="../assets/icons/events/intensity1.png">
-                                    <img v-else-if="event.tier === 2" src="../assets/icons/events/intensity2.png">
-                                    <img v-else-if="event.tier === 3" src="../assets/icons/events/intensity3.png">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </router-link>
             </div>
         </div>
     </div>
@@ -140,8 +94,9 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, watch } from "vue";
 import datePicker from '../components/datePicker.vue';
+import { useRouter } from 'vue-router';
 import { useStore } from 'vuex';
 
 export default 
@@ -153,8 +108,19 @@ export default
             console.log("booked events page");
             const selectedTab = ref('bookedEvents');
             const store = useStore(); // Import useStore from vuex
+            const router = useRouter();
             const userId = computed(() => store.state.userId); // Access userId from the store
             const userEmail = computed(() => store.state.userEmail) // Access userEmail from the store
+
+            watch(selectedTab, (newTab) => {
+                if (newTab === 'allEvents') {
+                    // Navigate to /events route
+                    router.push({ path: '/events' });
+                } else if (newTab === 'bookedEvents') {
+                    // Navigate to /booked route
+                    router.push({ path: '/booked' });
+                }
+            });
 
             return {
                 selectedTab,
@@ -165,7 +131,10 @@ export default
         data() {
             return {
                 sortedDates: [],
-                eventData: {}
+                eventData: {},
+                searchInput: '',
+                dateInput: null,
+                filteredEvents: {}
             }
         },
         async mounted() {
@@ -254,6 +223,38 @@ export default
                 };
 
                 return `${formatTime(startDate)} - ${formatTime(endDate)}`;
+            },
+            async searchEvents() {
+                console.log("checking search input:", this.searchInput);
+                console.log("checking date input:", this.dateInput);
+
+                this.filteredEvents = {};
+
+                for (const date of this.sortedDates) {
+                    const eventsForDate = this.eventData[date].filter(event => {
+                        const matchesSearchInput = event.title.toLowerCase().includes(this.searchInput.toLowerCase()) || 
+                                                    event.location.toLowerCase().includes(this.searchInput.toLowerCase());
+                        
+                        const matchesDate = !this.dateInput || date === this.dateInput;
+
+                        return matchesSearchInput && matchesDate;
+                    });
+
+                if (eventsForDate.length) {
+                    this.filteredEvents[date] = eventsForDate;
+                }
+            }
+            }
+        },
+        computed: {
+            filteredEventsData() {
+                if (this.searchInput || this.dateInput) {
+                    console.log("returning filtered data");
+                    console.log("filtered events:", this.filteredEvents);
+                    return this.filteredEvents || {};
+                } else {
+                    return this.eventData;
+                }
             }
         }
     });
