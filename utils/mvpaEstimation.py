@@ -186,11 +186,7 @@ def estimate_mvpa():
         if not user:
             return jsonify({"code": 404, "message": "User not found"}), 404
 
-        # # Step 2: Check if the token has expired, refresh if necessary
-        # if user.expires_at < time.time():
-        #     user = refresh_access_token(user)
-
-        # Step 3: Call the Strava API to get activities
+        # Step 2: Call the Strava API to get activities
         result = processStravaInformation(user.access_token)
         return jsonify(result), result['code']
         
@@ -204,9 +200,6 @@ def estimate_mvpa():
             "code": 500,
             "message": "Internal error: " + ex_str
         }), 500
-        
-from datetime import datetime
-from invokes import invoke_http  # Assuming this is a custom function you use for HTTP requests
 
 def processStravaInformation(access_token):
     # Set up authorization headers
@@ -216,8 +209,8 @@ def processStravaInformation(access_token):
     activities_response = invoke_http(f'{strava_URL}/activities', method='GET', headers=headers)
     
     # Check if the response is successful
-    if activities_response.get('code', 200) != 200:
-        raise Exception(f"Failed to fetch activities: {activities_response.get('message', 'Unknown error')}")
+    # if activities_response.get('code', 200) != 200:
+    #     raise Exception(f"Failed to fetch activities: {activities_response.get('message', 'Unknown error')}")
     
     activities = activities_response.get("data")
     
