@@ -206,46 +206,46 @@ def estimate_mvpa():
         }), 500
 
 # Fetch activities from Strava using the user's access token
-def processStravaInformation(access_token):
-    headers = {'Authorization': f'Bearer {access_token}'}
-    activities_response = requests.get(f'{strava_URL}/activities', headers=headers)
+# def processStravaInformation(access_token):
+#     headers = {'Authorization': f'Bearer {access_token}'}
+#     activities_response = requests.get(f'{strava_URL}/activities', headers=headers)
     
-    if activities_response.status_code != 200:
-        raise Exception(f"Failed to fetch activities: {activities_response.json()['error']}")
+#     if activities_response.status_code != 200:
+#         raise Exception(f"Failed to fetch activities: {activities_response.json()['error']}")
 
-    activities = activities_response.json()
+#     activities = activities_response.json()
 
-    # Process activities (filter by current week)
-    current_week = datetime.now().isocalendar()[1]
-    distance = 0
-    time_spent = 0
+#     # Process activities (filter by current week)
+#     current_week = datetime.now().isocalendar()[1]
+#     distance = 0
+#     time_spent = 0
     
-    for activity in activities:
-        activity_week = datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").isocalendar()[1]
+#     for activity in activities:
+#         activity_week = datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").isocalendar()[1]
         
-        if activity_week == current_week:
-            distance += activity["distance"]
-            time_spent += activity["elapsed_time"]
+#         if activity_week == current_week:
+#             distance += activity["distance"]
+#             time_spent += activity["elapsed_time"]
 
-    if time_spent == 0:
-        return {
-            "code": 400,
-            "message": "No activities found for the current week."
-        }
+#     if time_spent == 0:
+#         return {
+#             "code": 400,
+#             "message": "No activities found for the current week."
+#         }
 
-    # weekly_speed_in_m_per_s = distance / time_spent
-    # met = (weekly_speed_in_m_per_s / 0.2) + 3.5
+#     # weekly_speed_in_m_per_s = distance / time_spent
+#     # met = (weekly_speed_in_m_per_s / 0.2) + 3.5
 
-    if time_spent == 0:
-        met = 0  # Set to 0 or an appropriate value if no time is recorded
-    else:
-        weekly_speed_in_m_per_s = distance / time_spent
-        met = (weekly_speed_in_m_per_s / 0.2) + 3.5
+#     if time_spent == 0:
+#         met = 0  # Set to 0 or an appropriate value if no time is recorded
+#     else:
+#         weekly_speed_in_m_per_s = distance / time_spent
+#         met = (weekly_speed_in_m_per_s / 0.2) + 3.5
 
-    return {
-        "code": 200,
-        "met": met
-    }
+#     return {
+#         "code": 200,
+#         "met": met
+#     }
     
 def processStravaInformation(access_token):
     
@@ -294,10 +294,16 @@ def processStravaInformation(access_token):
         else:
             break
             
-    weekly_speed_in_m_per_s = weekly_distance/weekly_time
-    to_return["weekly_met"] = (weekly_speed_in_m_per_s / 0.2) + 3.5
-    to_return["weekly_time_lapse"] = round(weekly_time/60,0)
+    # weekly_speed_in_m_per_s = weekly_distance/weekly_time
+    # to_return["weekly_met"] = (weekly_speed_in_m_per_s / 0.2) + 3.5
+    # to_return["weekly_time_lapse"] = round(weekly_time/60,0)
     
+    if weekly_time == 0:
+        to_return["weekly_met"] = 0  # Or handle the case as necessary
+    else:
+        weekly_speed_in_m_per_s = weekly_distance / weekly_time
+        to_return["weekly_met"] = (weekly_speed_in_m_per_s / 0.2) + 3.5
+
     res = [key for key in activity_dict if all(activity_dict[temp] <= activity_dict[key] for temp in activity_dict)]
     
     to_return["monthly_top_activity"] = res
