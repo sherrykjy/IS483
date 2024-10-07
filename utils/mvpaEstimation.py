@@ -188,7 +188,7 @@ def estimate_mvpa():
 
         # Step 2: Call the Strava API to get activities
         result = processStravaInformation(user.access_token)
-        return jsonify(result), result['code']
+        return jsonify(result)
         
     except Exception as e:
         exc_type, exc_obj, exc_tb = sys.exc_info()
