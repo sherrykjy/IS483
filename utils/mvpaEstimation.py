@@ -62,6 +62,6 @@ def processStravaInformation():
     }
     
 if __name__ == "__main__":
-    app.run(port=5009, debug=True)
+    app.run(port=5012, debug=True)
     
     
