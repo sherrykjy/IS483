@@ -51,7 +51,7 @@
                 <div class="receive">
                     <div class="card" @click="openInfoPopup('Selena', 'Fruit Basket', 'Description of Selena', '../assets/icons/collection/fruit_basket/selena_strawberry.png')">
                         <p class="head"> Requesting For </p>
-                        <img src="../assets/icons/collection/fruit_basket/selena_strawberry.png">
+                        <img src="../assets/icons/collection/fruit_basket/selena.png">
                         <p class="cardName"> Selena </p>
                         <p class="cardSet"> Fruit Basket </p>
                     </div>
@@ -89,7 +89,7 @@
                 <div class="receive">
                     <div class="card" @click="openInfoPopup('Selena', 'Fruit Basket', 'Description of Selena', '../assets/icons/collection/fruit_basket/selena_strawberry.png')">
                         <p class="head"> Requesting For </p>
-                        <img src="../assets/icons/collection/fruit_basket/selena_strawberry.png">
+                        <img src="../assets/icons/collection/fruit_basket/selena.png">
                         <p class="cardName"> Selena </p>
                         <p class="cardSet"> Fruit Basket </p>
                     </div>
@@ -127,7 +127,7 @@
                 <div class="receive">
                     <div class="card" @click="openInfoPopup('Selena', 'Fruit Basket', 'Description of Selena', '../assets/icons/collection/fruit_basket/selena_strawberry.png')">
                         <p class="head"> Requesting For </p>
-                        <img src="../assets/icons/collection/fruit_basket/selena_strawberry.png">
+                        <img src="../assets/icons/collection/fruit_basket/selena.png">
                         <p class="cardName"> Selena </p>
                         <p class="cardSet"> Fruit Basket </p>
                     </div>

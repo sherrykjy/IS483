@@ -46,34 +46,14 @@
         </div>
 
         <div class="colDisplay">
-            <div class="card" @click="openInfoPopup('Selena', 'Fruit Basket', 'Description of Selena', '../assets/icons/collection/fruit_basket/selena_strawberry.png')">
-                <img src="../assets/icons/collection/fruit_basket/selena_strawberry.png">
-                <p class="cardName"> Selena </p>
-                <p class="cardSet"> Fruit Basket </p>
-            </div>
-
-            <div class="card" @click="openInfoPopup('Gracia', 'Fruit Basket', 'Description of Gracia', '../assets/icons/collection/fruit_basket/gracia_grape.png')">
-                <img src="../assets/icons/collection/fruit_basket/gracia_grape.png">
-                <p class="cardName"> Gracia </p>
-                <p class="cardSet"> Fruit Basket </p>
-            </div>
-
-            <div class="card" @click="openInfoPopup('Gracia', 'Fruit Basket', 'Description of Gracia', '../assets/icons/collection/fruit_basket/gracia_grape.png')">
-                <img src="../assets/icons/collection/wellness_wonders/sweat_squad.png">
-                <p class="cardName"> Sweet Squad </p>
-                <p class="cardSet"> Wellness Wonders </p>
-            </div>
-
-            <div class="card" @click="openInfoPopup('Hydration Hero', 'Wellness Wonders', 'Description of Hydration Hero', '../assets/icons/collection/wellness_wonders/hydration_hero.png')">
-                <img src="../assets/icons/collection/wellness_wonders/hydration_hero.png">
-                <p class="cardName"> Hydration Hero </p>
-                <p class="cardSet"> Wellness Wonders </p>
-            </div>
-
-            <div class="card" @click="openInfoPopup('Cardio Champ', 'Wellness Wonders', 'Description of Cardio Champ', '../assets/icons/collection/wellness_wonders/cardio_champ.png')">
-                <img src="../assets/icons/collection/wellness_wonders/cardio_champ.png">
-                <p class="cardName"> Cardio Champ </p>
-                <p class="cardSet"> Wellness Wonders </p>
+            <div v-for="card in userCards" 
+                :key="card.card_id"
+                class="card"
+                @click="openInfoPopup(card.description, card.recommendation)"
+            >
+                <img :src="getCardImage(card.title, card.card_type)" />
+                <p class="cardName"> {{ card.title }} </p>
+                <p class="cardSet"> {{ card.card_type }} </p>
             </div>
 
         </div>
@@ -83,16 +63,9 @@
             ref="popup"
             :visible="isPopupVisible"
             :type="popupType"
-            :cardName="selectedCardName"
-            :cardPrice="selectedCardPrice"
-            :tradeCardName="tradeCardName"
-            :receiveCardName="receiveCardName"
-            :tradeWith="tradeWith"
-            :cardImage="selectedCardImage"
-            :cardSet="selectedCardSet"
             :cardDescription="selectedCardDescription"
+            :cardRecommendation="selectedCardRecommendation"
             @close="closePopup"
-            @confirm="handleConfirm"
         />
     </div>
     
@@ -101,7 +74,6 @@
 <script>
 import Popup from '@/components/popUp.vue';
 
-// info pop up
 export default {
     components: {
         Popup
@@ -109,32 +81,55 @@ export default {
     data() {
         return {
             isPopupVisible: false,
-            popupType: '', // 'unlock', 'trade', 'info'
+            popupType: '', // 'unlock', 'trade', 'info', 'event-code'
             selectedCardName: '',
-            selectedCardPrice: 0,
-            tradeCardName: '',
-            receiveCardName: '',
-            tradeWith: '',
             selectedCardImage: '',
             selectedCardSet: '',
-            selectedCardDescription: ''
+            selectedCardDescription: '',
+            selectedCardRecommendation: '',
+            userCards: []
         };
+    },
+    methods: {
+        async fetchUserCards() {
+            try {
+                const response = await fetch("http://127.0.0.1:5006/usercard/user/1");
+                const data = await response.json();
+                // console.log(data);
+
+                if (data && data.data && data.data.cards) {
+                    this.userCards = data.data.cards;
+                    console.log(this.userCards);
+                } else {
+                    console.log("No cards found for this user.")
+                }
+            } catch (error) {
+                console.error("Error fetching user cards:" + error);
+            }
         },
-        methods: {
-        openInfoPopup(cardName, cardSet, cardDescription) {
-            this.selectedCardName = cardName;
-            this.selectedCardSet = cardSet;
+        getCardImage(card_title, card_set) {
+            if (!card_title || !card_set) {
+                console.error("Invalid card_title or card_set:", card_title, card_set);
+                return ;
+            }
+
+            const formattedTitle = card_title.toLowerCase().replace(/\s+/g, "_");
+            // console.log(formattedTitle);
+            const formattedSetName = card_set.toLowerCase().replace(/\s+/g, "_");
+            return require(`@/assets/icons/collection/${formattedSetName}/${formattedTitle}.png`);
+        },
+        openInfoPopup(cardDescription, cardRecommendation) {
             this.selectedCardDescription = cardDescription;
+            this.selectedCardRecommendation = cardRecommendation;
             this.popupType = 'info';
             this.isPopupVisible = true;
         },
         closePopup() {
             this.isPopupVisible = false;
-        },
-        handleConfirm() {
-            console.log('Action confirmed');
-            this.isPopupVisible = false;
         }
+    },
+    mounted() {
+        this.fetchUserCards();
     }
 };
 </script>

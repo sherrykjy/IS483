@@ -50,7 +50,7 @@
             <div class="carousel">
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>
@@ -60,7 +60,7 @@
 
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>
@@ -70,7 +70,7 @@
 
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>
@@ -80,7 +80,7 @@
 
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>
@@ -90,7 +90,7 @@
 
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>
@@ -105,7 +105,7 @@
             <div class="carousel">
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>
@@ -115,7 +115,7 @@
 
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>
@@ -125,7 +125,7 @@
 
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>
@@ -135,7 +135,7 @@
 
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>
@@ -145,7 +145,7 @@
 
                 <div class="card">
                     <p class="cardName"> Oliver </p>
-                    <img src="../assets/icons/collection/fruit_basket/oliver_orange.png">
+                    <img src="../assets/icons/collection/fruit_basket/oliver.png">
                     <div class="price">
                         <img src="../assets/icons/collection/coin.png">
                         <p> 200 </p>

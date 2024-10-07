@@ -22,7 +22,9 @@
                 <button style="background-color: var(--blue);" @click="confirmAction"> Confirm </button>
             </div>
         </div>
-  
+
+
+
         <!-- Trade Popup -->
         <div v-if="type === 'trade'">
             <p class="head">
@@ -43,7 +45,9 @@
                 <button style="background-color: var(--blue);" @click="confirmAction"> Confirm </button>
             </div>
         </div>
-  
+
+
+
         <!-- Info Popup -->
         <div v-if="type === 'info'">
             <div class="head">
@@ -52,8 +56,7 @@
             </div>
 
             <p class="cbody">
-                Strawberries aren’t true berries by botanical definition. 
-                They are part of the rose family!
+                {{ cardDescription }}
             </p>
 
             <div class="head">
@@ -62,15 +65,15 @@
             </div>
 
             <p class="cbody">
-                The daily fruit intake recommendation is 1.5-2 cups of fruit 
-                per day. Munch on 12-16 strawberries as part of your healthy 
-                diet with this rich source of vitamin C, fibre, and antioxidants.
+                {{ cardRecommendation }}
             </p>
 
             <div class="coolButton">
                 <button style="background-color: var(--blue);" @click="closePopup"> Cool! </button>
             </div>
         </div>
+
+
 
         <!-- event code pop up -->
         <div v-if="type === 'event-code'">
@@ -141,6 +144,10 @@ props: {
         default: ''
     },
     cardDescription: {
+        type: String, // Used for info popup
+        default: ''
+    },
+    cardRecommendation: {
         type: String, // Used for info popup
         default: ''
     },
