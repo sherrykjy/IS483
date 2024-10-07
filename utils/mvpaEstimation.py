@@ -204,65 +204,28 @@ def estimate_mvpa():
             "code": 500,
             "message": "Internal error: " + ex_str
         }), 500
-
-# Fetch activities from Strava using the user's access token
-# def processStravaInformation(access_token):
-#     headers = {'Authorization': f'Bearer {access_token}'}
-#     activities_response = requests.get(f'{strava_URL}/activities', headers=headers)
-    
-#     if activities_response.status_code != 200:
-#         raise Exception(f"Failed to fetch activities: {activities_response.json()['error']}")
-
-#     activities = activities_response.json()
-
-#     # Process activities (filter by current week)
-#     current_week = datetime.now().isocalendar()[1]
-#     distance = 0
-#     time_spent = 0
-    
-#     for activity in activities:
-#         activity_week = datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").isocalendar()[1]
         
-#         if activity_week == current_week:
-#             distance += activity["distance"]
-#             time_spent += activity["elapsed_time"]
+from datetime import datetime
+from invokes import invoke_http  # Assuming this is a custom function you use for HTTP requests
 
-#     if time_spent == 0:
-#         return {
-#             "code": 400,
-#             "message": "No activities found for the current week."
-#         }
-
-#     # weekly_speed_in_m_per_s = distance / time_spent
-#     # met = (weekly_speed_in_m_per_s / 0.2) + 3.5
-
-#     if time_spent == 0:
-#         met = 0  # Set to 0 or an appropriate value if no time is recorded
-#     else:
-#         weekly_speed_in_m_per_s = distance / time_spent
-#         met = (weekly_speed_in_m_per_s / 0.2) + 3.5
-
-#     return {
-#         "code": 200,
-#         "met": met
-#     }
-    
 def processStravaInformation(access_token):
-    
+    # Set up authorization headers
     headers = {'Authorization': f'Bearer {access_token}'}
     
+    # Step 1: Fetch activities from Strava API
     activities_response = invoke_http(f'{strava_URL}/activities', method='GET', headers=headers)
     
+    # Check if the response is successful
     if activities_response.get('code', 200) != 200:
         raise Exception(f"Failed to fetch activities: {activities_response.get('message', 'Unknown error')}")
     
     activities = activities_response.get("data")
-
-    # Get all activities within a week
-    current_week = datetime.date(datetime.now()).isocalendar()[1]
+    
+    # Initialize variables for tracking weekly stats
+    current_week = datetime.now().isocalendar()[1]
     weekly_distance = 0
     weekly_time = 0
-    
+    daily_met = 0
     to_return = {
         "weekly_met": 0,
         "weekly_time_lapse": 0,
@@ -270,69 +233,119 @@ def processStravaInformation(access_token):
         "monthly_top_activity": ""
     }
     
+    # Dictionary to count occurrences of each activity type in the current month
     activity_dict = {}
     
     for activity in activities:
-        # check if it is within current month:
-        if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").month == datetime.now().month:
-            # initalise top activity
-            if activity["sport_type"] not in activity_dict:
-                activity_dict[activity["sport_type"]] = 1
-            else: 
-                activity_dict[activity["sport_type"]] += 1
-                
-            if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").isocalendar()[1] == current_week:
-                weekly_distance += activity["distance"]
-                weekly_time += activity["elapsed_time"]
-                
-                if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ") == datetime.now().date():
-                    daily_met = ((activity["distance"]/activity["elapsed_time"])/ 0.2) + 3.5
-                    
-                    if daily_met >= 3:
-                        to_return["daily_time_lapse"] = round(activity["elapsed_time"]/60, 0)
-                        
-        else:
-            break
+        # Parse activity start date
+        activity_date = datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ")
+        
+        # Check if the activity is in the current month
+        if activity_date.month == datetime.now().month:
+            # Update the count of each sport type
+            sport_type = activity.get("sport_type")
+            if sport_type not in activity_dict:
+                activity_dict[sport_type] = 1
+            else:
+                activity_dict[sport_type] += 1
             
-    # weekly_speed_in_m_per_s = weekly_distance/weekly_time
-    # to_return["weekly_met"] = (weekly_speed_in_m_per_s / 0.2) + 3.5
-    # to_return["weekly_time_lapse"] = round(weekly_time/60,0)
-    
-    if weekly_time == 0:
-        to_return["weekly_met"] = 0  # Or handle the case as necessary
-    else:
-        weekly_speed_in_m_per_s = weekly_distance / weekly_time
-        to_return["weekly_met"] = (weekly_speed_in_m_per_s / 0.2) + 3.5
+            # If the activity is in the current week, update weekly stats
+            if activity_date.isocalendar()[1] == current_week:
+                weekly_distance += activity.get("distance", 0)  # In meters
+                weekly_time += activity.get("elapsed_time", 0)  # In seconds
 
-    res = [key for key in activity_dict if all(activity_dict[temp] <= activity_dict[key] for temp in activity_dict)]
+                # If the activity is today, calculate MET (Metabolic Equivalent of Task)
+                if activity_date.date() == datetime.now().date():
+                    # Assuming MET formula (MET = (speed in m/s / 0.2) + 3.5)
+                    speed_m_s = activity.get("distance", 0) / activity.get("elapsed_time", 1)
+                    daily_met = (speed_m_s / 0.2) + 3.5
+                    
+                    # Update daily time lapse if MET >= 3
+                    if daily_met >= 3:
+                        to_return["daily_time_lapse"] = round(activity.get("elapsed_time", 0) / 60, 0)  # Convert to minutes
+        
+        else:
+            break  # No need to process further as we only care about current month data
     
-    to_return["monthly_top_activity"] = res
+    # Calculate weekly MET
+    if weekly_time > 0:
+        weekly_speed_m_s = weekly_distance / weekly_time
+        to_return["weekly_met"] = (weekly_speed_m_s / 0.2) + 3.5
+        to_return["weekly_time_lapse"] = round(weekly_time / 60, 0)  # Convert to minutes
     
-    print(to_return)
+    # Determine the top activity of the current month
+    if activity_dict:
+        top_activity = max(activity_dict, key=activity_dict.get)
+        to_return["monthly_top_activity"] = top_activity
     
+    # Return the calculated results
     return to_return
-
-# Helper function to refresh the access token
-# def refresh_access_token(user):
-#     token_response = requests.post(
-#         TOKEN_URL,
-#         data={
-#             'client_id': CLIENT_ID,
-#             'client_secret': CLIENT_SECRET,
-#             'grant_type': 'refresh_token',
-#             'refresh_token': user.refresh_token,
-#         }
-#     )
-    
-#     new_token_data = token_response.json()
-#     user.access_token = new_token_data['access_token']
-#     user.refresh_token = new_token_data['refresh_token']
-#     user.expires_at = new_token_data['expires_at']
-    
-#     db.session.commit()
-    
-#     return user
-
 
 if __name__ == '__main__':
     app.run(port=5021, debug=True)
+
+    
+# def processStravaInformation(access_token):
+    
+#     headers = {'Authorization': f'Bearer {access_token}'}
+    
+#     activities_response = invoke_http(f'{strava_URL}/activities', method='GET', headers=headers)
+    
+#     if activities_response.get('code', 200) != 200:
+#         raise Exception(f"Failed to fetch activities: {activities_response.get('message', 'Unknown error')}")
+    
+#     activities = activities_response.get("data")
+
+#     # Get all activities within a week
+#     current_week = datetime.date(datetime.now()).isocalendar()[1]
+#     weekly_distance = 0
+#     weekly_time = 0
+    
+#     to_return = {
+#         "weekly_met": 0,
+#         "weekly_time_lapse": 0,
+#         "daily_time_lapse": 0,
+#         "monthly_top_activity": ""
+#     }
+    
+#     activity_dict = {}
+    
+#     for activity in activities:
+#         # check if it is within current month:
+#         if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").month == datetime.now().month:
+#             # initalise top activity
+#             if activity["sport_type"] not in activity_dict:
+#                 activity_dict[activity["sport_type"]] = 1
+#             else: 
+#                 activity_dict[activity["sport_type"]] += 1
+                
+#             if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ").isocalendar()[1] == current_week:
+#                 weekly_distance += activity["distance"]
+#                 weekly_time += activity["elapsed_time"]
+                
+#                 if datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ") == datetime.now().date():
+#                     daily_met = ((activity["distance"]/activity["elapsed_time"])/ 0.2) + 3.5
+                    
+#                     if daily_met >= 3:
+#                         to_return["daily_time_lapse"] = round(activity["elapsed_time"]/60, 0)
+                        
+#         else:
+#             break
+            
+#     # weekly_speed_in_m_per_s = weekly_distance/weekly_time
+#     # to_return["weekly_met"] = (weekly_speed_in_m_per_s / 0.2) + 3.5
+#     # to_return["weekly_time_lapse"] = round(weekly_time/60,0)
+    
+#     if weekly_time == 0:
+#         to_return["weekly_met"] = 0  # Or handle the case as necessary
+#     else:
+#         weekly_speed_in_m_per_s = weekly_distance / weekly_time
+#         to_return["weekly_met"] = (weekly_speed_in_m_per_s / 0.2) + 3.5
+
+#     res = [key for key in activity_dict if all(activity_dict[temp] <= activity_dict[key] for temp in activity_dict)]
+    
+#     to_return["monthly_top_activity"] = res
+    
+#     print(to_return)
+    
+#     return to_return
