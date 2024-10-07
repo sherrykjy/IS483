@@ -141,10 +141,10 @@ def get_trades():
                 card_one_title = card_one_response["data"]["title"]
                 card_one_type = card_one_response["data"]["card_type"]
                 card_two_title = card_two_response["data"]["title"]
-                card_one_type = card_two_response["data"]["card_type"]
+                card_two_type = card_two_response["data"]["card_type"]
                 output.append({"trade_id": trade_id, "trade_date": trade_date, "user_id": user_id, "name": name, 
                             "card_one_id": card_one_id, "card_one_title": card_one_title, "card_one_type": card_one_type, 
-                            "card_two_id": card_two_id, "card_two_title": card_two_title, "card_two_type": card_one_type})
+                            "card_two_id": card_two_id, "card_two_title": card_two_title, "card_two_type": card_two_type})
 
         return jsonify({"code": 200, "data": output}), 200
 
@@ -185,10 +185,10 @@ def get_trades_by_user(user_id):
                 card_one_title = card_one_response["data"]["title"]
                 card_one_type = card_one_response["data"]["card_type"]
                 card_two_title = card_two_response["data"]["title"]
-                card_one_type = card_two_response["data"]["card_type"]
+                card_two_type = card_two_response["data"]["card_type"]
                 output.append({"trade_id": trade_id, "trade_date": trade_date, "user_id": user_id, "name": name,
                             "card_one_id": card_one_id, "card_one_title": card_one_title, "card_one_type": card_one_type, 
-                            "card_two_id": card_two_id, "card_two_title": card_two_title, "card_two_type": card_one_type})
+                            "card_two_id": card_two_id, "card_two_title": card_two_title, "card_two_type": card_two_type})
 
         return jsonify({"code": 200, "data": output}), 200
 

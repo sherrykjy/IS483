@@ -26,13 +26,8 @@
             </div>
         </div>        
 
-        <!-- Check if there are no filtered events or eventData -->
-        <div v-if="Object.keys(filteredEventsData).length === 0">
-            <p class="no-events-found">No matching events found</p>
-        </div>
-
         <!-- loop for each date -->
-        <div v-for="date in sortedDates" :key="date" v-else>
+        <div v-for="date in sortedDates" :key="date">
             <div v-if="filteredEventsData[date] && filteredEventsData[date].length">
                 <!-- date header -->
                 <div class="basicHeader">
@@ -240,10 +235,10 @@ export default
                         return matchesSearchInput && matchesDate;
                     });
 
-                if (eventsForDate.length) {
-                    this.filteredEvents[date] = eventsForDate;
+                    if (eventsForDate.length) {
+                        this.filteredEvents[date] = eventsForDate;
+                    }
                 }
-            }
             }
         },
         computed: {

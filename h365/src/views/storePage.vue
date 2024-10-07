@@ -32,7 +32,7 @@
     <div class="pagePad">
         <div class="search-bar">
             <i class="uil uil-search"></i>
-            <input type="text" placeholder="Search by card or set" />
+            <input type="text" v-model="searchInput" @input="searchCards" placeholder="Search by card or set" />
         </div>
 
         <div class="head">
@@ -45,7 +45,7 @@
             </router-link>
         </div>
 
-        <div v-for="(cards, cardType) in allCards" :key="cardType" class="set">
+        <div v-for="(cards, cardType) in filteredCardsData" :key="cardType" class="set">
             <div class="set">
                 <p> {{ cardType }} </p>
                 <div class="carousel">
@@ -128,7 +128,9 @@ export default {
             numCards: 0,
             allCards: {},
             userCards: [],
-            errorMessage: ''
+            errorMessage: '',
+            searchInput: '',
+            searchResults: {}
         };
     },
     methods: {
@@ -224,6 +226,40 @@ export default {
             const formattedSetName = card_set.toLowerCase().replace(/\s+/g, "_");
             return require(`@/assets/icons/collection/${formattedSetName}/${formattedTitle}.png`);
         },
+        searchCards() {
+            this.searchResults = {};
+
+            if (this.searchInput) {
+                var lowerCaseInput = this.searchInput.toLowerCase();
+
+                for (let type in this.allCards) {
+                    console.log(type);
+                    if (type.toLowerCase().includes(lowerCaseInput)) {
+                        this.searchResults[type] = this.allCards[type];
+                    } else {
+                        // console.log(this.allCards[type]);
+                        var card_set = this.allCards[type];
+                        // console.log("card set check", card_set);
+                        for (let i = 0; i < card_set.length; i++) {
+                            let card = card_set[i];
+                            console.log("card", card);
+                            if (card.title.toLowerCase().includes(lowerCaseInput)) {
+                                console.log("title check pass", card.title);
+                                if (!this.searchResults[type]) {
+                                    this.searchResults[type] = [];
+                                }
+                                this.searchResults[type].push(card);
+                            }
+                        }
+                    }
+                }
+
+                console.log("search results check", this.searchResults);
+                
+            } else {
+                this.searchResults = {};
+            }
+        }
     },
     setup() {
         console.log("store page");
@@ -243,12 +279,21 @@ export default {
             this.fetchUserData();
             this.fetchAllCards();
             this.fetchUserCards(); 
+
+            console.log(this.allCards);
         }
         catch (error) {
             console.log("error:", error);
 
             this.numUnlocked = 0;
             
+        }
+    },
+    computed: {
+        filteredCardsData() {
+            return Object.keys(this.searchResults).length > 0 && this.searchInput
+            ? this.searchResults
+            : this.allCards;
         }
     }
 };

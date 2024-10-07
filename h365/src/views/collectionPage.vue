@@ -42,11 +42,11 @@
     <div class="pagePad">
         <div class="search-bar">
             <i class="uil uil-search"></i>
-            <input type="text" placeholder="Search by card or set" />
+            <input type="text" v-model="searchInput" @input="searchCards" placeholder="Search by card or set" />
         </div>
 
         <div class="colDisplay">
-            <div v-for="card in userCards" 
+            <div v-for="card in filteredCardsData" 
                 :key="card.card_id"
                 class="card"
                 @click="openInfoPopup(card.description, card.recommendation)"
@@ -91,7 +91,9 @@ export default {
             selectedCardRecommendation: '',
             userCards: [],
             numCards: 0,
-            numHealthCoins: 0
+            numHealthCoins: 0,
+            searchInput: '',
+            searchResults: []
         };
     },
     methods: {
@@ -148,6 +150,19 @@ export default {
         },
         closePopup() {
             this.isPopupVisible = false;
+        },
+        searchCards() {
+            console.log("checking search input:" + this.searchInput);
+            var lowerCaseInput = this.searchInput.toLowerCase();
+
+            this.searchResults = [];
+
+            for (var card of this.userCards) {
+                if (card.title.toLowerCase().includes(lowerCaseInput) || card.card_type.toLowerCase().includes(lowerCaseInput)) {
+                    this.searchResults.push(card);
+                }
+            }
+
         }
     },
     mounted() {
@@ -167,6 +182,17 @@ export default {
             userId,
             userEmail
         };
+    },
+    computed: {
+        filteredCardsData() {
+            if (this.searchInput) {
+                console.log("returning filtered data");
+                console.log("filtered cards:", this.searchResults);
+                return this.searchResults || [];
+            } else {
+                return this.userCards;
+            }
+        }
     }
 };
 </script>

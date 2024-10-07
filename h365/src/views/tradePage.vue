@@ -1,11 +1,11 @@
 <template>
     <div class="stickyHeader">
         <div class="pageHeader">
-            <i class="uil uil-angle-left"></i>
+            <i class="uil uil-angle-left" @click="goBack"></i>
             <p> Trade </p>
         </div>
 
-        <n-tabs type="line" class="pageTab">
+        <n-tabs v-model:value="selectedTab" type="line" class="pageTab">
             <n-tab name="allTrades">
                 All
             </n-tab>
@@ -18,118 +18,39 @@
     <div class="pagePad">
         <div class="search-bar">
             <i class="uil uil-search"></i>
-            <input type="text" placeholder="Search by card, set, or user" />
+            <input type="text" v-model="searchInput" @input="searchTrades" placeholder="Search by card, set, or user" />
         </div>
 
-        <div class="card">
-            <div class="cardTop">
-                <div class="tradeInfo">
-                    <p class="head"> Trade Request </p>
-                    <p class="body"> Alice Tan </p>
-                </div>
-
-                <div class="acceptBtn" @click="openTradePopup('Williams', 'Selena', 'Alice Tan')">
-                    <p> Accept </p>
-                    <i class="uil uil-thumbs-up"></i>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="cardBottom">
-                <div class="offer">
-                    <div class="card" @click="openInfoPopup('Williams', 'Weekend Action', 'Description of Williams', '../assets/icons/collection/weekend_action/williams.png')">
-                        <p class="head"> Offering Up </p>
-                        <img src="../assets/icons/collection/weekend_action/williams.png">
-                        <p class="cardName"> Williams </p>
-                        <p class="cardSet"> Weekend Action </p>
+        <div v-for="trade in filteredTradesData" :key="trade.trade_id">
+            <div class="card">
+                <div class="cardTop">
+                    <div class="tradeInfo">
+                        <p class="head"> Trade Request </p>
+                        <p class="body"> {{ trade.name }} </p>
+                    </div>
+                    <div class="acceptBtn" @click="openTradePopup(trade.card_one_title, trade.card_two_title, trade.name)">
+                        <p> Accept </p>
+                        <i class="uil uil-thumbs-up"></i>
                     </div>
                 </div>
-
-                <i class="uil uil-exchange"></i>
-
-                <div class="receive">
-                    <div class="card" @click="openInfoPopup('Selena', 'Fruit Basket', 'Description of Selena', '../assets/icons/collection/fruit_basket/selena_strawberry.png')">
-                        <p class="head"> Requesting For </p>
-                        <img src="../assets/icons/collection/fruit_basket/selena.png">
-                        <p class="cardName"> Selena </p>
-                        <p class="cardSet"> Fruit Basket </p>
+                <div class="divider"></div>
+                <div class="cardBottom">
+                    <div class="offer">
+                        <div class="card">
+                            <p class="head"> Offering Up </p>
+                            <img :src="getCardImage(trade.card_one_title, trade.card_one_type)" />
+                            <p class="cardName"> {{ trade.card_one_title }} </p>
+                            <p class="cardSet"> {{ trade.card_one_type }} </p>
+                        </div>
                     </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="cardTop">
-                <div class="tradeInfo">
-                    <p class="head"> Trade Request </p>
-                    <p class="body"> Alice Tan </p>
-                </div>
-
-                <div class="acceptBtn" @click="openTradePopup('Williams', 'Selena', 'Alice Tan')">
-                    <p> Accept </p>
-                    <i class="uil uil-thumbs-up"></i>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="cardBottom">
-                <div class="offer">
-                    <div class="card" @click="openInfoPopup('Williams', 'Weekend Action', 'Description of Williams', '../assets/icons/collection/weekend_action/williams.png')">
-                        <p class="head"> Offering Up </p>
-                        <img src="../assets/icons/collection/weekend_action/williams.png">
-                        <p class="cardName"> Williams </p>
-                        <p class="cardSet"> Weekend Action </p>
-                    </div>
-                </div>
-
-                <i class="uil uil-exchange"></i>
-
-                <div class="receive">
-                    <div class="card" @click="openInfoPopup('Selena', 'Fruit Basket', 'Description of Selena', '../assets/icons/collection/fruit_basket/selena_strawberry.png')">
-                        <p class="head"> Requesting For </p>
-                        <img src="../assets/icons/collection/fruit_basket/selena.png">
-                        <p class="cardName"> Selena </p>
-                        <p class="cardSet"> Fruit Basket </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="cardTop">
-                <div class="tradeInfo">
-                    <p class="head"> Trade Request </p>
-                    <p class="body"> Alice Tan </p>
-                </div>
-
-                <div class="acceptBtn" @click="openTradePopup('Williams', 'Selena', 'Alice Tan')">
-                    <p> Accept </p>
-                    <i class="uil uil-thumbs-up"></i>
-                </div>
-            </div>
-
-            <div class="divider"></div>
-
-            <div class="cardBottom">
-                <div class="offer">
-                    <div class="card" @click="openInfoPopup('Williams', 'Weekend Action', 'Description of Williams', '../assets/icons/collection/weekend_action/williams.png')">
-                        <p class="head"> Offering Up </p>
-                        <img src="../assets/icons/collection/weekend_action/williams.png">
-                        <p class="cardName"> Williams </p>
-                        <p class="cardSet"> Weekend Action </p>
-                    </div>
-                </div>
-
-                <i class="uil uil-exchange"></i>
-
-                <div class="receive">
-                    <div class="card" @click="openInfoPopup('Selena', 'Fruit Basket', 'Description of Selena', '../assets/icons/collection/fruit_basket/selena_strawberry.png')">
-                        <p class="head"> Requesting For </p>
-                        <img src="../assets/icons/collection/fruit_basket/selena.png">
-                        <p class="cardName"> Selena </p>
-                        <p class="cardSet"> Fruit Basket </p>
+                    <i class="uil uil-exchange"></i>
+                    <div class="receive">
+                        <div class="card">
+                            <p class="head"> Requesting For </p>
+                            <img :src="getCardImage(trade.card_two_title, trade.card_two_type)" />
+                            <p class="cardName"> {{ trade.card_two_title }} </p>
+                            <p class="cardSet"> {{ trade.card_two_type }} </p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -154,21 +75,49 @@
 </template>
 
 <script>
+import { ref, watch } from "vue";
+import { useRouter } from 'vue-router';
 import Popup from '@/components/popUp.vue';
 
 export default {
     components: {
         Popup
     },
+    setup() {
+        console.log("all trades page");
+        const selectedTab = ref('allTrades');
+        const router = useRouter();
+
+        watch(selectedTab, (newTab) => {
+            if (newTab === 'allTrades') {
+                router.push({ path: '/trade' });
+            } else if (newTab === 'myTrades') {
+                router.push({ path: '/mytrades' });
+            }
+        });
+
+        return {
+            selectedTab
+        };
+    },
     data() {
         return {
             isPopupVisible: false,
             tradeCardName: 'Card A',  // Example data
             receiveCardName: 'Card B',  // Example data
-            tradeWith: 'User123'  // Example data
+            tradeWith: 'User123',  // Example data
+            trades: [],
+            searchInput: '',
+            searchResults: []
         };
     },
     methods: {
+        openInfoPopup(cardDescription, cardRecommendation) {
+            this.selectedCardDescription = cardDescription;
+            this.selectedCardRecommendation = cardRecommendation;
+            this.popupType = 'info';
+            this.isPopupVisible = true;
+        },
         openTradePopup(tradeCardName, receiveCardName, tradeWith) {
             this.tradeCardName = tradeCardName;
             this.receiveCardName = receiveCardName;
@@ -178,6 +127,62 @@ export default {
         },
         closePopup() {
             this.isPopupVisible = false;
+        },
+        getCardImage(card_title, card_set) {
+            if (!card_title || !card_set) {
+                console.error("Invalid card_title or card_set:", card_title, card_set);
+                return ;
+            }
+
+            const formattedTitle = card_title.toLowerCase().replace(/\s+/g, "_");
+            // console.log(formattedTitle);
+            const formattedSetName = card_set.toLowerCase().replace(/\s+/g, "_");
+            return require(`@/assets/icons/collection/${formattedSetName}/${formattedTitle}.png`);
+        },
+        goBack() {
+            this.$router.go(-1);
+        },
+        async fetchAllTrades() {
+            try {
+                const response = await this.$http.get("http://127.0.0.1:5013/trades");
+                console.log(response.data.data);
+                this.trades = response.data.data;
+            } catch (error) {
+                console.log("Error fetching trades:" + error);
+            }
+        },
+        async searchTrades() {
+            console.log("checking search input:", this.searchInput);
+            try {
+                const url = "http://127.0.0.1:5013/trade/search";
+                const params = {};
+                params.search_input = this.searchInput;
+
+                const response = await this.$http.get(url, { params });
+                console.log("response:", response);
+
+                if (response.status === 200) {
+                    console.log("returning search results");
+                    console.log(response.data.data);
+                    this.searchResults = response.data.data;
+                }
+            } catch (error) {
+                console.log("Error in searching for trades:" + error);
+            }
+        }
+    },
+    mounted() {
+        this.fetchAllTrades();
+    },
+    computed: {
+        filteredTradesData() {
+            if (this.searchInput) {
+                console.log("returning filtered data");
+                console.log("filtered trades:", this.searchResults);
+                return this.searchResults || [];
+            } else {
+                return this.trades;
+            }
         }
     }
 };
