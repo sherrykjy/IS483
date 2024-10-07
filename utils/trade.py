@@ -162,6 +162,42 @@ def get_trade(trade_id):
         return jsonify(trade.json()), 200
     return jsonify({"error": "Trade not found"}), 404
 
+# Get Trades by User ID
+@app.route('/trade/user/<int:user_id>', methods=['GET'])
+def get_trades_by_user(user_id):
+    try:
+        trades = Trade.query.filter_by(user_id=user_id).all()
+        output = []
+        for trade in trades:
+            trade_id = trade.trade_id
+            card_one_id = trade.card_one_id
+            card_two_id = trade.card_two_id
+            trade_date = trade.trade_date
+
+            user_response = invoke_http(userURL+f"/id/{user_id}")
+            card_one_response = invoke_http(cardURL+f"/{card_one_id}")
+            card_two_response = invoke_http(cardURL+f"/{card_two_id}")
+            # print(card_one_response)
+            # print(card_two_response)
+
+            if user_response["code"] == 200 and card_one_response["code"] == 200 and card_two_response["code"] == 200:
+                name = user_response["data"]["name"]
+                card_one_title = card_one_response["data"]["title"]
+                card_one_type = card_one_response["data"]["card_type"]
+                card_two_title = card_two_response["data"]["title"]
+                card_one_type = card_two_response["data"]["card_type"]
+                output.append({"trade_id": trade_id, "trade_date": trade_date, "user_id": user_id, "name": name,
+                            "card_one_id": card_one_id, "card_one_title": card_one_title, "card_one_type": card_one_type, 
+                            "card_two_id": card_two_id, "card_two_title": card_two_title, "card_two_type": card_one_type})
+
+        return jsonify({"code": 200, "data": output}), 200
+
+    except Exception as e:
+        return jsonify({
+            "code": 500,
+            "message": f"An error occurred: {str(e)}"
+        }), 500
+    
 # Get Trades by Search on card title, card type, user name, and order by date
 @app.route('/trade/search', methods=['GET'])
 def search_trade():
@@ -245,5 +281,5 @@ def delete_trade(trade_id):
     return jsonify({"code": 404, "error": "Trade not found"}), 404
 
 if __name__ == '__main__':
-    app.run(port=5010, debug=True)
+    app.run(port=5013, debug=True)
 

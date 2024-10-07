@@ -25,7 +25,9 @@
                 <button style="background-color: var(--blue);" @click="confirmUnlock"> Confirm </button>
             </div>
         </div>
-  
+
+
+
         <!-- Trade Popup -->
         <div v-if="type === 'trade'">
             <p class="head">
@@ -46,7 +48,9 @@
                 <button style="background-color: var(--blue);" @click="confirmAction"> Confirm </button>
             </div>
         </div>
-  
+
+
+
         <!-- Info Popup -->
         <div v-if="type === 'info'">
             <div class="head">
@@ -71,6 +75,8 @@
                 <button style="background-color: var(--blue);" @click="closePopup"> Cool! </button>
             </div>
         </div>
+
+
 
         <!-- event code pop up -->
         <div v-if="type === 'event-code'">
@@ -153,7 +159,7 @@ props: {
         default: ''
     },
     cardRecommendation: {
-        type: String, 
+        type: String, // Used for info popup
         default: ''
     },
     eventName: {
