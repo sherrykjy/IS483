@@ -133,6 +133,49 @@ class strava_users(db.Model):
 
 strava_URL = "http://localhost:5020"
 
+@app.route('/check_activities_access', methods=['GET'])
+def check_activities_access():
+    try:
+        # Step 1: Fetch user data from the database (assuming first user for now)
+        user = strava_users.query.first()
+
+        if not user:
+            return jsonify({"code": 404, "message": "User not found"}), 404
+
+        # Step 3: Use invoke_http to fetch activities from Strava
+        headers = {'Authorization': f'Bearer {user.access_token}'}
+        activities_response = invoke_http(f"{strava_URL}/activities", method="GET", headers=headers)
+
+        # Step 4: Check if the response contains an error
+        if activities_response.get('code', 200) != 200:
+            raise Exception(f"Failed to fetch activities: {activities_response.get('message', 'Unknown error')}")
+
+        # Step 5: If activities are fetched, return the activities data
+        activities = activities_response.get("data")
+        if activities:
+            return jsonify({
+                "code": 200,
+                "message": "Successfully accessed activities data",
+                "data": activities
+            }), 200
+        else:
+            return jsonify({
+                "code": 204,
+                "message": "No activities found"
+            }), 204
+
+    except Exception as e:
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
+        print(ex_str)
+
+        return jsonify({
+            "code": 500,
+            "message": "Internal error: " + ex_str
+        }), 500
+
+
 # Calculate weekly MVPA based on speed of activities
 @app.route('/estimate_mvpa', methods=['GET'])
 def estimate_mvpa():
