@@ -90,19 +90,28 @@
             <img src="../assets/icons/homepage/glass.png">
             <div class="headerText">
                 <p class="head"> My H365 Unwrapped </p>
-                <p class="body"> Take a look at your progress in {{ lastMonth }} </p>
+                <p class="body"> Take a look at your progress </p>
             </div>
         </div>
 
         <div class="container">
             <div class="basicCard">
+
                 <div class="pageHeading">
-                    <img src="../assets/icons/homepage/glass.png">
-                    <div class="headerText">
-                        <p class="head"> My H365 Unwrapped </p>
-                        <p class="body"> Take a look at your progress in {{ lastMonth }} </p>
-                    </div>
+                    <span style="font-family: text-medium; color: var(--text-highlight); 
+                    font-size: 13px; text-align: justify;"> 
+                        You moved for a total of 
+                        <span style="font-family: text-bold; color: var(--green)"> {{ mr_movingMinutes }} </span>
+                        minutes in 
+                        <span style="color: var(--orange)"> {{ lastMonth }} </span>
+                    </span>
                 </div>
+
+                <router-link :to="{ name: 'monthlyReport'}">
+                    <button class="syncButton"> View your {{ lastMonth }} report </button>
+                </router-link>
+
+                
 
             </div>
         </div>
@@ -338,6 +347,7 @@ export default {
             currentWeekly: 75,
             goalWeekly: 150,
             minutesToday: 30,
+            mr_movingMinutes: 180,
             lastMonth: "August"
         }
     },
