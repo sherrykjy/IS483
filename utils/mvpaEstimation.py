@@ -224,11 +224,13 @@ def processStravaInformation(access_token):
         "daily_time_lapse": 0,
         "monthly_time_lapse": 0,
         "monthly_top_activity": "",
-        "activities_in_month": {} # key: date, value: distance
+        "activities_in_month": {}, # key: date, value: distance
+        "monthly_distance": 0
     }
 
     weekly_time_lapse = 0
     monthly_time_lapse = 0
+    monthly_distance = 0
     activity_dict = {}
 
     ### monthly report
@@ -277,12 +279,14 @@ def processStravaInformation(access_token):
             
             # store activities for last month
             to_return["activities_in_month"][activity_date.day] = activity.get("distance", 0)
+            monthly_distance += activity.get("distance", 0)
 
         else:
             break
     
     to_return["weekly_time_lapse"] = weekly_time_lapse
     to_return["monthly_time_lapse"] = monthly_time_lapse
+    to_return["monthly_distance"] = monthly_distance
 
     if weekly_time > 0:
         weekly_speed_m_s = weekly_distance / weekly_time

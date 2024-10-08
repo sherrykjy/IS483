@@ -128,7 +128,8 @@ def processStreakInformation(streak_information):
             "monthly_time_lapse": met_result['monthly_time_lapse'],
             "weekly_time_lapse": met_result['weekly_time_lapse'],
             "streak_count": streak_result['streak_count'],
-            "activities_in_month": met_result['activities_in_month']
+            "activities_in_month": met_result['activities_in_month'],
+            "monthly_distance": met_result['monthly_distance']
         }
     }
 

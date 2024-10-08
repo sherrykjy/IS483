@@ -108,7 +108,7 @@
                 </div>
 
                 <router-link :to="{ name: 'monthlyReport'}">
-                    <button class="syncButton" style="width: 90%;"> View your {{ lastMonth }} report </button>
+                    <button class="syncButton" style="width: 90%;" @click="goToMonthlyReport"> View your {{ lastMonth }} report </button>
                 </router-link>
 
             </div>
@@ -342,11 +342,17 @@ export default {
     data() {
         return {
             streakCount: 1,
+
             currentWeekly: 0,
             goalWeekly: 0,
             minutesToday: 0,
+
             mr_movingMinutes: 0,
-            lastMonth: "August",
+            mr_topActivity: "",
+            mr_totalDistance: 0,
+            mr_allActivitites: {},
+
+            lastMonth: "",
             numHealthCoins: 0,
             userName: "",
         }
@@ -362,6 +368,22 @@ export default {
     },
 
     methods: {
+        getPreviousMonth() {
+            const currentDate = new Date();
+            let month = currentDate.getMonth();
+
+            if (month === 0) {
+                month = 11;
+            } else {
+                month -= 1;
+            }
+
+            // Get the month name from the month index
+            const monthNames = ["January", "February", "March", "April", "May", "June", 
+                                "July", "August", "September", "October", "November", "December"];
+            this.lastMonth = monthNames[month];
+        },
+
         async fetchUserData() {
             try {
                 const userReponse = await this.$http.get("http://127.0.0.1:5001/user/" + this.userEmail);
@@ -411,7 +433,13 @@ export default {
                 this.currentWeekly = response.data.data.weekly_time_lapse;
                 this.goalWeekly = goalData[0].target;
                 this.minutesToday = response.data.data.daily_time_lapse;
-                // this.mr_movingMinutes = 
+
+                this.mr_movingMinutes = response.data.data.monthly_time_lapse;
+                this.mr_topActivity = response.data.data.monthly_top_activity;
+                this.mr_totalDistance = response.data.data.monthly_distance;
+                this.mr_allActivitites = response.data.data.activities_in_month;
+
+                // console.log("haha", this.mr_allActivitites)
 
                 if (response.status === 200) {
                     console.log('Streak update successful', response.data);
@@ -421,11 +449,27 @@ export default {
             } catch (error) {
                 console.error('Sync failed:', error);
             }
+        },
+
+        goToMonthlyReport() {
+            this.$router.push({
+                name: 'monthlyReport',
+                params: {
+                    streakCount: this.streakCount,
+                    mr_movingMinutes: this.mr_movingMinutes,
+                    mr_topActivity: this.mr_topActivity,
+                    mr_totalDistance: this.mr_totalDistance,
+                    // mr_allActivitites: this.mr_allActivitites,
+                    mr_allActivitites: JSON.stringify(this.mr_allActivitites),
+                    mr_month: this.month
+                }
+            });
         }
     },
 
     async mounted() {
         try {
+            this.getPreviousMonth();
             this.fetchUserData();
             await this.syncNow();
         } catch (error) {
