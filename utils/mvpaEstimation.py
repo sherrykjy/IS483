@@ -223,11 +223,13 @@ def processStravaInformation(access_token):
         "weekly_time_lapse": 0,
         "daily_time_lapse": 0,
         "monthly_time_lapse": 0,
-        "monthly_top_activity": ""
+        "monthly_top_activity": "",
+        "activities_in_month": {} # key: date, value: distance
     }
 
     weekly_time_lapse = 0
     monthly_time_lapse = 0
+    activity_dict = {}
 
     ### monthly report
     now = datetime.now()
@@ -236,46 +238,51 @@ def processStravaInformation(access_token):
     else:
         last_month = now.month - 1
 
-    
-    
-    
+    # process activity data
     for activity in activities:
         activity_date = datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ")
         
-        if activity_date.month == datetime.now().month: # check month
+        if activity_date.month == datetime.now().month: # check for current month
             if activity_date.isocalendar()[1] == current_week: # check week
 
                 weekly_distance += activity.get("distance", 0)
                 weekly_time += activity.get("elapsed_time", 0)
 
-                if activity_date.date() == datetime.now().date():
+                if activity_date.date() == datetime.now().date(): # today in current week
                     speed_m_s = activity.get("distance", 0) / activity.get("elapsed_time", 1)
                     daily_met = (speed_m_s / 0.2) + 3.5
                     if daily_met >= 3:
                         to_return["daily_time_lapse"] = round(activity.get("elapsed_time", 0) / 60, 0)
                         weekly_time_lapse += round(activity.get("elapsed_time", 0) / 60, 0)
-                        monthly_time_lapse += round(activity.get("elapsed_time", 0) / 60, 0)
                 
-                else:
+                else: # other days in current week
                     speed_m_s = activity.get("distance", 0)
                     daily_met = (speed_m_s / 0.2) + 3.5
                     if daily_met >= 3:
                         weekly_time_lapse += round(activity.get("elapsed_time", 0) / 60, 0)
-                        monthly_time_lapse += round(activity.get("elapsed_time", 0) / 60, 0)
 
-                to_return["weekly_time_lapse"] = weekly_time_lapse
-
+        elif activity_date.month == last_month: # check for last month
+            # total activity for last month
+            speed_m_s = activity.get("distance", 0)
+            daily_met = (speed_m_s / 0.2) + 3.5
+            if daily_met >= 3:
+                monthly_time_lapse += round(activity.get("elapsed_time", 0) / 60, 0)
+            
+            # top activity for last month
+            sport_type = activity.get("sport_type")
+            if sport_type not in activity_dict:
+                activity_dict[sport_type] = 1
             else:
-                speed_m_s = activity.get("distance", 0)
-                daily_met = (speed_m_s / 0.2) + 3.5
-                if daily_met >= 3:
-                    monthly_time_lapse += round(activity.get("elapsed_time", 0) / 60, 0)
-
-            to_return["monthly_time_lapse"] = monthly_time_lapse
+                activity_dict[sport_type] += 1
+            
+            # store activities for last month
+            to_return["activities_in_month"][activity_date.day] = activity.get("distance", 0)
 
         else:
             break
-
+    
+    to_return["weekly_time_lapse"] = weekly_time_lapse
+    to_return["monthly_time_lapse"] = monthly_time_lapse
 
     if weekly_time > 0:
         weekly_speed_m_s = weekly_distance / weekly_time
@@ -283,19 +290,7 @@ def processStravaInformation(access_token):
 
 
 
-    # Determine the top activity for the previous month
-
-    # Dictionary to count occurrences of each activity type in the previous month
-    activity_dict = {}
-    
-    if activity_date.month == last_month:
-            # Update the count of each sport type
-            sport_type = activity.get("sport_type")
-            if sport_type not in activity_dict:
-                activity_dict[sport_type] = 1
-            else:
-                activity_dict[sport_type] += 1
-    
+    # Determine the top activity for the previous month            
     if activity_dict:
         top_activity = max(activity_dict, key=activity_dict.get)
         to_return["monthly_top_activity"] = top_activity

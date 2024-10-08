@@ -78,7 +78,7 @@ def processStreakInformation(streak_information):
                 "goal_id": streak_result["goal_id"],
                 "week_started": streak_result["week_started"],
                 "week_current": streak_result["week_current"],
-                "streak_count": streak_result["streak_count"]
+                "streak_count": streak_result["streak_count"],
                 }
             coinEarned = 0
             
@@ -125,8 +125,10 @@ def processStreakInformation(streak_information):
         "data": {
             "daily_time_lapse": met_result['daily_time_lapse'],
             "monthly_top_activity": met_result['monthly_top_activity'],
+            "monthly_time_lapse": met_result['monthly_time_lapse'],
             "weekly_time_lapse": met_result['weekly_time_lapse'],
-            "streak_count": streak_result['streak_count']
+            "streak_count": streak_result['streak_count'],
+            "activities_in_month": met_result['activities_in_month']
         }
     }
 
