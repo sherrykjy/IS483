@@ -451,6 +451,26 @@ export default {
             }
         },
 
+        // goToMonthlyReport() {
+        //     this.$router.push({
+        //         name: 'monthlyReport',
+        //         params: {
+        //             streakCount: this.streakCount,
+        //             mr_movingMinutes: this.mr_movingMinutes,
+        //             mr_topActivity: this.mr_topActivity,
+        //             mr_totalDistance: this.mr_totalDistance,
+        //             // mr_allActivitites: this.mr_allActivitites,
+        //             // mr_allActivitites: Object.keys(activities).length ? JSON.stringify(activities) : '{}', // Default to empty object
+
+                    
+
+        //             mr_month: this.month
+        //         }
+        //     });
+
+        //     this.$router.push('monthlyReport').then(() => { this.$route.params.mr_allActivitites = this.mr_allActivitites })
+        // }
+
         goToMonthlyReport() {
             this.$router.push({
                 name: 'monthlyReport',
@@ -459,10 +479,11 @@ export default {
                     mr_movingMinutes: this.mr_movingMinutes,
                     mr_topActivity: this.mr_topActivity,
                     mr_totalDistance: this.mr_totalDistance,
-                    // mr_allActivitites: this.mr_allActivitites,
-                    mr_allActivitites: JSON.stringify(this.mr_allActivitites),
+                    mr_allActivitites: JSON.stringify(this.mr_allActivitites), // Stringify the array before passing
                     mr_month: this.month
                 }
+            }).then(() => { 
+                this.$route.params.mr_allActivitites = this.mr_allActivitites;
             });
         }
     },

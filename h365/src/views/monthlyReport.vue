@@ -10,7 +10,7 @@
                 <div>
                     <div class="card drop-shadow">
                         <div class="content">
-                                <p class="actual"> {{ topActivity }} </p>
+                                <p class="actual"> {{ mr_topActivity }} </p>
                                 <p class="label"> Top Activity </p>
                                 <img src="../assets/icons/report/trophy.png" class="cardimg">
                         </div>
@@ -21,7 +21,7 @@
                 <div>
                     <div class="card drop-shadow">
                         <div class="content">
-                                <p class="actual"> {{ currentStreak }} </p>
+                                <p class="actual"> {{ streakCount }} </p>
                                 <p class="label"> Current Streak </p>
                                 <img src="../assets/icons/report/streak.png" class="cardimg">
                         </div>
@@ -35,7 +35,7 @@
                 <div>
                     <div class="card drop-shadow">
                         <div class="content">
-                                <p class="actual"> {{ totalDistance }} KM </p>
+                                <p class="actual"> {{ mr_totalDistance }} KM </p>
                                 <p class="label"> Total Distance </p>
                                 <img src="../assets/icons/report/distance.png" class="cardimg">
                         </div>
@@ -46,7 +46,7 @@
                 <div>
                     <div class="card drop-shadow">
                         <div class="content">
-                                <p class="actual"> {{ totalTime }} </p>
+                                <p class="actual"> {{ mr_movingMinutes }} </p>
                                 <p class="label"> Moving Minutes </p>
                                 <img src="../assets/icons/report/time.png" class="cardimg">
                         </div>
@@ -83,7 +83,101 @@ export default {
 
   data() {
     return {
-        activities: JSON.parse(this.mr_allActivitites),
+        chartData: {
+            labels: [],
+            datasets: [
+                {
+                    data: [],
+                    fill: false,
+                    borderColor: 'rgb(28, 131, 225)',
+                    tension: 0.1,
+                    pointBackgroundColor: 'white',
+                    pointRadius: 3
+                }
+            ]
+        },
+        streakCount: this.$route.params.streakCount || 0,
+        mr_movingMinutes: this.$route.params.mr_movingMinutes || 0,
+        mr_topActivity: this.$route.params.mr_topActivity || "",
+        mr_totalDistance: this.$route.params.mr_totalDistance || 0,
+        mr_allActivitites: {}, // Empty object to be filled later
+        mr_month: this.$route.params.mr_month || 0,
+
+        temp: []
+    };
+  },
+
+  mounted() {
+    console.log('Route params:', this.$route.params); // Log all route parameters
+
+    if (this.$route.params.mr_allActivitites) {
+        try {
+            // Parse the JSON string passed in mr_allActivitites
+            this.mr_allActivitites = JSON.parse(this.$route.params.mr_allActivitites);
+            console.log('Parsed Activities:', this.mr_allActivitites); // Log parsed activities
+
+            this.populateChartData();
+        } catch (error) {
+            console.error("Error parsing mr_allActivitites:", error);
+        }
+    } else {
+        console.error("mr_allActivitites is undefined.");
+    }
+  },
+
+//   async mounted() {
+//     try {
+//         this.populateChartData();
+//     } catch (error) {
+//             console.log("error:", error);
+//         }
+//   },
+
+//   {7: 6001.5, 14: 5708.5, 21: 7104.9, 28: 6006.2}
+
+  methods: {
+    populateChartData() {
+        const totalDaysInMonth = new Date(2024, this.mr_month, 0).getDate(); // Get the total number of days in the month
+
+        this.chartData.labels = Array.from({ length: totalDaysInMonth }, (_, i) => i + 1);
+        console.log(this.chartData.labels)
+
+        const activities = this.mr_allActivitites; // Reference the activities object
+        this.temp = [];
+
+        // Loop through all days of the month (1-based index for days)
+        for (let i = 1; i <= totalDaysInMonth; i++) {
+            // Check if the current day (i) exists in the activities object
+            if (activities.hasOwnProperty(i)) {
+                this.temp.push(activities[i]); // If it exists, add the value to the temp array
+            } else {
+                this.temp.push(0); // If it doesn't exist, append 0
+            }
+        }
+
+        console.log("haha", this.temp)
+
+        // Update the chartData with the populated temp array
+        this.chartData.datasets[0].data = this.temp;
+        
+        console.log("Populated Chart Data:", this.chartData.datasets[0].data); // Log the populated chart data
+    }
+  }
+};
+</script>
+
+
+<!-- <script>
+import ChartComponent from '@/components/chartComponent.vue';
+
+export default {
+  components: {
+    ChartComponent
+  },
+
+  data() {
+    return {
+        // activities: JSON.parse(this.mr_allActivitites),
         chartData: {
             labels: [],
             datasets: [
@@ -102,7 +196,7 @@ export default {
         mr_movingMinutes: this.$route.params.mr_movingMinutes || 0,
         mr_topActivity: this.$route.params.mr_topActivity || "",
         mr_totalDistance: this.$route.params.mr_totalDistance || 0,
-        mr_allActivitites: {},
+        mr_allActivitites: this.$route.params.mr_allActivitites || {},
         };
     },
 
@@ -136,13 +230,17 @@ export default {
     // },
 
     mounted() {
-        try {
-            const activities = this.$route.params.mr_allActivitites;
-            if (activities) {
-                this.mr_allActivitites = JSON.parse(activities);  // Only parse if not undefined
+        console.log('Route params:', this.$route.params); // Log all params
+        
+        if (this.$route.params.mr_allActivitites) {
+            console.log('Activities:', this.$route.params.mr_allActivitites); // Log mr_allActivitites
+            try {
+                this.mr_allActivitites = this.$route.params.mr_allActivitites;
+            } catch (error) {
+                console.error("Error parsing mr_allActivitites:", error);
             }
-        } catch (error) {
-            console.error("Error parsing activities:", error);
+        } else {
+            console.error("mr_allActivitites is undefined.");
         }
     },
 
@@ -162,19 +260,19 @@ export default {
     //     this.populateChartData();
     // },
 
-    methods: {
-        populateChartData() {
-            const totalDaysInMonth = new Date(2024, this.mr_month, 0).getDate();
+    // methods: {
+    //     populateChartData() {
+    //         const totalDaysInMonth = new Date(2024, this.mr_month, 0).getDate();
 
-            this.chartData.labels = Array.from({ length: totalDaysInMonth }, (_, i) => i + 1);
+    //         this.chartData.labels = Array.from({ length: totalDaysInMonth }, (_, i) => i + 1);
 
-            this.chartData.datasets[0].data = this.chartData.labels.map(day => {
-                return this.activities.hasOwnProperty(day) ? this.activities[day] : 0;
-            });
+    //         this.chartData.datasets[0].data = this.chartData.labels.map(day => {
+    //             return this.activities.hasOwnProperty(day) ? this.activities[day] : 0;
+    //         });
 
-            console.log("Populated Chart Data:", this.chartData.datasets[0].data);
-        }
-    },
+    //         console.log("Populated Chart Data:", this.chartData.datasets[0].data);
+    //     }
+    // },
 //     methods: {
 //     populateChartData() {
 //       const totalDaysInMonth = new Date(2024, this.mr_month, 0).getDate(); // Get the number of days in the month
@@ -192,7 +290,7 @@ export default {
 //     }
 //   }
 };
-</script>
+</script> -->
 
 <style scoped>
 .pagePad {
