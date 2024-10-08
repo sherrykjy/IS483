@@ -3,8 +3,7 @@ import App from './App.vue'
 import router from "./router"
 import axios from 'axios';
 import store from './store';
-// import Chart from 'chart.js/auto';
-
+import './assets/styling/general.css';
 
 import { create, NTabs, NTab, NTabPane, NProgress, NSpace } from 'naive-ui'
 

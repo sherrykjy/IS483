@@ -108,10 +108,8 @@
                 </div>
 
                 <router-link :to="{ name: 'monthlyReport'}">
-                    <button class="syncButton"> View your {{ lastMonth }} report </button>
+                    <button class="syncButton" style="width: 90%;"> View your {{ lastMonth }} report </button>
                 </router-link>
-
-                
 
             </div>
         </div>
