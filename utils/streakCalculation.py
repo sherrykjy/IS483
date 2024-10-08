@@ -47,11 +47,14 @@ def processStreakInformation(streak_information):
     
     # Get Estimated MET
     met_result = invoke_http(f"{mvp_URL}")
+    print("haha1", met_result)
     
     # Get Streak 
     
-    estimated_met = met_result["met"]
+    estimated_met = met_result["weekly_met"]
     streak_result = invoke_http(f"{streak_URL}/{user_id}")
+    print("haha2", streak_result)
+
     coinEarned = 0
     streak_json = {}
     
@@ -89,6 +92,7 @@ def processStreakInformation(streak_information):
         coinEarned = 10
 
     streak_update_result = invoke_http(f"{streak_URL}/{streak_id}", method='PUT', json=streak_json)
+    print(streak_update_result)
 
     # create a new coin transaction
     coin_json = {
