@@ -15,6 +15,8 @@ db = SQLAlchemy(app)
 CORS(app)
 
 cardURL = "http://localhost:5003/card/"
+userURL = "http://localhost:5001/user/"
+healthCoinURL = "http://localhost:5004/healthcoins"
 
 class UserCard(db.Model):
     __tablename__ = 'user_cards'
@@ -40,12 +42,30 @@ class UserCard(db.Model):
             "earned_date": self.earned_date.isoformat()
         }
 
+# Get the next user_card_id
+def get_next_user_card_id():
+    try:
+        # Get the maximum user_card_id from the table
+        max_user_card_id = db.session.query(db.func.max(UserCard.user_card_id)).scalar()
+        # If there are no UserCards yet, start with user_card_id 1
+        if max_user_card_id is None:
+            return 1
+        return max_user_card_id + 1
+    except Exception as e:
+        print(f"Error getting next user_card_id: {str(e)}")
+        return None
+    
 # Create a new UserCard
 @app.route('/usercard', methods=['POST'])
 def create_user_card():
     data = request.json
+    next_user_card_id = get_next_user_card_id()
+
+    if next_user_card_id is None:
+        return jsonify({"error": "Failed to generate user_card_id"}), 400
+    
     new_user_card = UserCard(
-        user_card_id = data.get('user_card_id'),
+        user_card_id = next_user_card_id,
         user_id=data.get('user_id'),
         card_id=data.get('card_id'),
         earned_date=data.get('earned_date')
@@ -136,6 +156,83 @@ def delete_user_card(user_card_id):
             db.session.rollback()
             return jsonify({"error": str(e)}), 400
     return jsonify({"error": "UserCard not found"}), 404
+
+# Buying a new card
+@app.route('/usercard/buy', methods=['POST'])
+def buy_new_card():
+    try:
+        data = request.json
+        print(data)
+        user_id = data.get('user_id')
+        card_id = data.get('card_id')
+
+        # (1) Fetch card info and validate response
+        cardResponse = invoke_http(cardURL + str(card_id), method='GET')
+        if cardResponse["code"] != 200:
+            return jsonify({"code": 400, "error": "Error retrieving card details"}), 400
+        card_info = cardResponse["data"]
+        card_points = card_info["points_required"]
+
+        # (2) Fetch user info and validate response
+        userResponse = invoke_http(userURL + "id/" + str(user_id), method='GET')
+        if userResponse["code"] != 200:
+            return jsonify({"code": 400, "error": "Error retrieving user details"}), 400
+        user_info = userResponse["data"]
+        user_points = user_info["total_point"]
+
+        # (3) Check if user has enough points to buy the card
+        if user_points < card_points:
+            return jsonify({"code": 400, "error": "Insufficient HealthCoins to buy this card"}), 400
+
+        # If sufficient points, (4) add the card to user's collection, (5) deduct the points from user's total points, (6) add record in healthcoins db
+        next_user_card_id = get_next_user_card_id()
+        if next_user_card_id is None:
+            return jsonify({"code": 500, "error": "Error getting next user_card_id"}), 500
+        
+        # (4) Add the card to user's collection
+        new_user_card = UserCard(
+            user_card_id=next_user_card_id,
+            user_id=user_id,
+            card_id=card_id,
+            earned_date=datetime.now()
+        )
+
+        try:
+            db.session.add(new_user_card)
+            print("user card added")
+
+            # (5) Deduct the points from user's total points
+            deductionResponse = invoke_http(userURL + "id/" + str(user_id), method='PATCH', json={"total_point": user_points - card_points})
+            if deductionResponse["code"] != 200:
+                # db.session.rollback() # rollback addition of card
+                # return jsonify({"code": 400, "error": "Error deducting points from user's total points"}), 400
+                raise Exception("Error deducting points from user's total points")
+
+            # (6) Add record in healthcoins db
+            healthCoinResponse = invoke_http(healthCoinURL, method='POST', json={"user_id": user_id, "points_earned": -card_points, "earned_date": str(datetime.now()), "source": "Card Purchase"})
+            print(healthCoinResponse)
+            if healthCoinResponse["code"] != 201:
+                # db.session.rollback() # rollback addition of card and points deduction
+                # return jsonify({"code": 400, "error": "Error adding record in healthcoins db"}), 400
+                raise Exception("Error adding record in healthcoins db")
+
+            # all succeed
+            db.session.commit()
+            return jsonify({"code": 201, "data": new_user_card.json()}), 201
+
+        except Exception as e:
+            db.session.rollback()
+
+            # Compensating transaction: Refund the points if they were deducted
+            refundResponse = invoke_http(userURL + "id/" + str(user_id), method='PATCH', json={"total_point": user_points})
+            if refundResponse["code"] != 200:
+                return jsonify({"code": 500, "error": "Failed to rollback points deduction"}), 500
+            
+            return jsonify({"code": 400, "error": str(e)}), 400
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 400
 
 if __name__ == '__main__':
     app.run(port=5006, debug=True)

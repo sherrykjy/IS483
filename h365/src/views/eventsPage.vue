@@ -4,7 +4,7 @@
             <div class="pageHeader">
                 <p>Events</p>
             </div>
-            <n-tabs type="line" class="pageTab">
+            <n-tabs v-model:value="selectedTab" type="line" class="pageTab">
                 <n-tab name="allEvents">
                     All
                 </n-tab>
@@ -23,12 +23,8 @@
                     <datePicker v-model="dateInput" @update:modelValue="searchEvents"/>
                 </div>
             </div>
-            <!-- Check if there are no filtered events or eventData -->
-            <div v-if="isEmpty(filteredEventsData)">
-                <p class="no-events-found">No matching events found</p>
-            </div>
             <!-- loop for each date -->
-            <div v-for="date in sortedDates" :key="date" v-else>
+            <div v-for="date in sortedDates" :key="date">
                 <!-- date header -->
                 <div class="basicHeader">
                     <p>{{ formattedDateHeader(date) }}</p>
@@ -293,12 +289,32 @@
 
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref, watch } from "vue";
+import { useRouter } from 'vue-router';
 import datePicker from '../components/datePicker.vue';
 
 export default defineComponent({
     components: {
         datePicker
+    },
+    setup() {
+        console.log("all events page");
+        const selectedTab = ref('allEvents');
+        const router = useRouter();
+
+        watch(selectedTab, (newTab) => {
+            if (newTab === 'allEvents') {
+                // Navigate to /events route
+                router.push({ path: '/events' });
+            } else if (newTab === 'bookedEvents') {
+                // Navigate to /booked route
+                router.push({ path: '/booked' });
+            }
+        });
+
+        return {
+            selectedTab
+        };
     },
     async mounted() {
         // to update eventData
@@ -531,9 +547,6 @@ export default defineComponent({
                 this.filteredEvents = null;
                 this.sortedDates = [];
             }
-        },
-        isEmpty(eventsData) {
-            return !eventsData || Object.keys(eventsData).length === 0;
         }
     },
     computed: {

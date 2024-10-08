@@ -17,9 +17,12 @@
                 HealthCoins 
             </p>
 
+            <!-- Display error message -->
+            <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
             <div class="buttonBlock">
                 <button style="background-color: var(--text-highlight);" @click="closePopup"> Cancel </button>
-                <button style="background-color: var(--blue);" @click="confirmAction"> Confirm </button>
+                <button style="background-color: var(--blue);" @click="confirmUnlock"> Confirm </button>
             </div>
         </div>
 
@@ -42,7 +45,7 @@
 
             <div class="buttonBlock">
                 <button style="background-color: var(--text-highlight);" @click="closePopup"> Cancel </button>
-                <button style="background-color: var(--blue);" @click="confirmAction"> Confirm </button>
+                <button style="background-color: var(--blue);" @click="confirmTrade"> Confirm </button>
             </div>
         </div>
 
@@ -65,7 +68,7 @@
             </div>
 
             <p class="cbody">
-                {{ cardRecommendation }}
+               {{ cardRecommendation }}
             </p>
 
             <div class="coolButton">
@@ -94,8 +97,12 @@
                 Please enter code 
             </label><br>
 
-            <input type="text" id="eventCode" class="formInput"><br><br>
-            <button class="formButton" style="color: var(--default-white); background: var(--blue); width: 100%;">
+            <input type="text" id="eventCode" class="formInput" v-model="userEntryCode"><br><br>
+
+            <!-- Display error message -->
+            <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
+            <button class="formButton" style="color: var(--default-white); background: var(--blue); width: 100%;" @click="submitEventCode">
                 Enter
             </button>
         </div>
@@ -117,6 +124,10 @@ props: {
     },
     cardName: {
         type: String,
+        default: ''
+    },
+    cardId: {
+        type: [String, Number],
         default: ''
     },
     cardPrice: {
@@ -154,14 +165,33 @@ props: {
     eventName: {
         type: String,
         default: ''
+    },
+    errorMessage: { 
+        type: String, default: '' 
+    },
+    tradeId: {
+        type: [String, Number], 
+        default: ''
     }
+},
+data() {
+    return {
+      userEntryCode: ''  // This is where the user's event code will be stored
+    };
 },
 methods: {
     closePopup() {
         this.$emit('close');
     },
-    confirmAction() {
-        this.$emit('confirm');
+    confirmTrade() {
+        this.$emit('confirm', this.tradeId);
+    },
+    submitEventCode() {
+        // Emit the event code input by the user to the parent
+        this.$emit('validate-code', this.userEntryCode);
+    },
+    confirmUnlock() {
+        this.$emit('unlock-card', this.cardId);
     }
 }
 }
@@ -307,6 +337,15 @@ button {
     font-size: 11px;
     color: var(--text-highlight);
     margin-bottom: 10px;
+}
+
+.error-message {
+    width: 100%;
+    padding-left: 0px;
+    color: var(--red);
+    font-family: text-medium;
+    font-size: 13px;
+    text-align: left;
 }
 
 </style>  

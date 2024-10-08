@@ -7,7 +7,7 @@
         <div class="displayBlock">
             <div class="blockLeft">
                 <div class="blockText">
-                    <p style="margin-right: 5px"> 1080 </p>
+                    <p style="margin-right: 5px"> {{ numHealthCoins }} </p>
                     <span> <img src="../assets/icons/collection/coin.png"> </span>
                 </div>
                 <p> My Healthcoins </p>
@@ -16,7 +16,7 @@
             <div class="blockRight">
                 <div class="blockText">
                     <img src="../assets/icons/collection/lock.png" style="margin-right: 5px;">
-                    <p> <span> 2 </span> / 108 </p>
+                    <p> <span> {{ userCards.length }} </span> / {{ numCards }} </p>
                 </div>
                 <p> Collectibles Unlocked </p>
             </div>
@@ -42,11 +42,11 @@
     <div class="pagePad">
         <div class="search-bar">
             <i class="uil uil-search"></i>
-            <input type="text" placeholder="Search by card or set" />
+            <input type="text" v-model="searchInput" @input="searchCards" placeholder="Search by card or set" />
         </div>
 
         <div class="colDisplay">
-            <div v-for="card in userCards" 
+            <div v-for="card in filteredCardsData" 
                 :key="card.card_id"
                 class="card"
                 @click="openInfoPopup(card.description, card.recommendation)"
@@ -73,6 +73,8 @@
 
 <script>
 import Popup from '@/components/popUp.vue';
+import { useStore } from 'vuex';
+import { computed } from 'vue';
 
 export default {
     components: {
@@ -87,13 +89,17 @@ export default {
             selectedCardSet: '',
             selectedCardDescription: '',
             selectedCardRecommendation: '',
-            userCards: []
+            userCards: [],
+            numCards: 0,
+            numHealthCoins: 0,
+            searchInput: '',
+            searchResults: []
         };
     },
     methods: {
         async fetchUserCards() {
             try {
-                const response = await fetch("http://127.0.0.1:5006/usercard/user/1");
+                const response = await fetch("http://127.0.0.1:5006/usercard/user/" + this.userId);
                 const data = await response.json();
                 // console.log(data);
 
@@ -105,6 +111,24 @@ export default {
                 }
             } catch (error) {
                 console.error("Error fetching user cards:" + error);
+            }
+        },
+        async fetchAllCards() {
+            try {
+                const cardReponse = await this.$http.get("http://127.0.0.1:5003/cards");
+                const cardData = cardReponse.data;
+                this.numCards = cardData.length;
+            } catch (error) {
+                console.error("Error fetching all cards:" + error);
+            }
+        },
+        async fetchUserData() {
+            try {
+                const userReponse = await this.$http.get("http://127.0.0.1:5001/user/" + this.userEmail);
+                const userData = userReponse.data.data;
+                this.numHealthCoins = userData["total_point"];
+            } catch (error) {
+                console.log("Error fetching user data:" + error);
             }
         },
         getCardImage(card_title, card_set) {
@@ -126,10 +150,49 @@ export default {
         },
         closePopup() {
             this.isPopupVisible = false;
+        },
+        searchCards() {
+            console.log("checking search input:" + this.searchInput);
+            var lowerCaseInput = this.searchInput.toLowerCase();
+
+            this.searchResults = [];
+
+            for (var card of this.userCards) {
+                if (card.title.toLowerCase().includes(lowerCaseInput) || card.card_type.toLowerCase().includes(lowerCaseInput)) {
+                    this.searchResults.push(card);
+                }
+            }
+
         }
     },
     mounted() {
         this.fetchUserCards();
+        this.fetchAllCards();
+        this.fetchUserData();
+    },
+    setup() {
+        console.log("collection page");
+        const store = useStore(); // Import useStore from vuex
+        const userId = computed(() => store.state.userId); // Access userId from the store
+        const userEmail = computed(() => store.state.userEmail) // Access userEmail from the store
+        
+        console.log(userEmail.value);
+        
+        return {
+            userId,
+            userEmail
+        };
+    },
+    computed: {
+        filteredCardsData() {
+            if (this.searchInput) {
+                console.log("returning filtered data");
+                console.log("filtered cards:", this.searchResults);
+                return this.searchResults || [];
+            } else {
+                return this.userCards;
+            }
+        }
     }
 };
 </script>
