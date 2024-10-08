@@ -125,7 +125,6 @@ def processStreakInformation(streak_information):
         "data": {
             "daily_time_lapse": met_result['daily_time_lapse'],
             "monthly_top_activity": met_result['monthly_top_activity'],
-            "weekly_met": met_result['weekly_met'],
             "weekly_time_lapse": met_result['weekly_time_lapse'],
             "streak_count": streak_result['streak_count']
         }

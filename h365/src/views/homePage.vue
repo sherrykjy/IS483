@@ -328,12 +328,12 @@ import { computed } from 'vue';
 
 export default {
     setup() {
-        console.log("home page");
+        // console.log("home page");
         const store = useStore();
         const userId = computed(() => store.state.userId);
         const userEmail = computed(() => store.state.userEmail);
-        console.log(userId.value);
-        console.log(userEmail.value);
+        // console.log(userId.value);
+        // console.log(userEmail.value);
         return {
             userId,
             userEmail
@@ -342,10 +342,10 @@ export default {
     data() {
         return {
             streakCount: 1,
-            currentWeekly: 75,
-            goalWeekly: 150,
-            minutesToday: 30,
-            mr_movingMinutes: 180,
+            currentWeekly: 0,
+            goalWeekly: 0,
+            minutesToday: 0,
+            mr_movingMinutes: 0,
             lastMonth: "August",
             numHealthCoins: 0,
             userName: "",
@@ -374,7 +374,9 @@ export default {
         },
 
         async stravaLogin() {
-            window.open("http://localhost:5020/connect", "_blank");
+            // window.open("http://localhost:5020/connect", "_blank");
+            window.location.href = "http://localhost:5020/connect";
+            // await this.handleStravaCallback();
             await this.syncNow();
         },
 
@@ -382,6 +384,7 @@ export default {
             try {
                 const goalResponse = await this.$http.get("http://127.0.0.1:5011/goals/" + this.userId)
                 const goalData = goalResponse.data;
+                // console.log(goalData)
                 const goal_id = goalData[0].goal_id;
 
                 const streakResponse = await this.$http.get("http://127.0.0.1:5010/streaks/" + goal_id)
@@ -398,9 +401,17 @@ export default {
                 const response = await this.$http.post('http://localhost:5030/update_streak', payload, {
                     headers: { 'Content-Type': 'application/json' }
                 });
-                console.log(response)
+
+                // console.log("haha")
+                // console.log(response)
+
                 // console.log(response.data.data.streak_count)
                 this.streakCount = response.data.data.streak_count;
+
+                this.currentWeekly = response.data.data.weekly_time_lapse;
+                this.goalWeekly = goalData[0].target;
+                this.minutesToday = response.data.data.daily_time_lapse;
+                // this.mr_movingMinutes = 
 
                 if (response.status === 200) {
                     console.log('Streak update successful', response.data);
