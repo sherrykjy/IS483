@@ -16,7 +16,7 @@ mvp_URL = "http://localhost:5021/estimate_mvpa"
 coin_URL = "http://localhost:5004/healthcoins"
 user_URL = "http://localhost:5001/user"
 
-@app.route('/update_streak', methods=['GET'])
+@app.route('/update_streak', methods=['POST'])
 def update_streak_if_mvpa():
     if request.is_json:
         try:
@@ -35,6 +35,8 @@ def update_streak_if_mvpa():
                 "code": 500,
                 "message": "user_login.py internal error: " + ex_str
             }), 500
+    else: 
+        print("haha :(")
 
 def processStreakInformation(streak_information):
     
@@ -116,7 +118,18 @@ def processStreakInformation(streak_information):
     
     user_result = invoke_http(f"{user_URL}/{user_email}", method='PATCH', json=user_json)
 
-    return {"code": streak_update_result}
+    # return {"code": [met_result, streak_update_result]}
+
+    return {
+        "code": 200,
+        "data": {
+            "daily_time_lapse": met_result['daily_time_lapse'],
+            "monthly_top_activity": met_result['monthly_top_activity'],
+            "weekly_met": met_result['weekly_met'],
+            "weekly_time_lapse": met_result['weekly_time_lapse'],
+            "streak_count": streak_result['streak_count']
+        }
+    }
 
 if __name__ == '__main__':
     app.run(port=5030, debug=True)

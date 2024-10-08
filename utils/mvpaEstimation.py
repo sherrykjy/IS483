@@ -146,6 +146,8 @@ def check_activities_access():
         headers = {'Authorization': f'Bearer {user.access_token}'}
         activities_response = invoke_http(f"{strava_URL}/activities", method="GET", headers=headers)
 
+        print(f'{strava_URL}/activities')
+
         # Step 4: Check if the response contains an error
         if activities_response.get('code', 200) != 200:
             raise Exception(f"Failed to fetch activities: {activities_response.get('message', 'Unknown error')}")

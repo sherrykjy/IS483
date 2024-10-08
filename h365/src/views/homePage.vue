@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="updateDetails">
-                    <button class="syncButton"> Sync now </button>
+                    <button class="syncButton" @click="syncNow"> Sync now </button>
                 </div>
             </div>
 
@@ -329,9 +329,9 @@ import { computed } from 'vue';
 export default {
     setup() {
         console.log("home page");
-        const store = useStore(); // Import useStore from vuex
-        const userId = computed(() => store.state.userId); // Access userId from the store
-        const userEmail = computed(() => store.state.userEmail) // Access userEmail from the store
+        const store = useStore();
+        const userId = computed(() => store.state.userId);
+        const userEmail = computed(() => store.state.userEmail);
         console.log(userId.value);
         console.log(userEmail.value);
         return {
@@ -341,14 +341,14 @@ export default {
     },
     data() {
         return {
-            streakCount: 5,
+            streakCount: 1,
             currentWeekly: 75,
             goalWeekly: 150,
             minutesToday: 30,
             mr_movingMinutes: 180,
             lastMonth: "August",
             numHealthCoins: 0,
-            userName: ""
+            userName: "",
         }
     },
 
@@ -372,14 +372,48 @@ export default {
                 console.error("Error fetching user data:", error);
             }
         },
+
+        async syncNow() {
+            try {
+                const goalResponse = await this.$http.get("http://127.0.0.1:5011/goals/" + this.userId)
+                const goalData = goalResponse.data;
+                const goal_id = goalData[0].goal_id;
+
+                const streakResponse = await this.$http.get("http://127.0.0.1:5010/streaks/" + goal_id)
+                const streakData = streakResponse.data;
+                // console.log(streakData)
+                const streak_id = streakData[0].streak_id;
+
+                const payload = {
+                    goal_id: goal_id,
+                    user_id: this.userId,
+                    streak_id: streak_id,
+                };
+
+                const response = await this.$http.post('http://localhost:5030/update_streak', payload, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                console.log(response)
+                // console.log(response.data.data.streak_count)
+                this.streakCount = response.data.data.streak_count;
+
+                if (response.status === 200) {
+                    console.log('Streak update successful', response.data);
+                } else {
+                    console.error('Error syncing streak:', response.data);
+                }
+            } catch (error) {
+                console.error('Sync failed:', error);
+            }
+        }
     },
 
     async mounted() {
         try {
             this.fetchUserData();
-        }
-        catch (error) {
-            console.log("error:", error);            
+            await this.syncNow();
+        } catch (error) {
+            console.log("error:", error);
         }
     },
 }
