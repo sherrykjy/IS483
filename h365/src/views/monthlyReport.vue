@@ -1,6 +1,7 @@
 <template>
     <div class="stickyHeader">
         <div class="pageHeader">
+            <i class="uil uil-angle-left"></i>
             <p> Your Monthly Report </p>
         </div>
 
@@ -106,6 +107,11 @@ export default {
 <style scoped>
 .pagePad {
     padding: 32px;
+}
+
+.pageHeader {
+    background-color: var(--orange);
+    color: var(--default-white);
 }
 
 .card {
