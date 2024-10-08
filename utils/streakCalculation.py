@@ -46,12 +46,8 @@ def processStreakInformation(streak_information):
     goal_result = invoke_http(f"{goal_URL}/{user_id}", method='GET')
     
     # Get Estimated MET
-    # met_result = invoke_http(f"{mvp_URL}")
+    met_result = invoke_http(f"{mvp_URL}")
     
-    met_result =  {
-        "code": 200,
-        "met": 19
-    }
     # Get Streak 
     
     estimated_met = met_result["met"]
