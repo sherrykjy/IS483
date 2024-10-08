@@ -1,14 +1,15 @@
-1,Junyang,1999-09-11 00:00:00,Male,152.03,62.16,Contact_1,Singaporean,junyang.ng.2021@scis.smu.edu.sg,East,Loyang Secondary School,pass1,NULL,User,2022-06-26 00:00:00,2024-09-11 00:00:00,500,3,100,1,2024-09-11 00:00:00
-2,User_2,2000-08-20 00:00:00,Female,198.12,91.65,Contact_2,Singaporean,user2@example.com,East,Dunman High School,pass2,NULL,Admin,2022-01-12 00:00:00,2024-09-11 00:00:00,150,2,120,1,2024-09-11 00:00:00
-3,User_3,2002-12-30 00:00:00,Female,177.54,95.07,Contact_3,Singaporean,user3@example.com,North,Presbytarian High School,pass3,1,User,2022-05-12 00:00:00,2024-09-11 00:00:00,40,3,150,1,2024-09-11 00:00:00
-4,User_4,2002-08-05 00:00:00,Male,189.49,75.46,Contact_4,Singaporean,user4@example.com,East,Tampines Secondary School,pass4,NULL,User,2022-06-26 00:00:01,2024-09-11 00:00:00,40,2,200,1,2024-09-11 00:00:00
-5,User_5,2001-07-20 00:00:00,Female,183.15,51.11,Contact_5,Singaporean,user5@example.com,East,Pasir Ris Secondary school,pass5,NULL,User,2022-01-12 00:00:01,2024-09-11 00:00:00,40,3,150,2,2024-09-11 00:00:00
-6,User_6,2001-07-02 00:00:00,Male,174.31,51.53,Contact_6,Singaporean,user6@example.com,Central,Raffles Instituition,pass6,NULL,User,2022-05-12 00:00:01,2024-09-11 00:00:00,50,1,200,2,2024-09-11 00:00:00
-7,User_7,2003-06-12 00:00:00,Female,185.78,61.38,Contact_7,Singaporean,user7@example.com,Central,Hwa Chong Institution,pass7,NULL,User,2022-06-26 00:00:02,2024-09-11 00:00:00,70,1,100,1,2024-09-11 00:00:00
-8,User_8,2004-04-15 00:00:00,Female,165.63,97.72,Contact_8,Singaporean,user8@example.com,East,Temasek Polytechnic,pass8,NULL,User,2022-01-12 00:00:02,2024-09-11 00:00:00,30,3,200,3,2024-09-11 00:00:00
-9,User_9,2000-01-05 00:00:00,Male,183.68,91.77,Contact_9,Singaporean,user9@example.com,North,Nanyang polytechnic,pass9,NULL,User,2022-05-12 00:00:02,2024-09-11 00:00:00,10,1,150,3,2024-09-11 00:00:00
-10,User_10,2003-03-17 00:00:00,Male,194.22,52.04,Contact_10,Singaporean,user10@example.com,Northeast,Ahmad Ibrahim Secondary School,pass10,NULL,User,2022-06-26 00:00:03,2024-09-11 00:00:00,10,1,120,3,2024-09-11 00:00:00
-11,User_11,2005-05-20 00:00:00,Female,153.48,68.78,Contact_11,Singaporean,user11@example.com,North,Admiralty Secondary School,pass11,NULL,User,2022-01-12 00:00:03,2024-09-11 00:00:00,10,2,200,2,2024-09-11 00:00:00
-12,User_12,2008-11-25 00:00:00,Male,184.57,66.77,Contact_12,Singaporean,user12@example.com,North,Ang Mo Kio Secondary School,pass12,NULL,User,2022-05-12 00:00:03,2024-09-11 00:00:00,10,3,120,3,2024-09-11 00:00:00
-13,User_13,2004-05-08 00:00:00,Male,184.77,57.75,Contact_13,Singaporean,user13@example.com,East,Loyang Secondary School,pass13,NULL,User,2022-06-26 00:00:04,2024-09-11 00:00:00,10,3,150,2,2024-09-11 00:00:00
-14,User_14,2005-04-22 00:00:00,Female,161.19,93.08,Contact_14,Singaporean,user14@example.com,East,Dunman High School,pass14,NULL,User,2022-01-12 00:00:04,2024-09-11 00:00:00,0,2,120,1,2024-09-11 00:00:00
+1,Junyang,1999-09-22,Male,152.03,62.16,Contact_1,Singaporean,junyang.ng.2021@scis.smu.edu.sg,East,Loyang Secondary School,pass1,NULL,User,26/6/22 0:00,11/9/24 0:00,500,3,100,1,11/9/24 0:00
+2,Sherry,2002-08-05,Female,198.12,91.65,Contact_2,Singaporean,sherry@gmail.com,East,Dunman High School,pass2,NULL,Admin,12/1/22 0:00,11/9/24 0:00,150,2,120,1,11/9/24 0:00
+3,Danelle,2002-12-20,Female,177.54,95.07,Contact_3,Singaporean,danelle@gmail.com,North,Presbytarian High School,pass3,1,User,12/5/22 0:00,11/9/24 0:00,1000,3,150,1,11/9/24 0:00
+4,Rachel,2001-09-25,Female,189.49,75.46,Contact_4,Singaporean,rachel@gmail.com,East,Tampines Secondary School,pass4,NULL,User,26/6/22 0:00,11/9/24 0:00,500,2,200,1,11/9/24 0:00
+5,Xin Hui,2004-03-15,Male,183.15,51.11,Contact_5,Singaporean,xh@gmail.com,East,Pasir Ris Secondary school,pass5,NULL,User,12/1/22 0:00,11/9/24 0:00,100,3,150,2,11/9/24 0:00
+6,Alice Tan,2004-06-30,Female,174.31,51.53,Contact_6,Singaporean,alice@gmail.com,Central,Raffles Instituition,pass6,NULL,User,12/5/22 0:00,11/9/24 0:00,50,1,200,2,11/9/24 0:00
+7,Ben,2005-01-28,Male,185.78,61.38,Contact_7,Singaporean,ben@gmail.com,Central,Hwa Chong Institution,pass7,NULL,User,26/6/22 0:00,11/9/24 0:00,70,1,100,1,11/9/24 0:00
+8,Chris,2004-05-06,Male,165.63,97.72,Contact_8,Singaporean,chris@gmail.com,East,Temasek Polytechnic,pass8,NULL,User,12/1/22 0:00,11/9/24 0:00,100,3,200,3,11/9/24 0:00
+9,Dan,2006-07-08,Male,183.68,91.77,Contact_9,Singaporean,dan@gmail.com,North,Nanyang Polytechnic,pass9,NULL,User,12/5/22 0:00,11/9/24 0:00,100,1,150,3,11/9/24 0:00
+10,Elizabeth,2005-02-23,Female,194.22,52.04,Contact_10,Singaporean,eliz@gmail.com,Northeast,Ahmad Ibrahim Secondary School,pass10,NULL,User,26/6/22 0:00,11/9/24 0:00,100,1,120,3,11/9/24 0:00
+11,Felicia,2007-11-19,Female,153.48,68.78,Contact_11,Singaporean,fel@gmail.com,North,Admiralty Secondary School,pass11,NULL,User,12/1/22 0:00,11/9/24 0:00,100,2,200,2,11/9/24 0:00
+12,Kai,2008-08-09,Male,184.57,66.77,Contact_12,Singaporean,kai@gmail.com,North,Ang Mo Kio Secondary School,pass12,NULL,User,12/5/22 0:00,11/9/24 0:00,100,3,120,3,11/9/24 0:00
+13,William,2007-06-11,Male,184.77,57.75,Contact_13,Singaporean,william@gmail.com,East,Loyang Secondary School,pass13,NULL,User,26/6/22 0:00,11/9/24 0:00,100,3,150,2,11/9/24 0:00
+14,Kristen,2006-04-27,Female,161.19,93.08,Contact_14,Singaporean,kristen@gmail.com,East,Dunman High School,pass14,NULL,User,12/1/22 0:00,11/9/24 0:00,100,2,120,1,11/9/24 0:00
+15,Bobby,2009-10-06,Male,0,0,Contact_15,Singaporean,bobby@gmail.com,West,Fairfield Secondary School,testpass,NULL,User,8/10/24 0:00,8/10/24 0:00,0,0,0,0,8/10/24 0:00
