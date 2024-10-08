@@ -10,9 +10,9 @@ from datetime import datetime
 app = Flask(__name__)
 CORS(app)
 
-goal_URL = "http://localhost:5008/goal"
+goal_URL = "http://localhost:5011/goal"
 streak_URL = "http://localhost:5010/streak"
-mvp_URL = "http://localhost:5020/estimate_mvpa"
+mvp_URL = "http://localhost:5021/estimate_mvpa"
 coin_URL = "http://localhost:5004/healthcoins"
 user_URL = "http://localhost:5001/user"
 
