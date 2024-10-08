@@ -234,7 +234,7 @@ def callback():
 
     session['user_id'] = user_id
 
-    return jsonify({'message': 'User authenticated successfully!'})
+    return jsonify({'message': 'User authenticated successfully! Please return to H365.'})
 
 # Step 3: Fetch user activities from Strava
 @app.route('/activities', methods=['GET'])

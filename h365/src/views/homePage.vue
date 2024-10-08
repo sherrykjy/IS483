@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="updateDetails">
-                    <button class="syncButton" @click="syncNow"> Sync now </button>
+                    <button class="syncButton" @click="stravaLogin"> Sync now </button>
                 </div>
             </div>
 
@@ -371,6 +371,11 @@ export default {
             } catch (error) {
                 console.error("Error fetching user data:", error);
             }
+        },
+
+        async stravaLogin() {
+            window.open("http://localhost:5020/connect", "_blank");
+            await this.syncNow();
         },
 
         async syncNow() {
