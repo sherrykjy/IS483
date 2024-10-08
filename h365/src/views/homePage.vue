@@ -119,192 +119,37 @@
         <div class="container">
             <div class="carousel">
                 
-                <!-- v-for however many events there are -->
-                <div class="card drop-shadow">
-                    <div class="cardImage">
-                        <img src="../assets/icons/homepage/nextSteps.png">
-                    </div>
-
-                    <div class="cardText">
-                        <!-- v-if few slots left -->
-                        <div class="lowSlotAlert">
-                            Event near you
-                        </div>
-
-                        <!-- activity name -->
-                        <p class="eventName"> Bedok Walkers </p>
-
-                        <!-- date, day, and time  -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> 14 September 2024 </p>
-                                <p> 10.00am - 11.00am </p>
+                <div v-for="event in recommendedEvents" :key="event.event_id">
+                    <router-link :to="{ name: 'viewEventPage', params: { eventId: event.event_id } }">
+                        <div class="card drop-shadow">
+                            <div class="cardImage">
+                                <img src="../assets/icons/homepage/nextSteps.png">
+                            </div>
+                            <div class="cardText">
+                                <!-- v-if few slots left -->
+                                <div class="lowSlotAlert">
+                                    Event near you
+                                </div>
+                                <!-- activity name -->
+                                <p class="eventName"> {{ event.title }} </p>
+                                <!-- date, day, and time  -->
+                                <div class="eventInfo">
+                                    <div class=eventDetails>
+                                        <p> {{ formattedDate(event.start_date) }} </p>
+                                        <p> {{ formattedTime(event.start_date, event.end_date) }} </p>
+                                    </div>
+                                </div>
+                                <!-- location -->
+                                <div class="eventInfo">
+                                    <div class=eventDetails>
+                                        <p> {{ event.location }} </p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <!-- location -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> BEDOK, Asia Green </p>
-                            </div>
-                        </div>
-                    </div>
+                    </router-link>
                 </div>
 
-                <div class="card drop-shadow">
-                    <div class="cardImage">
-                        <img src="../assets/icons/homepage/nextSteps.png">
-                    </div>
-
-                    <div class="cardText">
-                        <!-- v-if few slots left -->
-                        <div class="lowSlotAlert">
-                            Event near you
-                        </div>
-
-                        <!-- activity name -->
-                        <p class="eventName"> Bedok Walkers </p>
-
-                        <!-- date, day, and time  -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> 14 September 2024 </p>
-                                <p> 10.00am - 11.00am </p>
-                            </div>
-                        </div>
-
-                        <!-- location -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> BEDOK, Asia Green </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card drop-shadow">
-                    <div class="cardImage">
-                        <img src="../assets/icons/homepage/nextSteps.png">
-                    </div>
-
-                    <div class="cardText">
-                        <!-- v-if few slots left -->
-                        <div class="lowSlotAlert">
-                            Event near you
-                        </div>
-
-                        <!-- activity name -->
-                        <p class="eventName"> Bedok Walkers </p>
-
-                        <!-- date, day, and time  -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> 14 September 2024 </p>
-                                <p> 10.00am - 11.00am </p>
-                            </div>
-                        </div>
-
-                        <!-- location -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> BEDOK, Asia Green </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card drop-shadow">
-                    <div class="cardImage">
-                        <img src="../assets/icons/homepage/nextSteps.png">
-                    </div>
-
-                    <div class="cardText">
-                        <!-- v-if few slots left -->
-                        <div class="lowSlotAlert">
-                            Event near you
-                        </div>
-
-                        <!-- activity name -->
-                        <p class="eventName"> Bedok Walkers </p>
-
-                        <!-- date, day, and time  -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> 14 September 2024 </p>
-                                <p> 10.00am - 11.00am </p>
-                            </div>
-                        </div>
-
-                        <!-- location -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> BEDOK, Asia Green </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card drop-shadow">
-                    <div class="cardImage">
-                        <img src="../assets/icons/homepage/nextSteps.png">
-                    </div>
-
-                    <div class="cardText">
-                        <!-- v-if few slots left -->
-                        <div class="lowSlotAlert">
-                            Event near you
-                        </div>
-
-                        <!-- activity name -->
-                        <p class="eventName"> Bedok Walkers </p>
-
-                        <!-- date, day, and time  -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> 14 September 2024 </p>
-                                <p> 10.00am - 11.00am </p>
-                            </div>
-                        </div>
-
-                        <!-- location -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> BEDOK, Asia Green </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="card drop-shadow">
-                    <div class="cardImage">
-                        <img src="../assets/icons/homepage/nextSteps.png">
-                    </div>
-
-                    <div class="cardText">
-                        <!-- v-if few slots left -->
-                        <div class="lowSlotAlert">
-                            Event near you
-                        </div>
-
-                        <!-- activity name -->
-                        <p class="eventName"> Bedok Walkers </p>
-
-                        <!-- date, day, and time  -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> 14 September 2024 </p>
-                                <p> 10.00am - 11.00am </p>
-                            </div>
-                        </div>
-
-                        <!-- location -->
-                        <div class="eventInfo">
-                            <div class=eventDetails>
-                                <p> BEDOK, Asia Green </p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
 
         </div>
@@ -340,7 +185,33 @@ export default {
             minutesToday: 30,
             lastMonth: "August",
             numHealthCoins: 0,
-            userName: ""
+            userName: "",
+            recommendedEvents: [
+                {
+                    "event_id": 5,
+                    "current_signups": 8,
+                    "max_signups": 10,
+                    "slots_left": 2,
+                    "event_program": "Active Family Program",
+                    "title": "Yoga Challenge",
+                    "start_date": "2024-10-11T12:00:00",
+                    "end_date": "2024-10-11T14:00:00",
+                    "location": "Paya Lebar",
+                    "tier": 2
+                },
+                {
+                    "event_id": 6,
+                    "current_signups": 5,
+                    "max_signups": 10,
+                    "slots_left": 5,
+                    "event_program": "Active Family Program",
+                    "title": "Plank Challenge",
+                    "start_date": "2024-10-11T14:00:00",
+                    "end_date": "2024-10-11T16:00:00",
+                    "location": "Tampines",
+                    "tier": 1
+                }
+            ]
         }
     },
 
@@ -364,6 +235,31 @@ export default {
                 console.error("Error fetching user data:", error);
             }
         },
+        formattedDate(dateStr) {
+            const date = new Date(dateStr);
+
+            // Get the formatted day, month, and year
+            const day = date.getDate(); // 1
+            const month = new Intl.DateTimeFormat('en-US', { month: 'long' }).format(date); // August
+            const year = date.getFullYear(); // 2024
+            const weekday = new Intl.DateTimeFormat('en-US', { weekday: 'long' }).format(date); // e.g., Wednesday
+
+            return `${day} ${month} ${year}, ${weekday}`;
+        },
+        formattedTime(startDateStr, endDateStr) {
+            const startDate = new Date(startDateStr);
+            const endDate = new Date(endDateStr);
+
+            const formatTime = date => {
+                return new Intl.DateTimeFormat('en-US', {
+                hour: 'numeric',
+                minute: 'numeric',
+                hour12: true
+                }).format(date);
+            };
+
+            return `${formatTime(startDate)} - ${formatTime(endDate)}`;
+        }
     },
 
     async mounted() {

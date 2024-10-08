@@ -410,32 +410,46 @@ export default defineComponent({
                 ] // end of 2024-12-01
             }, // end of eventData dict
             recommendedEvents: {
-                "2024-10-03": [
-                    {
-                        "event_id": 4,
-                        "current_signups": 6,
-                        "max_signups": 10,
-                        "event_program": "Active Family Program",
-                        "title": "Mindfulness Week",
-                        "start_date": "2024-10-03T19:00:00",
-                        "end_date": "2024-10-03T20:00:00",
-                        "location": "Bendemeer",
-                        "tier": 2
-                    }
-                ],
-                "2024-10-04": [
+                "2024-10-11": [
                     {
                         "event_id": 5,
-                        "current_signups": 6,
+                        "current_signups": 8,
                         "max_signups": 10,
+                        "slots_left": 2,
                         "event_program": "Active Family Program",
-                        "title": "Test Week",
-                        "start_date": "2024-10-04T19:00:00",
-                        "end_date": "2024-10-04T20:00:00",
-                        "location": "Bendemeer",
+                        "title": "Yoga Challenge",
+                        "start_date": "2024-10-11T12:00:00",
+                        "end_date": "2024-10-11T14:00:00",
+                        "location": "Paya Lebar",
                         "tier": 2
+                    },
+                    {
+                        "event_id": 6,
+                        "current_signups": 5,
+                        "max_signups": 10,
+                        "slots_left": 5,
+                        "event_program": "Active Family Program",
+                        "title": "Plank Challenge",
+                        "start_date": "2024-10-11T14:00:00",
+                        "end_date": "2024-10-11T16:00:00",
+                        "location": "Tampines",
+                        "tier": 1
                     }
                 ]
+                // ,
+                // "2024-10-04": [
+                //     {
+                //         "event_id": 6,
+                //         "current_signups": 6,
+                //         "max_signups": 10,
+                //         "event_program": "Active Family Program",
+                //         "title": "Test Week",
+                //         "start_date": "2024-10-04T19:00:00",
+                //         "end_date": "2024-10-04T20:00:00",
+                //         "location": "Bendemeer",
+                //         "tier": 2
+                //     }
+                // ]
             },
             filteredEvents: null
         }
