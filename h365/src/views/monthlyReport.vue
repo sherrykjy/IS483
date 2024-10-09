@@ -75,6 +75,7 @@
 
 <script>
 import ChartComponent from '@/components/chartComponent.vue';
+import { markRaw } from 'vue';
 
 export default {
   components: {
@@ -84,10 +85,12 @@ export default {
   data() {
     return {
         chartData: {
-            labels: [],
+            labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30],
+            // labels: [],
             datasets: [
                 {
-                    data: [],
+                    // data: [],
+                    data: [0, 0, 0, 0, 0, 0, 6001.5, 0, 0, 0, 0, 0, 0, 5708.5, 0, 0, 0, 0, 0, 0, 7104.9, 0, 0, 0, 0, 0, 0, 6006.2, 0, 0],
                     fill: false,
                     borderColor: 'rgb(28, 131, 225)',
                     tension: 0.1,
@@ -99,8 +102,8 @@ export default {
         streakCount: this.$route.params.streakCount || 0,
         mr_movingMinutes: this.$route.params.mr_movingMinutes || 0,
         mr_topActivity: this.$route.params.mr_topActivity || "",
-        mr_totalDistance: this.$route.params.mr_totalDistance || 0,
-        mr_allActivitites: {}, // Empty object to be filled later
+        mr_totalDistance: Math.round((this.$route.params.mr_totalDistance / 1000), 2) || 0,
+        mr_allActivitites: {},
         mr_month: this.$route.params.mr_month || 0,
 
         temp: []
@@ -108,14 +111,12 @@ export default {
   },
 
   mounted() {
-    console.log('Route params:', this.$route.params); // Log all route parameters
+    console.log('Route params:', this.$route.params);
 
     if (this.$route.params.mr_allActivitites) {
         try {
-            // Parse the JSON string passed in mr_allActivitites
             this.mr_allActivitites = JSON.parse(this.$route.params.mr_allActivitites);
-            console.log('Parsed Activities:', this.mr_allActivitites); // Log parsed activities
-
+            console.log('Parsed Activities:', this.mr_allActivitites);
             this.populateChartData();
         } catch (error) {
             console.error("Error parsing mr_allActivitites:", error);
@@ -125,43 +126,93 @@ export default {
     }
   },
 
-//   async mounted() {
-//     try {
-//         this.populateChartData();
-//     } catch (error) {
-//             console.log("error:", error);
-//         }
-//   },
-
-//   {7: 6001.5, 14: 5708.5, 21: 7104.9, 28: 6006.2}
-
   methods: {
+    // populateChartData() {
+    //     const totalDaysInMonth = new Date(2024, this.mr_month, 0).getDate();
+
+    //     // Update labels (use Vue.set to ensure reactivity)
+    //     this.$set(this.chartData, 'labels', Array.from({ length: totalDaysInMonth }, (_, i) => i + 1));
+    //     console.log(this.chartData.labels);
+
+    //     const activities = this.mr_allActivitites;
+    //     this.temp = [];
+
+    //     // Populate temp array
+    //     for (let i = 1; i <= totalDaysInMonth; i++) {
+    //         if (activities[i]) {
+    //             this.temp.push(activities[i]);
+    //         } else {
+    //             this.temp.push(0);
+    //         }
+    //     }
+
+    //     console.log("haha", this.temp);
+
+    //     // Ensure reactivity for datasets[0].data
+    //     this.$set(this.chartData.datasets[0], 'data', [...this.temp]);
+
+    //     console.log("Populated Chart Data:", this.chartData.datasets[0].data);
+    // }
+
     populateChartData() {
-        const totalDaysInMonth = new Date(2024, this.mr_month, 0).getDate(); // Get the total number of days in the month
+        const totalDaysInMonth = new Date(2024, this.mr_month, 0).getDate();
 
-        this.chartData.labels = Array.from({ length: totalDaysInMonth }, (_, i) => i + 1);
-        console.log(this.chartData.labels)
+        // Create a shallow copy of chartData to avoid triggering unnecessary reactivity loops
+        const newChartData = { ...this.chartData };
 
-        const activities = this.mr_allActivitites; // Reference the activities object
+        // Update labels with a shallow copy
+        newChartData.labels = Array.from({ length: totalDaysInMonth }, (_, i) => i + 1);
+        console.log(newChartData.labels);
+
+        const activities = this.mr_allActivitites;
         this.temp = [];
 
-        // Loop through all days of the month (1-based index for days)
+        // Populate temp array with activity data
         for (let i = 1; i <= totalDaysInMonth; i++) {
-            // Check if the current day (i) exists in the activities object
-            if (activities.hasOwnProperty(i)) {
-                this.temp.push(activities[i]); // If it exists, add the value to the temp array
+            if (activities[i]) {
+                this.temp.push(activities[i]);
             } else {
-                this.temp.push(0); // If it doesn't exist, append 0
+                this.temp.push(0);
             }
         }
 
-        console.log("haha", this.temp)
+        console.log("haha", this.temp);
 
-        // Update the chartData with the populated temp array
-        this.chartData.datasets[0].data = this.temp;
-        
-        console.log("Populated Chart Data:", this.chartData.datasets[0].data); // Log the populated chart data
+        // Update datasets[0].data with a shallow copy
+        newChartData.datasets = [...this.chartData.datasets];
+        newChartData.datasets[0] = { ...this.chartData.datasets[0], data: [...this.temp] };
+
+        // Replace the entire chartData object with the updated copy
+        // this.chartData = newChartData;
+
+        this.chartData = markRaw(newChartData);
+
+        console.log("Populated Chart Data:", this.chartData.datasets[0].data);
     }
+
+
+    // populateChartData() {
+    //     const totalDaysInMonth = new Date(2024, this.mr_month, 0).getDate();
+
+    //     this.chartData.labels = Array.from({ length: totalDaysInMonth }, (_, i) => i + 1);
+    //     console.log(this.chartData.labels);
+
+    //     const activities = this.mr_allActivitites;
+    //     this.temp = [];
+
+    //     for (let i = 1; i <= totalDaysInMonth; i++) {
+    //         if (activities[i]) {
+    //             this.temp.push(activities[i]);
+    //         } else {
+    //             this.temp.push(0);
+    //         }
+    //     }
+
+    //     console.log("haha", this.temp);
+    //     // this.chartData.datasets[0].data = this.temp;
+    //     this.chartData.datasets[0].data = [...this.temp];
+    //     console.log("Populated Chart Data:", this.chartData.datasets[0].data);
+    // }
   }
 };
 </script>
