@@ -60,7 +60,7 @@
                 </div>
 
                 <div class="updateDetails">
-                    <button class="syncButton"> Sync now </button>
+                    <button class="syncButton" @click="stravaLogin"> Sync now </button>
                 </div>
             </div>
 
@@ -90,19 +90,26 @@
             <img src="../assets/icons/homepage/glass.png">
             <div class="headerText">
                 <p class="head"> My H365 Unwrapped </p>
-                <p class="body"> Take a look at your progress in {{ lastMonth }} </p>
+                <p class="body"> Take a look at your progress </p>
             </div>
         </div>
 
         <div class="container">
             <div class="basicCard">
+
                 <div class="pageHeading">
-                    <img src="../assets/icons/homepage/glass.png">
-                    <div class="headerText">
-                        <p class="head"> My H365 Unwrapped </p>
-                        <p class="body"> Take a look at your progress in {{ lastMonth }} </p>
-                    </div>
+                    <span style="font-family: text-medium; color: var(--text-highlight); 
+                    font-size: 13px; text-align: justify;"> 
+                        You moved for a total of 
+                        <span style="font-family: text-bold; color: var(--green)"> {{ mr_movingMinutes }} </span>
+                        minutes in 
+                        <span style="color: var(--orange)"> {{ lastMonth }} </span>
+                    </span>
                 </div>
+
+                <router-link :to="{ name: 'monthlyReport'}">
+                    <button class="syncButton" style="width: 90%;" @click="goToMonthlyReport"> View your {{ lastMonth }} report </button>
+                </router-link>
 
             </div>
         </div>
@@ -166,12 +173,12 @@ import { computed } from 'vue';
 
 export default {
     setup() {
-        console.log("home page");
-        const store = useStore(); // Import useStore from vuex
-        const userId = computed(() => store.state.userId); // Access userId from the store
-        const userEmail = computed(() => store.state.userEmail) // Access userEmail from the store
-        console.log(userId.value);
-        console.log(userEmail.value);
+        // console.log("home page");
+        const store = useStore();
+        const userId = computed(() => store.state.userId);
+        const userEmail = computed(() => store.state.userEmail);
+        // console.log(userId.value);
+        // console.log(userEmail.value);
         return {
             userId,
             userEmail
@@ -179,11 +186,18 @@ export default {
     },
     data() {
         return {
-            streakCount: 5,
-            currentWeekly: 75,
-            goalWeekly: 150,
-            minutesToday: 30,
-            lastMonth: "August",
+            streakCount: 1,
+
+            currentWeekly: 0,
+            goalWeekly: 0,
+            minutesToday: 0,
+
+            mr_movingMinutes: 0,
+            mr_topActivity: "",
+            mr_totalDistance: 0,
+            mr_allActivitites: {},
+
+            lastMonth: "",
             numHealthCoins: 0,
             userName: "",
             recommendedEvents: [
@@ -225,6 +239,22 @@ export default {
     },
 
     methods: {
+        getPreviousMonth() {
+            const currentDate = new Date();
+            let month = currentDate.getMonth();
+
+            if (month === 0) {
+                month = 11;
+            } else {
+                month -= 1;
+            }
+
+            // Get the month name from the month index
+            const monthNames = ["January", "February", "March", "April", "May", "June", 
+                                "July", "August", "September", "October", "November", "December"];
+            this.lastMonth = monthNames[month];
+        },
+
         async fetchUserData() {
             try {
                 const userReponse = await this.$http.get("http://127.0.0.1:5001/user/" + this.userEmail);
@@ -260,14 +290,107 @@ export default {
 
             return `${formatTime(startDate)} - ${formatTime(endDate)}`;
         }
+
+        async stravaLogin() {
+            // window.open("http://localhost:5020/connect", "_blank");
+            window.location.href = "http://localhost:5020/connect";
+            // await this.handleStravaCallback();
+            await this.syncNow();
+        },
+
+        async syncNow() {
+            try {
+                const goalResponse = await this.$http.get("http://127.0.0.1:5011/goals/" + this.userId)
+                const goalData = goalResponse.data;
+                // console.log(goalData)
+                const goal_id = goalData[0].goal_id;
+
+                const streakResponse = await this.$http.get("http://127.0.0.1:5010/streaks/" + goal_id)
+                const streakData = streakResponse.data;
+                // console.log(streakData)
+                const streak_id = streakData[0].streak_id;
+
+                const payload = {
+                    goal_id: goal_id,
+                    user_id: this.userId,
+                    streak_id: streak_id,
+                };
+
+                const response = await this.$http.post('http://localhost:5030/update_streak', payload, {
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                // console.log("haha")
+                // console.log(response)
+
+                // console.log(response.data.data.streak_count)
+                this.streakCount = response.data.data.streak_count;
+
+                this.currentWeekly = response.data.data.weekly_time_lapse;
+                this.goalWeekly = goalData[0].target;
+                this.minutesToday = response.data.data.daily_time_lapse;
+
+                this.mr_movingMinutes = response.data.data.monthly_time_lapse;
+                this.mr_topActivity = response.data.data.monthly_top_activity;
+                this.mr_totalDistance = response.data.data.monthly_distance;
+                this.mr_allActivitites = response.data.data.activities_in_month;
+
+                // console.log("haha", this.mr_allActivitites)
+
+                if (response.status === 200) {
+                    console.log('Streak update successful', response.data);
+                } else {
+                    console.error('Error syncing streak:', response.data);
+                }
+            } catch (error) {
+                console.error('Sync failed:', error);
+            }
+        },
+
+        // goToMonthlyReport() {
+        //     this.$router.push({
+        //         name: 'monthlyReport',
+        //         params: {
+        //             streakCount: this.streakCount,
+        //             mr_movingMinutes: this.mr_movingMinutes,
+        //             mr_topActivity: this.mr_topActivity,
+        //             mr_totalDistance: this.mr_totalDistance,
+        //             // mr_allActivitites: this.mr_allActivitites,
+        //             // mr_allActivitites: Object.keys(activities).length ? JSON.stringify(activities) : '{}', // Default to empty object
+
+                    
+
+        //             mr_month: this.month
+        //         }
+        //     });
+
+        //     this.$router.push('monthlyReport').then(() => { this.$route.params.mr_allActivitites = this.mr_allActivitites })
+        // }
+
+        goToMonthlyReport() {
+            this.$router.push({
+                name: 'monthlyReport',
+                params: {
+                    streakCount: this.streakCount,
+                    mr_movingMinutes: this.mr_movingMinutes,
+                    mr_topActivity: this.mr_topActivity,
+                    mr_totalDistance: this.mr_totalDistance,
+                    mr_allActivitites: JSON.stringify(this.mr_allActivitites), // Stringify the array before passing
+                    mr_month: this.month
+                }
+            }).then(() => { 
+                this.$route.params.mr_allActivitites = this.mr_allActivitites;
+            });
+        }
     },
 
     async mounted() {
         try {
+            this.getPreviousMonth();
             this.fetchUserData();
-        }
-        catch (error) {
-            console.log("error:", error);            
+            await this.syncNow();
+        } catch (error) {
+            console.log("error:", error);
         }
     },
 }

@@ -16,7 +16,7 @@ mvp_URL = "http://localhost:5021/estimate_mvpa"
 coin_URL = "http://localhost:5004/healthcoins"
 user_URL = "http://localhost:5001/user"
 
-@app.route('/update_streak', methods=['GET'])
+@app.route('/update_streak', methods=['POST'])
 def update_streak_if_mvpa():
     if request.is_json:
         try:
@@ -35,6 +35,8 @@ def update_streak_if_mvpa():
                 "code": 500,
                 "message": "user_login.py internal error: " + ex_str
             }), 500
+    else: 
+        print("haha :(")
 
 def processStreakInformation(streak_information):
     
@@ -47,11 +49,14 @@ def processStreakInformation(streak_information):
     
     # Get Estimated MET
     met_result = invoke_http(f"{mvp_URL}")
+    print("haha1", met_result)
     
     # Get Streak 
     
-    estimated_met = met_result["met"]
+    estimated_met = met_result["weekly_met"]
     streak_result = invoke_http(f"{streak_URL}/{user_id}")
+    print("haha2", streak_result)
+
     coinEarned = 0
     streak_json = {}
     
@@ -73,7 +78,7 @@ def processStreakInformation(streak_information):
                 "goal_id": streak_result["goal_id"],
                 "week_started": streak_result["week_started"],
                 "week_current": streak_result["week_current"],
-                "streak_count": streak_result["streak_count"]
+                "streak_count": streak_result["streak_count"],
                 }
             coinEarned = 0
             
@@ -89,6 +94,7 @@ def processStreakInformation(streak_information):
         coinEarned = 10
 
     streak_update_result = invoke_http(f"{streak_URL}/{streak_id}", method='PUT', json=streak_json)
+    print(streak_update_result)
 
     # create a new coin transaction
     coin_json = {
@@ -112,7 +118,20 @@ def processStreakInformation(streak_information):
     
     user_result = invoke_http(f"{user_URL}/{user_email}", method='PATCH', json=user_json)
 
-    return {"code": streak_update_result}
+    # return {"code": [met_result, streak_update_result]}
+
+    return {
+        "code": 200,
+        "data": {
+            "daily_time_lapse": met_result['daily_time_lapse'],
+            "monthly_top_activity": met_result['monthly_top_activity'],
+            "monthly_time_lapse": met_result['monthly_time_lapse'],
+            "weekly_time_lapse": met_result['weekly_time_lapse'],
+            "streak_count": streak_result['streak_count'],
+            "activities_in_month": met_result['activities_in_month'],
+            "monthly_distance": met_result['monthly_distance']
+        }
+    }
 
 if __name__ == '__main__':
     app.run(port=5030, debug=True)

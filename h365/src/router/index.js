@@ -29,6 +29,13 @@ const routes = [
     },
 
     {
+      path: "/report",
+      name: "monthlyReport",
+      component: () => import("@/views/monthlyReport.vue"),
+      props: true
+    },
+
+    {
       path: "/events",
       name: "eventsPage",
       component: () => import("@/views/eventsPage.vue")

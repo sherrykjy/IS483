@@ -11,6 +11,27 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 CORS(app)
 
+class User(db.Model):    
+    user_id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(64), nullable = False)
+    age = db.Column(db.Integer, nullable = False)
+    gender = db.Column(db.String(64), nullable = False)
+    height = db.Column(db.Float, nullable = False)
+    weight = db.Column(db.Float, nullable = False)
+    contact_details = db.Column(db.String(64), nullable = False)
+    nationality = db.Column(db.String(64), nullable = False)
+    email = db.Column(db.String(64), nullable = False, unique = True)
+    location_group = db.Column(db.String(64), nullable = False)
+    school = db.Column(db.String(64), nullable = False)
+    password = db.Column(db.String(64), nullable = False) 
+    parent_id = db.Column(db.String(64), db.ForeignKey('user_id'), nullable = True) 
+    role = db.Column(db.String(64), nullable = False)
+    created_date = db.Column(db.DateTime, nullable = False)
+    last_login = db.Column(db.DateTime, nullable = False)
+    total_point = db.Column(db.Integer, nullable = False)
+    health_tier = db.Column(db.Integer, nullable = False)
+    goal_user = db.relationship('Goal', backref='user', lazy=True)
+
 class Goal(db.Model):
     __tablename__ = 'goal'
     
@@ -26,7 +47,7 @@ class Goal(db.Model):
         self.goal_description = goal_description
         self.tier = tier
         self.date_created = datetime.now()
-        self.date_completed = target
+        self.target = target
 
     def json(self):
         return {
@@ -41,21 +62,24 @@ class Goal(db.Model):
 # Create a new goal
 @app.route('/goal', methods=['POST'])
 def create_goal():
-    data = request.json
-    new_goal = Goal(
-        user_id=data.get('user_id'),
-        goal_description=data.get('goal_description'),
-        tier=data.get('tier'),
-        completed=data.get('completed', False),
-        target=data.get('target')
-    )
-    try:
-        db.session.add(new_goal)
-        db.session.commit()
-        return jsonify(new_goal.json()), 200
+    try: 
+        data = request.json
+        new_goal = Goal(
+            user_id=data.get('user_id'),
+            goal_description=data.get('goal_description'),
+            tier=data.get('tier'),
+            target=data.get('target')
+        )
+        try:
+            db.session.add(new_goal)
+            db.session.commit()
+            return jsonify(new_goal.json()), 200
+        except Exception as e:
+            db.session.rollback()
+            print(str(e))
+            return jsonify({"error": str(e)}), 400
     except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"error": "Error in creating goal"}), 404
 
 # Get all goals for a user
 @app.route('/goals/<int:user_id>', methods=['GET'])

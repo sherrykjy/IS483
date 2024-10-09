@@ -131,11 +131,21 @@ export default {
             try {
                 console.log("Submit goal attempt");
                 console.log("User email:", this.userEmail);
-                const response = await this.$http.patch("http://127.0.0.1:5001/user/" + this.userEmail, {
+                const userResponse = await this.$http.patch("http://127.0.0.1:5001/user/" + this.userEmail, {
                         target_minutes: this.goal,
                         preferred_intensity: this.selectedIntensity,
+                        goal_date: new Date().toISOString().split('T')[0]
                 })
-                console.log(response);
+                console.log(userResponse);
+
+                const goalResponse = await this.$http.post("http://127.0.0.1:5011/goal", {
+                    user_id: this.userId,
+                    goal_description: "Hit MVPA goal",
+                    tier: 1, // TO DO: confirm how tier is determined,
+                    completed: false,
+                    target: this.goal
+                })
+                console.log(goalResponse);
 
                 this.$router.push('/home');
             }

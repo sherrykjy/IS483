@@ -146,6 +146,8 @@ def check_activities_access():
         headers = {'Authorization': f'Bearer {user.access_token}'}
         activities_response = invoke_http(f"{strava_URL}/activities", method="GET", headers=headers)
 
+        print(f'{strava_URL}/activities')
+
         # Step 4: Check if the response contains an error
         if activities_response.get('code', 200) != 200:
             raise Exception(f"Failed to fetch activities: {activities_response.get('message', 'Unknown error')}")
@@ -204,74 +206,100 @@ def estimate_mvpa():
 def processStravaInformation(access_token):
     # Set up authorization headers
     headers = {'Authorization': f'Bearer {access_token}'}
-    
+
     # Step 1: Fetch activities from Strava API
     activities_response = invoke_http(f'{strava_URL}/activities', method='GET', headers=headers)
-    
-    # Check if the response is successful
-    # if activities_response.get('code', 200) != 200:
-    #     raise Exception(f"Failed to fetch activities: {activities_response.get('message', 'Unknown error')}")
-    
+
     activities = activities_response.get("data")
-    
+
     # Initialize variables for tracking weekly stats
     current_week = datetime.now().isocalendar()[1]
     weekly_distance = 0
     weekly_time = 0
+    
     daily_met = 0
     to_return = {
         "weekly_met": 0,
         "weekly_time_lapse": 0,
         "daily_time_lapse": 0,
-        "monthly_top_activity": ""
+        "monthly_time_lapse": 0,
+        "monthly_top_activity": "",
+        "activities_in_month": {}, # key: date, value: distance
+        "monthly_distance": 0
     }
-    
-    # Dictionary to count occurrences of each activity type in the current month
+
+    weekly_time_lapse = 0
+    monthly_time_lapse = 0
+    monthly_distance = 0
     activity_dict = {}
-    
+
+    ### monthly report
+    now = datetime.now()
+    if now.month == 1:
+        last_month = 12
+    else:
+        last_month = now.month - 1
+
+    # process activity data
     for activity in activities:
-        # Parse activity start date
         activity_date = datetime.strptime(activity["start_date_local"], "%Y-%m-%dT%H:%M:%SZ")
         
-        # Check if the activity is in the current month
-        if activity_date.month == datetime.now().month:
-            # Update the count of each sport type
+        if activity_date.month == datetime.now().month: # check for current month
+            if activity_date.isocalendar()[1] == current_week: # check week
+
+                weekly_distance += activity.get("distance", 0)
+                weekly_time += activity.get("elapsed_time", 0)
+
+                if activity_date.date() == datetime.now().date(): # today in current week
+                    speed_m_s = activity.get("distance", 0) / activity.get("elapsed_time", 1)
+                    daily_met = (speed_m_s / 0.2) + 3.5
+                    if daily_met >= 3:
+                        to_return["daily_time_lapse"] = round(activity.get("elapsed_time", 0) / 60, 0)
+                        weekly_time_lapse += round(activity.get("elapsed_time", 0) / 60, 0)
+                
+                else: # other days in current week
+                    speed_m_s = activity.get("distance", 0)
+                    daily_met = (speed_m_s / 0.2) + 3.5
+                    if daily_met >= 3:
+                        weekly_time_lapse += round(activity.get("elapsed_time", 0) / 60, 0)
+
+        elif activity_date.month == last_month: # check for last month
+            # total activity for last month
+            speed_m_s = activity.get("distance", 0)
+            daily_met = (speed_m_s / 0.2) + 3.5
+            if daily_met >= 3:
+                monthly_time_lapse += round(activity.get("elapsed_time", 0) / 60, 0)
+            
+            # top activity for last month
             sport_type = activity.get("sport_type")
             if sport_type not in activity_dict:
                 activity_dict[sport_type] = 1
             else:
                 activity_dict[sport_type] += 1
             
-            # If the activity is in the current week, update weekly stats
-            if activity_date.isocalendar()[1] == current_week:
-                weekly_distance += activity.get("distance", 0)  # In meters
-                weekly_time += activity.get("elapsed_time", 0)  # In seconds
+            # store activities for last month
+            to_return["activities_in_month"][activity_date.day] = activity.get("distance", 0)
+            monthly_distance += activity.get("distance", 0)
 
-                # If the activity is today, calculate MET (Metabolic Equivalent of Task)
-                if activity_date.date() == datetime.now().date():
-                    # Assuming MET formula (MET = (speed in m/s / 0.2) + 3.5)
-                    speed_m_s = activity.get("distance", 0) / activity.get("elapsed_time", 1)
-                    daily_met = (speed_m_s / 0.2) + 3.5
-                    
-                    # Update daily time lapse if MET >= 3
-                    if daily_met >= 3:
-                        to_return["daily_time_lapse"] = round(activity.get("elapsed_time", 0) / 60, 0)  # Convert to minutes
-        
         else:
-            break  # No need to process further as we only care about current month data
+            break
     
-    # Calculate weekly MET
+    to_return["weekly_time_lapse"] = weekly_time_lapse
+    to_return["monthly_time_lapse"] = monthly_time_lapse
+    to_return["monthly_distance"] = monthly_distance
+
     if weekly_time > 0:
         weekly_speed_m_s = weekly_distance / weekly_time
         to_return["weekly_met"] = (weekly_speed_m_s / 0.2) + 3.5
-        to_return["weekly_time_lapse"] = round(weekly_time / 60, 0)  # Convert to minutes
-    
-    # Determine the top activity of the current month
+
+
+
+    # Determine the top activity for the previous month            
     if activity_dict:
         top_activity = max(activity_dict, key=activity_dict.get)
         to_return["monthly_top_activity"] = top_activity
-    
-    # Return the calculated results
+
+
     return to_return
 
 if __name__ == '__main__':
