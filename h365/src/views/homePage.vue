@@ -289,7 +289,7 @@ export default {
             };
 
             return `${formatTime(startDate)} - ${formatTime(endDate)}`;
-        }
+        },
 
         async stravaLogin() {
             // window.open("http://localhost:5020/connect", "_blank");

@@ -1,7 +1,7 @@
 <template>
     <div class="stickyHeader">
         <div class="pageHeader">
-            <i class="uil uil-angle-left"></i>
+            <i class="uil uil-angle-left" @click="goBack"></i>
             <p> Your Monthly Report </p>
         </div>
 
@@ -99,10 +99,10 @@ export default {
                 }
             ]
         },
-        streakCount: this.$route.params.streakCount || 0,
-        mr_movingMinutes: this.$route.params.mr_movingMinutes || 0,
-        mr_topActivity: this.$route.params.mr_topActivity || "",
-        mr_totalDistance: Math.round((this.$route.params.mr_totalDistance / 1000), 2) || 0,
+        streakCount: this.$route.params.streakCount || 1,
+        mr_movingMinutes: this.$route.params.mr_movingMinutes || 154,
+        mr_topActivity: this.$route.params.mr_topActivity || "Run",
+        mr_totalDistance: Math.round((this.$route.params.mr_totalDistance / 1000), 2) || 31,
         mr_allActivitites: {},
         mr_month: this.$route.params.mr_month || 0,
 
@@ -188,6 +188,9 @@ export default {
         this.chartData = markRaw(newChartData);
 
         console.log("Populated Chart Data:", this.chartData.datasets[0].data);
+    },
+    goBack() {
+        this.$router.go(-1);
     }
 
 
