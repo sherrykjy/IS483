@@ -19,8 +19,8 @@
     <div class="container">
         <div class="banner">
             <div class="text">
-                <p class="body"> Youths aged 13-17 should aim for an average of at least 60 minutes
-                 of moderate to high intensity physical activity a day across the week </p>
+                <p class="body"> Youths aged 13-17 should aim for at least 150 minutes
+                 of moderate to high intensity physical activity every week </p>
             </div>
 
             <div class="image">

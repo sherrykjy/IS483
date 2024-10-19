@@ -9,7 +9,7 @@
         <div class="displayBlock">
             <div class="blockLeft">
                 <div class="blockText">
-                    <p style="margin-right: 5px"> {{ numHealthCoins }} </p>
+                    <p style="margin-right: 5px"> 315 </p>
                     <span> <img src="../assets/icons/homepage/coin.png"> </span>
                 </div>
                 <p> My Healthcoins </p>
@@ -41,7 +41,7 @@
         <div class="container">
             <div class="basicCard">
                 <div class="barLabel">
-                    <span class="updatedVar"> {{ currentWeekly }} / {{ goalWeekly }} </span>
+                    <span class="updatedVar"> 150 / 150 </span>
                     <span class="updatedText"> minutes of MVPA </span>
                 </div>
 
@@ -79,7 +79,7 @@
             <div class="basicCard">
                 <div class="barLabel" style="padding-bottom: 16px;">
                     <span class="updatedText"> You have worked out for </span>
-                    <span class="updatedVar" style="color: var(--purple)"> {{ minutesToday }} </span>
+                    <span class="updatedVar" style="color: var(--purple)"> 30 </span>
                     <span class="updatedText"> minutes today! </span>
                 </div>
             </div>
@@ -360,10 +360,11 @@ export default {
 
     computed: {
         progressPercentage() {
-            if (this.goalWeekly > 0) {
-                return (this.currentWeekly / this.goalWeekly) * 100;
-            }
-            return 0;
+            // if (this.goalWeekly > 0) {
+            //     return (this.currentWeekly / this.goalWeekly) * 100;
+            // }
+            // return 0;
+            return (150/150)*100;
         }
     },
 

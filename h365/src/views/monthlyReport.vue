@@ -21,7 +21,7 @@
                 <div>
                     <div class="card drop-shadow">
                         <div class="content">
-                                <p class="actual"> {{ streakCount }} </p>
+                                <p class="actual"> 2 </p>
                                 <p class="label"> Current Streak </p>
                                 <img src="../assets/icons/report/streak.png" class="cardimg">
                         </div>
