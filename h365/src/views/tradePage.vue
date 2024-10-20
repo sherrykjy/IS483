@@ -64,6 +64,7 @@
             :receiveCardName="receiveCardName"
             :tradeWith="tradeWith"
             :tradeId="selectedTradeId"
+            :errorMessage="errorMessage"
             @close="closePopup"
             @confirm="acceptTrade"
         />
@@ -117,7 +118,8 @@ export default {
             selectedTradeId: '',
             trades: [],
             searchInput: '',
-            searchResults: []
+            searchResults: [],
+            errorMessage: ''
         };
     },
     methods: {
@@ -137,6 +139,7 @@ export default {
         },
         closePopup() {
             this.isPopupVisible = false;
+            this.errorMessage = '';
         },
         getCardImage(card_title, card_set) {
             if (!card_title || !card_set) {
@@ -188,20 +191,46 @@ export default {
                 const tradeData = tradeResponse.data;
                 console.log(tradeData);
 
+                // error handling: when trade request selected is user's own request
+                if (tradeData.user_id == this.userId) {
+                    this.errorMessage = "Unable to accept trade request with yourself. Please select a different trade request.";
+                    return;
+                }
+
+                // user one card information
                 const userOneResponse = await this.$http.get("http://127.0.0.1:5006/usercard/user/" + tradeData.user_id);
                 const userOneCards = userOneResponse.data.data.cards;
                 console.log(userOneCards);
                 const userOneTargetCard = userOneCards.find(card => card.card_id == tradeData.card_one_id);
+                // error handling: other user does not have the card they are offering
+                if (userOneTargetCard === undefined) {
+                    this.errorMessage = "There is an error in processing this trade. Please try again later.";
+                    console.log("user one does not have offered card");
+                    return;
+                }
                 const user_card_id_one = userOneTargetCard.user_card_id;
 
+                // user two card information
                 const userTwoResponse = await this.$http.get("http://127.0.0.1:5006/usercard/user/" + this.userId);
                 const userTwoCards = userTwoResponse.data.data.cards;
+                const userTwoRequestedCard = userTwoCards.find(card => card.card_id == tradeData.card_one_id);
                 const userTwoTargetCard = userTwoCards.find(card => card.card_id == tradeData.card_two_id);
+                // error handling: user two already owns the card being offered
+                if (userTwoRequestedCard) {
+                    this.errorMessage = "You already own the offered collectible. Please select a different trade request.";
+                    return;
+                }
+                // error handling: user two does not have the card being requested
+                if (userTwoTargetCard === undefined) {
+                    this.errorMessage = "You do not have the requested collectible in your collection."
+                    return;
+                }
                 const user_card_id_two = userTwoTargetCard.user_card_id;
 
                 // console.log(user_card_id_one);
                 // console.log(user_card_id_two);
 
+                // no errors above, proceed with processing trade & swapping of cards
                 const processTradeResponse = await this.$http.post("http://127.0.0.1:5015/trade_card", {
                     trade_id: tradeId,
                     user_card_id_one: user_card_id_one,
@@ -218,6 +247,7 @@ export default {
                 this.$router.push('/collection');
 
             } catch (error) {
+                // error handling: in db changes while processing trade
                 console.log("Error in processing trade:" + error);
             }
 

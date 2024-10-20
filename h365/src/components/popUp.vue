@@ -43,6 +43,9 @@
                 <span> {{ tradeWith }} </span>
             </p>
 
+            <!-- Display error message -->
+            <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
+
             <div class="buttonBlock">
                 <button style="background-color: var(--text-highlight);" @click="closePopup"> Cancel </button>
                 <button style="background-color: var(--blue);" @click="confirmTrade"> Confirm </button>
