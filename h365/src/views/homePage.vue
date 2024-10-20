@@ -17,7 +17,7 @@
 
             <div class="blockRight">
                 <div class="blockText">
-                    <p> {{ streakCount }} day </p>
+                    <p> {{ streakCount }} </p>
                     <img src="../assets/icons/homepage/streak.png" style="width: 25px; height: auto; margin-right: 3px;">
                 </div>
 
