@@ -157,7 +157,7 @@ export default {
         },
         async fetchAllTrades() {
             try {
-                const response = await this.$http.get("http://127.0.0.1:5013/trades");
+                const response = await this.$http.get("http://127.0.0.1:5013/active_trades");
                 console.log(response.data.data);
                 this.trades = response.data.data;
             } catch (error) {

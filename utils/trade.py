@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
-from datetime import datetime
+from datetime import datetime, timedelta
 from invokes import invoke_http
 
 app = Flask(__name__)
@@ -82,7 +82,16 @@ def get_next_trade_id():
 # Sort trades by date
 # order should be asc or desc as input
 def sort_trades(trades, order='asc'):
-    return sorted(trades, key=lambda x: datetime.strptime(x['trade_date'], '%a, %d %b %Y %H:%M:%S %Z'), reverse=(order == 'desc'))
+    def parse_date(date_str):
+        try:
+            # Try parsing as ISO 8601 format
+            return datetime.fromisoformat(date_str)
+        except ValueError:
+            # If parsing fails, try the RFC 1123 format
+            return datetime.strptime(date_str, '%a, %d %b %Y %H:%M:%S %Z')
+    
+    # Sort trades by parsed date
+    return sorted(trades, key=lambda x: parse_date(x['trade_date']), reverse=(order == 'desc'))
 
 # Create a new Trade
 @app.route('/trade', methods=['POST'])
@@ -142,7 +151,7 @@ def get_trades():
                 card_one_type = card_one_response["data"]["card_type"]
                 card_two_title = card_two_response["data"]["title"]
                 card_two_type = card_two_response["data"]["card_type"]
-                output.append({"trade_id": trade_id, "trade_date": trade_date, "user_id": user_id, "name": name, 
+                output.append({"trade_id": trade_id, "trade_date": trade_date.isoformat(), "user_id": user_id, "name": name, 
                             "card_one_id": card_one_id, "card_one_title": card_one_title, "card_one_type": card_one_type, 
                             "card_two_id": card_two_id, "card_two_title": card_two_title, "card_two_type": card_two_type})
 
@@ -154,6 +163,44 @@ def get_trades():
             "message": f"An error occurred: {str(e)}"
         }), 500
 
+# Get Active Trades and delete trades that are older than 24 hours
+@app.route('/active_trades', methods=['GET'])
+def get_active_trades():
+    try:
+        trades_response = get_trades()
+
+        if trades_response[1] != 200:
+            return jsonify({
+                "code": 400,
+                "message": "No available trades"
+            }), 400
+        
+        trades = trades_response[0].get_json()["data"]        
+        print("trades:", trades)
+        
+        updated_trades = []
+        for trade in trades:
+            # Convert trade_date from ISO format and compare with current time
+            trade_date = datetime.fromisoformat(trade["trade_date"])
+            # If trade_date + 24 hours is less than current time (in the past), delete the trade
+            if trade_date + timedelta(hours=24) < datetime.now():
+                trade_id = trade["trade_id"]
+                trade_result = delete_trade(trade_id)
+                
+                if trade_result[1] == 200:
+                    print(f"Trade with ID {trade_id} successfully deleted.")
+                else:
+                    print(f"Failed to delete trade with ID {trade_id}")
+            else:
+                # Keep the trades that are still within the 24-hour window
+                updated_trades.append(trade)
+        
+        # Return the remaining trades
+        return {"code": 200, "data": updated_trades}
+    
+    except Exception as e:
+        return {"code": 500, "message": str(e)}
+    
 # Get a Trade by ID
 @app.route('/trade/<int:trade_id>', methods=['GET'])
 def get_trade(trade_id):
@@ -203,18 +250,19 @@ def get_trades_by_user(user_id):
 def search_trade():
     try:
         keyword = request.args.get('search_input')
-        order_by =  request.args.get('order_by')
+        order_by = request.args.get('order_by')
             
         if keyword or order_by:
-            response = get_trades()
+            response = get_active_trades()
+            print("search", response)
 
-            if response[1] != 200:
+            if response["code"] != 200:
                 return jsonify({
                     "code": 400,
                     "message": "No available trades"
                 }), 400
             
-            active_trades = response[0].get_json()["data"]
+            active_trades = response["data"]
             # print(active_trades)
             output = []
 

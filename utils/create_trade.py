@@ -29,7 +29,7 @@ def get_trades():
             
             return jsonify({
                 "code": 500,
-                "message": "trade_card.py internal error: " + ex_str
+                "message": "create_trade.py internal error: " + ex_str
             }), 500
             
 def processCardTrades(user_details):
