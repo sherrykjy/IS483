@@ -119,7 +119,7 @@ def create_trade():
     try:
         db.session.add(new_trade)
         db.session.commit()
-        return jsonify(new_trade.json()), 201
+        return jsonify({"code": 201, "data": new_trade.json()}), 201
     except Exception as e:
         db.session.rollback()
         return jsonify({"error": str(e)}), 400
@@ -214,6 +214,12 @@ def get_trade(trade_id):
 def get_trades_by_user(user_id):
     try:
         trades = Trade.query.filter_by(user_id=user_id).all()
+        if len(trades) == 0: 
+            return jsonify({
+                "code": 404,
+                "message": "No trades found for user"
+            }), 404
+        
         output = []
         for trade in trades:
             trade_id = trade.trade_id
