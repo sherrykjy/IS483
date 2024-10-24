@@ -126,8 +126,15 @@ def get_events():
 def get_event(event_id):
     event = Event.query.get(event_id)
     if event:
-        return jsonify({"code": 200, "data": event.json()}), 200
-    return jsonify({"error": "Event not found"}), 404
+        return jsonify({
+            "code": 200, 
+            "data": event.json()
+        }), 200
+    
+    return jsonify({
+        "code": 404,
+        "error": "Event not found"
+    }), 404
 
 # Update an event by ID
 @app.route('/event/<int:event_id>', methods=['PUT'])

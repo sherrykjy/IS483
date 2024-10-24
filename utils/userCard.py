@@ -76,7 +76,7 @@ def create_user_card():
         return jsonify({"code": 201, "data": new_user_card.json()}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 400
+        return jsonify({"code": 400, "error": str(e)}), 400
 
 # Get all UserCards
 @app.route('/usercard', methods=['GET'])
@@ -123,6 +123,14 @@ def get_user_cards_by_user(user_id):
         return jsonify({"code": 404, "error": "No cards found for this user ID"}), 404
     except Exception as e:
         return jsonify({"error": str(e)}), 400
+
+# Get UserCard by User ID and Card ID
+@app.route('/usercard/user/<int:user_id>/card/<int:card_id>', methods=['GET'])
+def get_user_card_by_user_and_card(user_id, card_id):
+    user_card = UserCard.query.filter_by(user_id=user_id, card_id=card_id).first()
+    if user_card:
+        return jsonify({"code": 200, "data": user_card.json()}), 200
+    return jsonify({"code": 404, "error": "UserCard not found"}), 404
 
 # Update a UserCard by ID
 @app.route('/usercard/<int:user_card_id>', methods=['PUT'])

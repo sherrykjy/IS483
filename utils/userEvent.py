@@ -14,6 +14,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS' ] = False
 db = SQLAlchemy(app)
 CORS(app)
 
+userURL = "http://localhost:5001/user/"
 eventURL = "http://localhost:5002/event/"
 
 class User(db.Model):    
@@ -128,7 +129,10 @@ def get_user_events():
 def get_user_event(user_event_id):
     user_event = UserEvents.query.get(user_event_id)
     if user_event:
-        return jsonify(user_event.json()), 200
+        return jsonify({
+            "code": 200,
+            "data": user_event.json()
+        }), 200
     return jsonify({"error": "UserEvent not found"}), 404
 
 # Update a UserEvent by ID
@@ -149,6 +153,33 @@ def update_user_event(user_event_id):
             db.session.rollback()
             return jsonify({"error": str(e)}), 400
     return jsonify({"error": "UserEvent not found"}), 404
+
+# Update partial fields of UserEvent by user_event_id
+@app.route('/userevent/<int:user_event_id>', methods=['PATCH'])
+def partial_update_user_event(user_event_id):
+    user_event = UserEvents.query.get(user_event_id)
+    if user_event:
+        data = request.json
+
+        # Update fields only if they are provided in the request
+        if 'user_id' in data:
+            user_event.user_id = data['user_id']
+        if 'event_id' in data:
+            user_event.event_id = data['event_id']
+        if 'registered' in data:
+            user_event.registered = data['registered']
+        if 'completed' in data:
+            user_event.completed = data['completed']
+        
+        try:
+            db.session.commit()
+            return jsonify({"code": 200, "data": user_event.json()}), 200
+        
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({"error": str(e)}), 400
+    
+    return jsonify({"error": "User Event not found"}), 404
 
 # Delete a UserEvent by ID
 @app.route('/userevent/<int:user_event_id>', methods=['DELETE'])
@@ -261,5 +292,55 @@ def enrol_user_event():
             "message": f"An error occurred: {str(e)}"
         }), 500
 
+# Get users by event id
+@app.route('/userevent/eventusers/<int:event_id>', methods=['GET'])
+def get_users_by_event(event_id):
+    try:
+        # get all users who are registered for the event
+        user_events = UserEvents.query.filter_by(event_id=event_id, registered=True).all()
+
+        if user_events:
+            output = []
+
+            for user_event in user_events:
+                user_id = user_event.user_id
+
+                # get info for each user
+                userInfoURL = userURL + "id/" + str(user_id)
+                user = invoke_http(userInfoURL, method='GET')
+
+                if isinstance(user, dict) and user["code"] != 200:
+                    return jsonify(user), user["code"]
+
+                else:
+                    userInfo = user["data"]
+                    output.append({
+                        "user_event_id": user_event.user_event_id,
+                        "event_id": user_event.event_id,
+                        "user_id": userInfo["user_id"],
+                        "name": userInfo["name"],
+                        "contact_details": userInfo["contact_details"],
+                        "email": userInfo["email"],
+                        "gender": userInfo["gender"],
+                        "registered": user_event.registered,
+                        "completed": user_event.completed
+                    })
+            
+            return jsonify({
+                "code": 200,
+                "data": output
+            }), 200
+
+        return jsonify({
+            "code": 400,
+            "message": "No users found for this event_id"
+        }), 400
+    
+    except Exception as e:
+        return jsonify({
+            "code": 500,
+            "message": f"An error occurred: {str(e)}"
+        }), 500
+    
 if __name__ == '__main__':
     app.run(port=5007, debug=True)
