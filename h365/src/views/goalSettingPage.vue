@@ -20,7 +20,7 @@
         <div class="banner">
             <div class="text">
                 <p class="body"> Youths aged 13-17 should aim for at least 150 minutes
-                 of moderate to high intensity physical activity every week </p>
+                    of moderate to high intensity physical activity every week </p>
             </div>
 
             <div class="image">
