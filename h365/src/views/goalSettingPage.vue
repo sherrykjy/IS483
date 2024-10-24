@@ -30,7 +30,7 @@
     </div>
 
     <div class="container">
-        <form @submit.prevent="submitGoal">
+        <form @submit.prevent="submitGoal" novalidate>
             <div class="question">
                 <div class="label">
                     What is your target number of MVPA minutes per week?
@@ -39,8 +39,10 @@
 
                 <div class="input drop-shadow">
                     <input type="number" v-model="goal" name="goal" 
-                    id="goal" placeholder="Input your weekly target">
+                    id="goal" placeholder="Input your weekly target" step="1">
                 </div>
+
+                <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
             </div>
 
             <div class="question">
@@ -95,7 +97,7 @@
             </div>
 
             <button class="formButton" style="color: var(--default-white); 
-                background: var(--green); margin-top: 15px;"> <!-- need to add form handling here -->
+                background: var(--green); margin-top: 15px;">
                 Submit
             </button>
         </form>
@@ -123,11 +125,25 @@ export default {
     data() {
         return {
             selectedIntensity: '',
-            goal: ''
+            goal: '',
+            errorMessage: ''
         }
     },
     methods: {
         async submitGoal() {
+            this.errorMessage = '';
+
+            // validate goal input
+            if (this.goal < 150) {
+                console.log("error in goal input");
+                this.errorMessage = "Please enter a valid weekly target of at least 150 minutes.";
+                return;
+            } else if (!Number.isInteger(Number(this.goal))) {
+                console.log("invalid numeric input");
+                this.errorMessage = "Please enter a valid whole number of at least 150.";
+                return;
+            }
+            
             try {
                 console.log("Submit goal attempt");
                 console.log("User email:", this.userEmail);
@@ -141,7 +157,7 @@ export default {
                 const goalResponse = await this.$http.post("http://127.0.0.1:5011/goal", {
                     user_id: this.userId,
                     goal_description: "Hit MVPA goal",
-                    tier: 1, // TO DO: confirm how tier is determined,
+                    tier: 1,
                     completed: false,
                     target: this.goal
                 })
@@ -295,6 +311,12 @@ input {
 
 .info span {
     font-family: text-bold;
+}
+
+.error-message {
+    color: var(--red);
+    font-size: 12px;
+    margin-top: 5px;
 }
 
 </style>
